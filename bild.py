@@ -59,10 +59,10 @@ test_properties = {
 
 TARGETS = OrderedDict([
     ("Java", uniformpath(JAVA_TARGET)),
-    ("CSharp",uniformpath(CSHARP_TARGET)),
-    ("Python2", uniformpath(PYTHON2_TARGET)),
-    ("Python3", uniformpath(PYTHON3_TARGET)),
-    ("JavaScript",uniformpath(JAVASCRIPT_TARGET))
+  #  ("CSharp",uniformpath(CSHARP_TARGET)),
+  #  ("Python2", uniformpath(PYTHON2_TARGET)),
+  #  ("Python3", uniformpath(PYTHON3_TARGET)),
+  # ("JavaScript",uniformpath(JAVASCRIPT_TARGET))
 ])
 
 

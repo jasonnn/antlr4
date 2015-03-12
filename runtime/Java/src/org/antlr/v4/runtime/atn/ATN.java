@@ -187,8 +187,8 @@ public class ATN {
 		IntervalSet expected = new IntervalSet();
 		expected.addAll(following);
 		expected.remove(Token.EPSILON);
-		while (ctx != null && ctx.invokingState >= 0 && following.contains(Token.EPSILON)) {
-			ATNState invokingState = states.get(ctx.invokingState);
+		while (ctx != null && ctx.getInvokingState() >= 0 && following.contains(Token.EPSILON)) {
+			ATNState invokingState = states.get(ctx.getInvokingState());
 			RuleTransition rt = (RuleTransition)invokingState.transition(0);
 			following = nextTokens(rt.followState);
 			expected.addAll(following);

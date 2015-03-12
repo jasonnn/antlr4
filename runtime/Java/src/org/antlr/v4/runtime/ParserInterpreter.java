@@ -237,7 +237,7 @@ public class ParserInterpreter extends Parser {
 
 	@Override
 	public void enterRecursionRule(ParserRuleContext localctx, int state, int ruleIndex, int precedence) {
-		Pair<ParserRuleContext, Integer> pair = new Pair<ParserRuleContext, Integer>(_ctx, localctx.invokingState);
+		Pair<ParserRuleContext, Integer> pair = new Pair<ParserRuleContext, Integer>(_ctx, localctx.getInvokingState());
 		_parentContextStack.push(pair);
 		super.enterRecursionRule(localctx, state, ruleIndex, precedence);
 	}

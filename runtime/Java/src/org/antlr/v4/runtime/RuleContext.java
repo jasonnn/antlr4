@@ -99,12 +99,7 @@ public class RuleContext implements RuleNode {
 	/** What context invoked this rule? */
 	public RuleContext parent;
 
-	/** What state invoked the rule associated with this context?
-	 *  The "return address" is the followState of invokingState
-	 *  If parent is null, this should be -1 this context object represents
-	 *  the start rule.
-	 */
-	public int invokingState = -1;
+	private int invokingState = -1;
 
 	public RuleContext() {}
 
@@ -292,5 +287,18 @@ public class RuleContext implements RuleNode {
 
 		buf.append("]");
 		return buf.toString();
+	}
+
+	/** What state invoked the rule associated with this context?
+	 *  The "return address" is the followState of invokingState
+	 *  If parent is null, this should be -1 this context object represents
+	 *  the start rule.
+	 */
+	public int getInvokingState() {
+		return invokingState;
+	}
+
+	public void setInvokingState(int invokingState) {
+		this.invokingState = invokingState;
 	}
 }

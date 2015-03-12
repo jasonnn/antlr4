@@ -633,7 +633,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 		_ctx.stop = _input.LT(-1);
         // trigger event on _ctx, before it reverts to parent
         if ( _parseListeners != null) triggerExitRuleEvent();
-		setState(_ctx.invokingState);
+		setState(_ctx.getInvokingState());
 		_ctx = (ParserRuleContext)_ctx.parent;
     }
 
@@ -689,7 +689,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 	public void pushNewRecursionContext(ParserRuleContext localctx, int state, int ruleIndex) {
 		ParserRuleContext previous = _ctx;
 		previous.parent = localctx;
-		previous.invokingState = state;
+		previous.setInvokingState(state);
 		previous.stop = _input.LT(-1);
 
 		_ctx = localctx;
@@ -880,8 +880,8 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 //        System.out.println("following "+s+"="+following);
         if ( !following.contains(Token.EPSILON) ) return false;
 
-        while ( ctx!=null && ctx.invokingState>=0 && following.contains(Token.EPSILON) ) {
-            ATNState invokingState = atn.states.get(ctx.invokingState);
+        while ( ctx!=null && ctx.getInvokingState() >=0 && following.contains(Token.EPSILON) ) {
+            ATNState invokingState = atn.states.get(ctx.getInvokingState());
             RuleTransition rt = (RuleTransition)invokingState.transition(0);
             following = atn.nextTokens(rt.followState);
             if (following.contains(symbol)) {

@@ -730,9 +730,9 @@ public class DefaultErrorStrategy implements ANTLRErrorStrategy {
 		ATN atn = recognizer.getInterpreter().atn;
 		RuleContext ctx = recognizer._ctx;
 		IntervalSet recoverSet = new IntervalSet();
-		while ( ctx!=null && ctx.invokingState>=0 ) {
+		while ( ctx!=null && ctx.getInvokingState() >=0 ) {
 			// compute what follows who invoked us
-			ATNState invokingState = atn.states.get(ctx.invokingState);
+			ATNState invokingState = atn.states.get(ctx.getInvokingState());
 			RuleTransition rt = (RuleTransition)invokingState.transition(0);
 			IntervalSet follow = atn.nextTokens(rt.followState);
 			recoverSet.addAll(follow);

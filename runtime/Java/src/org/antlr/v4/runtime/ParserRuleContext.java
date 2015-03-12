@@ -107,7 +107,7 @@ public class ParserRuleContext extends RuleContext {
 	 */
 	public void copyFrom(ParserRuleContext ctx) {
 		this.parent = ctx.parent;
-		this.invokingState = ctx.invokingState;
+		this.setInvokingState(ctx.getInvokingState());
 
 		this.start = ctx.start;
 		this.stop = ctx.stop;

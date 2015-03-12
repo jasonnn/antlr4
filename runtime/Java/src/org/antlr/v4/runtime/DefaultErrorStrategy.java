@@ -736,7 +736,7 @@ public class DefaultErrorStrategy implements ANTLRErrorStrategy {
 			RuleTransition rt = (RuleTransition)invokingState.transition(0);
 			IntervalSet follow = atn.nextTokens(rt.followState);
 			recoverSet.addAll(follow);
-			ctx = ctx.parent;
+			ctx = ctx.getParent();
 		}
         recoverSet.remove(Token.EPSILON);
 //		System.out.println("recover set "+recoverSet.toString(recognizer.getTokenNames()));

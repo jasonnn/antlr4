@@ -79,7 +79,7 @@ public class InterpreterRuleContext extends ParserRuleContext {
 		InterpreterRuleContext dup = new InterpreterRuleContext();
 		dup.copyFrom(ctx);
 		dup.ruleIndex = ctx.getRuleIndex();
-		dup.parent = fromParserRuleContext(ctx.getParent());
+		dup.setParent(fromParserRuleContext(ctx.getParent()));
 		return dup;
 	}
 }

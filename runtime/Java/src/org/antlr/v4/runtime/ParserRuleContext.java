@@ -106,7 +106,7 @@ public class ParserRuleContext extends RuleContext {
 	 *  confusion with creating node with parent. Does not copy children.
 	 */
 	public void copyFrom(ParserRuleContext ctx) {
-		this.parent = ctx.parent;
+		this.setParent(ctx.getParent());
 		this.setInvokingState(ctx.getInvokingState());
 
 		this.start = ctx.start;

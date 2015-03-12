@@ -98,13 +98,13 @@ public abstract class PredictionContext {
 
 		// if we are in RuleContext of start rule, s, then PredictionContext
 		// is EMPTY. Nobody called us. (if we are empty, return empty)
-		if ( outerContext.parent==null || outerContext==RuleContext.EMPTY ) {
+		if ( outerContext.getParent() ==null || outerContext==RuleContext.EMPTY ) {
 			return PredictionContext.EMPTY;
 		}
 
 		// If we have a parent, convert it to a PredictionContext graph
 		PredictionContext parent = EMPTY;
-		parent = PredictionContext.fromRuleContext(atn, outerContext.parent);
+		parent = PredictionContext.fromRuleContext(atn, outerContext.getParent());
 
 		ATNState state = atn.states.get(outerContext.getInvokingState());
 		RuleTransition transition = (RuleTransition)state.transition(0);

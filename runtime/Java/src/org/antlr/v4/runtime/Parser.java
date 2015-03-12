@@ -610,7 +610,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 	}
 
 	protected void addContextToParseTree() {
-		ParserRuleContext parent = (ParserRuleContext)_ctx.parent;
+		ParserRuleContext parent = _ctx.getParent();
 		// add current context to parent if we have a parent
 		if ( parent!=null )	{
 			parent.addChild(_ctx);
@@ -634,14 +634,14 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
         // trigger event on _ctx, before it reverts to parent
         if ( _parseListeners != null) triggerExitRuleEvent();
 		setState(_ctx.getInvokingState());
-		_ctx = (ParserRuleContext)_ctx.parent;
+		_ctx = _ctx.getParent();
     }
 
 	public void enterOuterAlt(ParserRuleContext localctx, int altNum) {
 		// if we have new localctx, make sure we replace existing ctx
 		// that is previous child of parse tree
 		if ( _buildParseTrees && _ctx != localctx ) {
-			ParserRuleContext parent = (ParserRuleContext)_ctx.parent;
+			ParserRuleContext parent = _ctx.getParent();
 			if ( parent!=null )	{
 				parent.removeLastChild();
 				parent.addChild(localctx);
@@ -688,7 +688,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 	 */
 	public void pushNewRecursionContext(ParserRuleContext localctx, int state, int ruleIndex) {
 		ParserRuleContext previous = _ctx;
-		previous.parent = localctx;
+		previous.setParent(localctx);
 		previous.setInvokingState(state);
 		previous.stop = _input.LT(-1);
 
@@ -712,7 +712,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 		if ( _parseListeners != null ) {
 			while ( _ctx != _parentctx ) {
 				triggerExitRuleEvent();
-				_ctx = (ParserRuleContext)_ctx.parent;
+				_ctx = _ctx.getParent();
 			}
 		}
 		else {
@@ -720,7 +720,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 		}
 
 		// hook into tree
-		retctx.parent = _parentctx;
+		retctx.setParent(_parentctx);
 
 		if (_buildParseTrees && _parentctx != null) {
 			// add return ctx into invoking rule's tree
@@ -732,7 +732,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 		ParserRuleContext p = _ctx;
 		while ( p!=null ) {
 			if ( p.getRuleIndex() == ruleIndex ) return p;
-			p = (ParserRuleContext)p.parent;
+			p = p.getParent();
 		}
 		return null;
 	}
@@ -888,7 +888,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
                 return true;
             }
 
-            ctx = (ParserRuleContext)ctx.parent;
+            ctx = ctx.getParent();
         }
 
         if ( following.contains(Token.EPSILON) && symbol == Token.EOF ) {
@@ -944,7 +944,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 			int ruleIndex = p.getRuleIndex();
 			if ( ruleIndex<0 ) stack.add("n/a");
 			else stack.add(ruleNames[ruleIndex]);
-			p = p.parent;
+			p = p.getParent();
 		}
 		return stack;
 	}

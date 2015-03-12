@@ -96,8 +96,7 @@ import java.util.concurrent.Future;
 public class RuleContext implements RuleNode {
 	public static final ParserRuleContext EMPTY = new ParserRuleContext();
 
-	/** What context invoked this rule? */
-	public RuleContext parent;
+	private RuleContext parent;
 
 	private int invokingState = -1;
 
@@ -136,6 +135,7 @@ public class RuleContext implements RuleNode {
 	@Override
 	public RuleContext getRuleContext() { return this; }
 
+	/** What context invoked this rule? */
 	@Override
 	public RuleContext getParent() { return parent; }
 
@@ -300,5 +300,9 @@ public class RuleContext implements RuleNode {
 
 	public void setInvokingState(int invokingState) {
 		this.invokingState = invokingState;
+	}
+
+	public void setParent(RuleContext parent) {
+		this.parent = parent;
 	}
 }

@@ -102,10 +102,10 @@ public class TestListeners extends BaseTest {
 	                  "public static class LeafListener extends TBaseListener {\n" +
 	                  "	public void exitA(TParser.AContext ctx) {\n" +
 	                  "		if (ctx.getChildCount()==2) {\n" +
-	                  "			System.out.printf(\"%s %s %s\",ctx.b(0).start.getText(),\n" +
-	                  "				ctx.b(1).start.getText(),ctx.b().get(0).start.getText());\n" +
+	                  "			System.out.printf(\"%s %s %s\",ctx.b(0).getStart().getText(),\n" +
+	                  "				ctx.b(1).getStart().getText(),ctx.b().get(0).getStart().getText());\n" +
 	                  "		} else \n" +
-	                  "			System.out.println(ctx.b(0).start.getText());\n" +
+	                  "			System.out.println(ctx.b(0).getStart().getText());\n" +
 	                  "	}\n" +
 	                  "}\n" +
 	                  "}\n" +
@@ -156,8 +156,8 @@ public class TestListeners extends BaseTest {
 	                  "public static class LeafListener extends TBaseListener {\n" +
 	                  "	public void exitE(TParser.EContext ctx) {\n" +
 	                  "		if (ctx.getChildCount()==3) {\n" +
-	                  "			System.out.printf(\"%s %s %s\\n\",ctx.e(0).start.getText(),\n" +
-	                  "				ctx.e(1).start.getText(), ctx.e().get(0).start.getText());\n" +
+	                  "			System.out.printf(\"%s %s %s\\n\",ctx.e(0).getStart().getText(),\n" +
+	                  "				ctx.e(1).getStart().getText(), ctx.e().get(0).getStart().getText());\n" +
 	                  "		} else \n" +
 	                  "			System.out.println(ctx.INT().getSymbol().getText());\n" +
 	                  "	}\n" +
@@ -195,7 +195,7 @@ public class TestListeners extends BaseTest {
 	                  "@parser::members {\n" +
 	                  "public static class LeafListener extends TBaseListener {\n" +
 	                  "	public void exitCall(TParser.CallContext ctx) {\n" +
-	                  "		System.out.printf(\"%s %s\",ctx.e().start.getText(),ctx.eList());\n" +
+	                  "		System.out.printf(\"%s %s\",ctx.e().getStart().getText(),ctx.eList());\n" +
 	                  "	}\n" +
 	                  "	public void exitInt(TParser.IntContext ctx) {\n" +
 	                  "		System.out.println(ctx.INT().getSymbol().getText());\n" +

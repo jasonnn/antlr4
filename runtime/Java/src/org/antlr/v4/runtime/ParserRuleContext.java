@@ -72,27 +72,10 @@ public class ParserRuleContext extends RuleContext {
 	 */
 	public List<ParseTree> children;
 
-	/** For debugging/tracing purposes, we want to track all of the nodes in
-	 *  the ATN traversed by the parser for a particular rule.
-	 *  This list indicates the sequence of ATN nodes used to match
-	 *  the elements of the children list. This list does not include
-	 *  ATN nodes and other rules used to match rule invocations. It
-	 *  traces the rule invocation node itself but nothing inside that
-	 *  other rule's ATN submachine.
-	 *
-	 *  There is NOT a one-to-one correspondence between the children and
-	 *  states list. There are typically many nodes in the ATN traversed
-	 *  for each element in the children list. For example, for a rule
-	 *  invocation there is the invoking state and the following state.
-	 *
-	 *  The parser setState() method updates field s and adds it to this list
-	 *  if we are debugging/tracing.
-     *
-     *  This does not trace states visited during prediction.
-	 */
-//	public List<Integer> states;
+	//	public List<Integer> states;
 
-	public Token start, stop;
+	private Token start;
+	private Token stop;
 
 	private RecognitionException exception;
 
@@ -272,7 +255,24 @@ public class ParserRuleContext extends RuleContext {
 		return Interval.of(start.getTokenIndex(), stop.getTokenIndex());
 	}
 
-	/**
+	/** For debugging/tracing purposes, we want to track all of the nodes in
+	 *  the ATN traversed by the parser for a particular rule.
+	 *  This list indicates the sequence of ATN nodes used to match
+	 *  the elements of the children list. This list does not include
+	 *  ATN nodes and other rules used to match rule invocations. It
+	 *  traces the rule invocation node itself but nothing inside that
+	 *  other rule's ATN submachine.
+	 *
+	 *  There is NOT a one-to-one correspondence between the children and
+	 *  states list. There are typically many nodes in the ATN traversed
+	 *  for each element in the children list. For example, for a rule
+	 *  invocation there is the invoking state and the following state.
+	 *
+	 *  The parser setState() method updates field s and adds it to this list
+	 *  if we are debugging/tracing.
+     *
+     *  This does not trace states visited during prediction.
+	 */ /**
 	 * Get the initial token in this context.
 	 * Note that the range from start to stop is inclusive, so for rules that do not consume anything
 	 * (for example, zero length or error productions) this token may exceed stop.
@@ -305,5 +305,13 @@ public class ParserRuleContext extends RuleContext {
 
 	public void setException(RecognitionException exception) {
 		this.exception = exception;
+	}
+
+	public void setStart(Token start) {
+		this.start = start;
+	}
+
+	public void setStop(Token stop) {
+		this.stop = stop;
 	}
 }

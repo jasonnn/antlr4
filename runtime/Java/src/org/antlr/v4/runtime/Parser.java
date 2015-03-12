@@ -624,13 +624,13 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 	public void enterRule(ParserRuleContext localctx, int state, int ruleIndex) {
 		setState(state);
 		_ctx = localctx;
-		_ctx.start = _input.LT(1);
+		_ctx.setStart(_input.LT(1));
 		if (_buildParseTrees) addContextToParseTree();
         if ( _parseListeners != null) triggerEnterRuleEvent();
 	}
 
     public void exitRule() {
-		_ctx.stop = _input.LT(-1);
+		_ctx.setStop(_input.LT(-1));
         // trigger event on _ctx, before it reverts to parent
         if ( _parseListeners != null) triggerExitRuleEvent();
 		setState(_ctx.getInvokingState());
@@ -677,7 +677,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 		setState(state);
 		_precedenceStack.push(precedence);
 		_ctx = localctx;
-		_ctx.start = _input.LT(1);
+		_ctx.setStart(_input.LT(1));
 		if (_parseListeners != null) {
 			triggerEnterRuleEvent(); // simulates rule entry for left-recursive rules
 		}
@@ -690,10 +690,10 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 		ParserRuleContext previous = _ctx;
 		previous.setParent(localctx);
 		previous.setInvokingState(state);
-		previous.stop = _input.LT(-1);
+		previous.setStop(_input.LT(-1));
 
 		_ctx = localctx;
-		_ctx.start = previous.start;
+		_ctx.setStart(previous.getStart());
 		if (_buildParseTrees) {
 			_ctx.addChild(previous);
 		}
@@ -705,7 +705,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 
 	public void unrollRecursionContexts(ParserRuleContext _parentctx) {
 		_precedenceStack.pop();
-		_ctx.stop = _input.LT(-1);
+		_ctx.setStop(_input.LT(-1));
 		ParserRuleContext retctx = _ctx; // save current ctx (return value)
 
 		// unroll so _ctx is as it was before call to recursive method

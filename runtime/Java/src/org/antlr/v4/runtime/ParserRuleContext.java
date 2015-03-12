@@ -64,13 +64,7 @@ import java.util.List;
  *  satisfy the superclass interface.
  */
 public class ParserRuleContext extends RuleContext {
-	/** If we are debugging or building a parse tree for a visitor,
-	 *  we need to track all of the tokens and rule invocations associated
-	 *  with this rule's context. This is empty for parsing w/o tree constr.
-	 *  operation because we don't the need to track the details about
-	 *  how we parse this rule.
-	 */
-	public List<ParseTree> children;
+	private List<ParseTree> children;
 
 	//	public List<Integer> states;
 
@@ -313,5 +307,19 @@ public class ParserRuleContext extends RuleContext {
 
 	public void setStop(Token stop) {
 		this.stop = stop;
+	}
+
+	/** If we are debugging or building a parse tree for a visitor,
+	 *  we need to track all of the tokens and rule invocations associated
+	 *  with this rule's context. This is empty for parsing w/o tree constr.
+	 *  operation because we don't the need to track the details about
+	 *  how we parse this rule.
+	 */
+	public List<ParseTree> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<ParseTree> children) {
+		this.children = children;
 	}
 }

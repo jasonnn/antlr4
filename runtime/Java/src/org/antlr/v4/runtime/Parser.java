@@ -99,8 +99,8 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 
 		@Override
 		public void exitEveryRule(ParserRuleContext ctx) {
-			if (ctx.children instanceof ArrayList) {
-				((ArrayList<?>)ctx.children).trimToSize();
+			if (ctx.getChildren() instanceof ArrayList) {
+				((ArrayList<?>) ctx.getChildren()).trimToSize();
 			}
 		}
 	}

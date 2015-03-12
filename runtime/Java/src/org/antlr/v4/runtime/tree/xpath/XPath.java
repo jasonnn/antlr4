@@ -196,7 +196,7 @@ loop:
 	 */
 	public Collection<ParseTree> evaluate(final ParseTree t) {
 		ParserRuleContext dummyRoot = new ParserRuleContext();
-		dummyRoot.children = Collections.singletonList(t); // don't set t's parent.
+		dummyRoot.setChildren(Collections.singletonList(t)); // don't set t's parent.
 
 		Collection<ParseTree> work = Collections.<ParseTree>singleton(dummyRoot);
 

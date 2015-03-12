@@ -225,7 +225,7 @@ public class ParserInterpreter extends Parser {
 				}
 				catch (RecognitionException e) {
 					setState(atn.ruleToStopState[p.ruleIndex].stateNumber);
-					getContext().exception = e;
+					getContext().setException(e);
 					getErrorHandler().reportError(this, e);
 					getErrorHandler().recover(this, e);
 				}

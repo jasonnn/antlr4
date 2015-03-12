@@ -94,11 +94,7 @@ public class ParserRuleContext extends RuleContext {
 
 	public Token start, stop;
 
-	/**
-	 * The exception that forced this rule to return. If the rule successfully
-	 * completed, this is {@code null}.
-	 */
-	public RecognitionException exception;
+	private RecognitionException exception;
 
 	public ParserRuleContext() { }
 
@@ -298,4 +294,16 @@ public class ParserRuleContext extends RuleContext {
                 ", stop=" + stop +
                 '}';
     }
+
+	/**
+	 * The exception that forced this rule to return. If the rule successfully
+	 * completed, this is {@code null}.
+	 */
+	public RecognitionException getException() {
+		return exception;
+	}
+
+	public void setException(RecognitionException exception) {
+		this.exception = exception;
+	}
 }

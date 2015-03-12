@@ -399,7 +399,7 @@ RuleFunction(currentRule,args,code,locals,ruleCtx,altLabelCtxs,namedActions,fina
 	<exceptions; separator="\n">
 	<else>
 	catch (RecognitionException re) {
-		_localctx.exception = re;
+		_localctx.setException(re);
 		_errHandler.reportError(this, re);
 		_errHandler.recover(this, re);
 	}
@@ -441,7 +441,7 @@ private <currentRule.ctxType> <currentRule.name>(int _p<args:{a | , <a>}>) throw
 		<namedActions.after>
 	}
 	catch (RecognitionException re) {
-		_localctx.exception = re;
+		_localctx.setException(re);
 		_errHandler.reportError(this, re);
 		_errHandler.recover(this, re);
 	}

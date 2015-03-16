@@ -32,6 +32,7 @@ package org.antlr.v4.runtime.atn;
 
 import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.RuleContext;
+import org.antlr.v4.runtime.RuleContextImpl;
 import org.antlr.v4.runtime.misc.DoubleKeyMap;
 import org.antlr.v4.runtime.misc.MurmurHash;
 
@@ -90,15 +91,15 @@ public abstract class PredictionContext {
 		this.cachedHashCode = cachedHashCode;
 	}
 
-	/** Convert a {@link RuleContext} tree to a {@link PredictionContext} graph.
+	/** Convert a {@link RuleContextImpl} tree to a {@link PredictionContext} graph.
 	 *  Return {@link #EMPTY} if {@code outerContext} is empty or null.
 	 */
 	public static PredictionContext fromRuleContext(ATN atn, RuleContext outerContext) {
-		if ( outerContext==null ) outerContext = RuleContext.EMPTY;
+		if ( outerContext==null ) outerContext = RuleContextImpl.EMPTY;
 
 		// if we are in RuleContext of start rule, s, then PredictionContext
 		// is EMPTY. Nobody called us. (if we are empty, return empty)
-		if ( outerContext.getParent() ==null || outerContext==RuleContext.EMPTY ) {
+		if ( outerContext.getParent() ==null || outerContext== RuleContextImpl.EMPTY ) {
 			return PredictionContext.EMPTY;
 		}
 

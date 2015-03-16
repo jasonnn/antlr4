@@ -3,6 +3,7 @@ package org.antlr.v4.test.tool;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RuleContext;
+import org.antlr.v4.runtime.RuleContextImpl;
 import org.antlr.v4.runtime.misc.Pair;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -214,7 +215,7 @@ public class TestXPath extends BaseTest {
 
 		List<String> nodes = new ArrayList<String>();
 		for (ParseTree t : XPath.findAll(tree, xpath, parser) ) {
-			if ( t instanceof RuleContext) {
+			if ( t instanceof RuleContextImpl) {
 				RuleContext r = (RuleContext)t;
 				nodes.add(parser.getRuleNames()[r.getRuleIndex()]);
 			}

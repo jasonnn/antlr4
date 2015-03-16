@@ -63,7 +63,7 @@ import java.util.List;
  *  group values such as this aggregate.  The getters/setters are there to
  *  satisfy the superclass interface.
  */
-public class ParserRuleContext extends RuleContext {
+public class ParserRuleContext extends RuleContextImpl {
 	private List<ParseTree> children;
 
 	//	public List<Integer> states;

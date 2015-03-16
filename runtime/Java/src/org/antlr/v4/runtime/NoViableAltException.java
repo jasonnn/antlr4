@@ -55,7 +55,7 @@ public class NoViableAltException extends RecognitionException {
 			 recognizer.getCurrentToken(),
 			 recognizer.getCurrentToken(),
 			 null,
-			 recognizer._ctx);
+				recognizer.getContext());
 	}
 
 	public NoViableAltException(Parser recognizer,

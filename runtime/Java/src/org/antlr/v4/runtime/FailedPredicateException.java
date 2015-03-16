@@ -57,7 +57,7 @@ public class FailedPredicateException extends RecognitionException {
 									String predicate,
 									String message)
 	{
-		super(formatMessage(predicate, message), recognizer, recognizer.getInputStream(), recognizer._ctx);
+		super(formatMessage(predicate, message), recognizer, recognizer.getInputStream(), recognizer.getContext());
 		ATNState s = recognizer.getInterpreter().atn.states.get(recognizer.getState());
 
 		AbstractPredicateTransition trans = (AbstractPredicateTransition)s.transition(0);

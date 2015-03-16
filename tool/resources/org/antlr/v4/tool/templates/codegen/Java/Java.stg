@@ -383,7 +383,7 @@ RuleFunction(currentRule,args,code,locals,ruleCtx,altLabelCtxs,namedActions,fina
 <altLabelCtxs:{l | <altLabelCtxs.(l)>}; separator="\n">
 
 <if(currentRule.modifiers)><currentRule.modifiers:{f | <f> }><else>public final <endif><currentRule.ctxType> <currentRule.name>(<args; separator=",">) throws RecognitionException {
-	<currentRule.ctxType> _localctx = new <currentRule.ctxType>(_ctx, getState()<currentRule.args:{a | , <a.name>}>);
+	<currentRule.ctxType> _localctx = new <currentRule.ctxType>(<getCtx()>, getState()<currentRule.args:{a | , <a.name>}>);
 	enterRule(_localctx, <currentRule.startState>, RULE_<currentRule.name>);
 	<namedActions.init>
 	<locals; separator="\n">
@@ -424,9 +424,9 @@ LeftRecursiveRuleFunction(currentRule,args,code,locals,ruleCtx,altLabelCtxs,
 }
 
 private <currentRule.ctxType> <currentRule.name>(int _p<args:{a | , <a>}>) throws RecognitionException {
-	RuleContext _parentctx = _ctx;
+	RuleContext _parentctx = <getCtx()>;
 	int _parentState = getState();
-	<currentRule.ctxType> _localctx = new <currentRule.ctxType>(_ctx, _parentState<currentRule.args:{a | , <a.name>}>);
+	<currentRule.ctxType> _localctx = new <currentRule.ctxType>(<getCtx()>, _parentState<currentRule.args:{a | , <a.name>}>);
 	<currentRule.ctxType> _prevctx = _localctx;
 	int _startState = <currentRule.startState>;
 	enterRecursionRule(_localctx, <currentRule.startState>, RULE_<currentRule.name>, _p);
@@ -534,7 +534,7 @@ setState(<choice.stateNumber>);
 <!_errHandler.sync(this);!>
 <if(choice.label)><labelref(choice.label)> = _input.LT(1);<endif>
 <preamble; separator="\n">
-switch ( getInterpreter().adaptivePredict(_input,<choice.decision>,_ctx) ) {
+switch ( getInterpreter().adaptivePredict(_input,<choice.decision>,<getCtx()>) ) {
 <alts:{alt |
 case <i>:
 	<alt>
@@ -545,7 +545,7 @@ case <i>:
 OptionalBlock(choice, alts, error) ::= <<
 setState(<choice.stateNumber>);
 <!_errHandler.sync(this);!>
-switch ( getInterpreter().adaptivePredict(_input,<choice.decision>,_ctx) ) {
+switch ( getInterpreter().adaptivePredict(_input,<choice.decision>,<getCtx()>) ) {
 <alts:{alt |
 case <i><if(!choice.ast.greedy)>+1<endif>:
 	<alt>
@@ -556,7 +556,7 @@ case <i><if(!choice.ast.greedy)>+1<endif>:
 StarBlock(choice, alts, sync, iteration) ::= <<
 setState(<choice.stateNumber>);
 _errHandler.sync(this);
-_alt = getInterpreter().adaptivePredict(_input,<choice.decision>,_ctx);
+_alt = getInterpreter().adaptivePredict(_input,<choice.decision>,<getCtx()>);
 while ( _alt!=<choice.exitAlt> && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER ) {
 	if ( _alt==1<if(!choice.ast.greedy)>+1<endif> ) {
 		<iteration>
@@ -564,7 +564,7 @@ while ( _alt!=<choice.exitAlt> && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT
 	}
 	setState(<choice.loopBackStateNumber>);
 	_errHandler.sync(this);
-	_alt = getInterpreter().adaptivePredict(_input,<choice.decision>,_ctx);
+	_alt = getInterpreter().adaptivePredict(_input,<choice.decision>,<getCtx()>);
 }
 >>
 
@@ -583,7 +583,7 @@ case <i><if(!choice.ast.greedy)>+1<endif>:
 	}
 	setState(<choice.loopBackStateNumber>); <! loopback/exit decision !>
 	_errHandler.sync(this);
-	_alt = getInterpreter().adaptivePredict(_input,<choice.decision>,_ctx);
+	_alt = getInterpreter().adaptivePredict(_input,<choice.decision>,<getCtx()>);
 } while ( _alt!=<choice.exitAlt> && _alt!=org.antlr.v4.runtime.atn.ATN.INVALID_ALT_NUMBER );
 >>
 
@@ -670,6 +670,9 @@ catch (<catchArg>) {
 }
 >>
 
+getCtx() ::= "getContext()"
+setCtx(newCtx) ::= "setContext(<newCtx>)"
+
 // lexer actions are not associated with model objects
 
 LexerSkipCommand()  ::= "skip();"
@@ -709,6 +712,8 @@ RulePropertyRef_stop(r)	 ::= "(<ctx(r)>.<r.label>!=null?(<ctx(r)>.<r.label>.getS
 RulePropertyRef_text(r)	 ::= "(<ctx(r)>.<r.label>!=null?_input.getText(<ctx(r)>.<r.label>.getStart(),<ctx(r)>.<r.label>.getStop()):null)"
 RulePropertyRef_ctx(r)	 ::= "<ctx(r)>.<r.label>"
 RulePropertyRef_parser(r)	 ::= "this"
+
+
 
 ThisRulePropertyRef_start(r) ::= "_localctx.getStart()"
 ThisRulePropertyRef_stop(r)	 ::= "_localctx.getStop()"
@@ -824,9 +829,9 @@ labelref(x) ::= "<if(!x.isLocal)>((<x.ctx.name>)_localctx).<endif><x.name>"
 ctx(actionChunk) ::= "((<actionChunk.ctx.name>)_localctx)"
 
 // used for left-recursive rules
-recRuleAltPredicate(ruleName,opPrec)  ::= "precpred(_ctx, <opPrec>)"
+recRuleAltPredicate(ruleName,opPrec)  ::= "precpred(<getCtx()>, <opPrec>)"
 recRuleSetReturnAction(src,name)	  ::= "$<name>=$<src>.<name>;"
-recRuleSetStopToken()                 ::= "_ctx.setStop(_input.LT(-1));"
+recRuleSetStopToken()                 ::= "<getCtx()>.setStop(_input.LT(-1));"
 
 recRuleAltStartAction(ruleName, ctxName, label, isListLabel) ::= <<
 _localctx = new <ctxName>Context(_parentctx, _parentState);
@@ -855,7 +860,7 @@ pushNewRecursionContext(_localctx, _startState, RULE_<ruleName>);
 
 recRuleReplaceContext(ctxName) ::= <<
 _localctx = new <ctxName>Context(_localctx);
-_ctx = _localctx;
+<setCtx("_localctx")>;
 _prevctx = _localctx;
 >>
 

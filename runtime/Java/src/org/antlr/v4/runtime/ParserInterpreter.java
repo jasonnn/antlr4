@@ -30,20 +30,7 @@
 
 package org.antlr.v4.runtime;
 
-import org.antlr.v4.runtime.atn.ATN;
-import org.antlr.v4.runtime.atn.ATNState;
-import org.antlr.v4.runtime.atn.ActionTransition;
-import org.antlr.v4.runtime.atn.AtomTransition;
-import org.antlr.v4.runtime.atn.DecisionState;
-import org.antlr.v4.runtime.atn.LoopEndState;
-import org.antlr.v4.runtime.atn.ParserATNSimulator;
-import org.antlr.v4.runtime.atn.PrecedencePredicateTransition;
-import org.antlr.v4.runtime.atn.PredicateTransition;
-import org.antlr.v4.runtime.atn.PredictionContextCache;
-import org.antlr.v4.runtime.atn.RuleStartState;
-import org.antlr.v4.runtime.atn.RuleTransition;
-import org.antlr.v4.runtime.atn.StarLoopEntryState;
-import org.antlr.v4.runtime.atn.Transition;
+import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.misc.Pair;
 
@@ -203,9 +190,9 @@ public class ParserInterpreter extends Parser {
 			switch ( p.getStateType() ) {
 			case ATNState.RULE_STOP :
 				// pop; return from rule
-				if ( _ctx.isEmpty() ) {
+				if ( getContext().isEmpty() ) {
 					if (startRuleStartState.isPrecedenceRule) {
-						RuleContext result = _ctx;
+						RuleContext result = getContext();
 						Pair<RuleContext, Integer> parentContext = _parentContextStack.pop();
 						unrollRecursionContexts(parentContext.a);
 						return result;
@@ -237,7 +224,7 @@ public class ParserInterpreter extends Parser {
 
 	@Override
 	public void enterRecursionRule(RuleContext localctx, int state, int ruleIndex, int precedence) {
-		Pair<RuleContext, Integer> pair = new Pair<RuleContext, Integer>(_ctx, localctx.getInvokingState());
+		Pair<RuleContext, Integer> pair = new Pair<RuleContext, Integer>(getContext(), localctx.getInvokingState());
 		_parentContextStack.push(pair);
 		super.enterRecursionRule(localctx, state, ruleIndex, precedence);
 	}
@@ -255,7 +242,7 @@ public class ParserInterpreter extends Parser {
 				edge = overrideDecisionAlt;
 			}
 			else {
-				edge = getInterpreter().adaptivePredict(_input, decision, _ctx);
+				edge = getInterpreter().adaptivePredict(_input, decision, getContext());
 			}
 		}
 		else {
@@ -270,8 +257,8 @@ public class ParserInterpreter extends Parser {
 				{
 					// We are at the start of a left recursive rule's (...)* loop
 					// but it's not the exit branch of loop.
-					InterpreterRuleContext ctx = new InterpreterRuleContext(_parentContextStack.peek().a, _parentContextStack.peek().b, _ctx.getRuleIndex());
-					pushNewRecursionContext(ctx, atn.ruleToStartState[p.ruleIndex].stateNumber, _ctx.getRuleIndex());
+					InterpreterRuleContext ctx = new InterpreterRuleContext(_parentContextStack.peek().a, _parentContextStack.peek().b, getContext().getRuleIndex());
+					pushNewRecursionContext(ctx, atn.ruleToStartState[p.ruleIndex].stateNumber, getContext().getRuleIndex());
 				}
 				break;
 
@@ -295,7 +282,7 @@ public class ParserInterpreter extends Parser {
 			case Transition.RULE:
 				RuleStartState ruleStartState = (RuleStartState)transition.target;
 				int ruleIndex = ruleStartState.ruleIndex;
-				InterpreterRuleContext ctx = new InterpreterRuleContext(_ctx, p.stateNumber, ruleIndex);
+				InterpreterRuleContext ctx = new InterpreterRuleContext(getContext(), p.stateNumber, ruleIndex);
 				if (ruleStartState.isPrecedenceRule) {
 					enterRecursionRule(ctx, ruleStartState.stateNumber, ruleIndex, ((RuleTransition)transition).precedence);
 				}
@@ -306,7 +293,7 @@ public class ParserInterpreter extends Parser {
 
 			case Transition.PREDICATE:
 				PredicateTransition predicateTransition = (PredicateTransition)transition;
-				if (!sempred(_ctx, predicateTransition.ruleIndex, predicateTransition.predIndex)) {
+				if (!sempred(getContext(), predicateTransition.ruleIndex, predicateTransition.predIndex)) {
 					throw new FailedPredicateException(this);
 				}
 
@@ -314,11 +301,11 @@ public class ParserInterpreter extends Parser {
 
 			case Transition.ACTION:
 				ActionTransition actionTransition = (ActionTransition)transition;
-				action(_ctx, actionTransition.ruleIndex, actionTransition.actionIndex);
+				action(getContext(), actionTransition.ruleIndex, actionTransition.actionIndex);
 				break;
 
 			case Transition.PRECEDENCE:
-				if (!precpred(_ctx, ((PrecedencePredicateTransition)transition).precedence)) {
+				if (!precpred(getContext(), ((PrecedencePredicateTransition)transition).precedence)) {
 					throw new FailedPredicateException(this, String.format("precpred(_ctx, %d)", ((PrecedencePredicateTransition)transition).precedence));
 				}
 				break;

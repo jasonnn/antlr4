@@ -30,17 +30,7 @@
 
 package org.antlr.v4.runtime.atn;
 
-import org.antlr.v4.runtime.BailErrorStrategy;
-import org.antlr.v4.runtime.FailedPredicateException;
-import org.antlr.v4.runtime.IntStream;
-import org.antlr.v4.runtime.NoViableAltException;
-import org.antlr.v4.runtime.Parser;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.RuleContext;
-import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.TokenStream;
-import org.antlr.v4.runtime.Vocabulary;
-import org.antlr.v4.runtime.VocabularyImpl;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.dfa.DFAState;
 import org.antlr.v4.runtime.misc.DoubleKeyMap;
@@ -378,17 +368,23 @@ public class ParserATNSimulator extends ATNSimulator {
 			}
 
 			if (s0 == null) {
-				if ( outerContext ==null ) outerContext = ParserRuleContext.EMPTY;
+				if ( outerContext ==null ) outerContext = ParserRuleContextImpl.EMPTY;
 				if ( debug || debug_list_atn_decisions )  {
-					System.out.println("predictATN decision "+ dfa.decision+
-									   " exec LA(1)=="+ getLookaheadName(input) +
-									   ", outerContext="+ outerContext.toString(parser));
+					String msg = "predictATN decision "+ dfa.decision+
+							" exec LA(1)=="+ getLookaheadName(input);
+
+							if(outerContext instanceof RuleContextImpl){
+									 msg = msg+ ", outerContext="+ ((RuleContextImpl)outerContext).toString(parser);
+							} else {
+								msg = msg+", outerContext="+outerContext.toString();
+							}
+					System.out.println(msg);
 				}
 
 				boolean fullCtx = false;
 				ATNConfigSet s0_closure =
 					computeStartState(dfa.atnStartState,
-									  ParserRuleContext.EMPTY,
+									  ParserRuleContextImpl.EMPTY,
 									  fullCtx);
 
 				if (dfa.isPrecedenceDfa()) {
@@ -1279,7 +1275,7 @@ public class ParserATNSimulator extends ATNSimulator {
 	 * The default implementation of this method uses the following
 	 * algorithm to identify an ATN configuration which successfully parsed the
 	 * decision entry rule. Choosing such an alternative ensures that the
-	 * {@link ParserRuleContext} returned by the calling rule will be complete
+	 * {@link ParserRuleContextImpl} returned by the calling rule will be complete
 	 * and valid, and the syntax error will be reported later at a more
 	 * localized location.</p>
 	 *

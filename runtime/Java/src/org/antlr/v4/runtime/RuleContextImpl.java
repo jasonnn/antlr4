@@ -90,10 +90,10 @@ import java.util.concurrent.Future;
  *  For the special case of parsers, we use the subclass
  *  ParserRuleContext.
  *
- *  @see ParserRuleContext
+ *  @see ParserRuleContextImpl
  */
 public class RuleContextImpl implements RuleContext {
-	public static final ParserRuleContext EMPTY = new ParserRuleContext();
+	public static final ParserRuleContextImpl EMPTY = new ParserRuleContextImpl();
 
 	private RuleContext parent;
 
@@ -101,7 +101,7 @@ public class RuleContextImpl implements RuleContext {
 
 	public RuleContextImpl() {}
 
-	public RuleContextImpl(RuleContextImpl parent, int invokingState) {
+	public RuleContextImpl(RuleContext parent, int invokingState) {
 		this.parent = parent;
 		//if ( parent!=null ) System.out.println("invoke "+stateNumber+" from "+parent);
 		this.invokingState = invokingState;
@@ -250,7 +250,7 @@ public class RuleContextImpl implements RuleContext {
 	}
 
 	public final String toString(Recognizer<?,?> recog) {
-		return toString(recog, ParserRuleContext.EMPTY);
+		return toString(recog, ParserRuleContextImpl.EMPTY);
 	}
 
 	public final String toString(List<String> ruleNames) {

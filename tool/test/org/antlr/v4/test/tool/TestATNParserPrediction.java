@@ -32,10 +32,7 @@ package org.antlr.v4.test.tool;
 
 import org.antlr.v4.Tool;
 import org.antlr.v4.automata.ParserATNFactory;
-import org.antlr.v4.runtime.Lexer;
-import org.antlr.v4.runtime.NoViableAltException;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.ATN;
 import org.antlr.v4.runtime.atn.LexerATNSimulator;
 import org.antlr.v4.runtime.atn.PredictionContextCache;
@@ -486,7 +483,7 @@ public class TestATNParserPrediction extends BaseTest {
 //		ParserATNSimulator interp = new ParserATNSimulator(atn);
 		TokenStream input = new IntTokenStream(types);
 		ParserInterpreterForTesting interp = new ParserInterpreterForTesting(g, input);
-		int alt = interp.adaptivePredict(input, decision, ParserRuleContext.EMPTY);
+		int alt = interp.adaptivePredict(input, decision, ParserRuleContextImpl.EMPTY);
 
 		assertEquals(expectedAlt, alt);
 
@@ -519,7 +516,7 @@ public class TestATNParserPrediction extends BaseTest {
 			System.out.println(types);
 			TokenStream input = new IntTokenStream(types);
 			try {
-				interp.adaptivePredict(input, decision, ParserRuleContext.EMPTY);
+				interp.adaptivePredict(input, decision, ParserRuleContextImpl.EMPTY);
 			}
 			catch (NoViableAltException nvae) {
 				nvae.printStackTrace(System.err);

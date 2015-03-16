@@ -1,11 +1,6 @@
 package org.antlr.v4.runtime.tree.xpath;
 
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.LexerNoViableAltException;
-import org.antlr.v4.runtime.Parser;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.io.IOException;
@@ -195,7 +190,7 @@ loop:
 	 * {@link #evaluate}.
 	 */
 	public Collection<ParseTree> evaluate(final ParseTree t) {
-		ParserRuleContext dummyRoot = new ParserRuleContext();
+		ParserRuleContext dummyRoot = new ParserRuleContextImpl();
 		dummyRoot.setChildren(Collections.singletonList(t)); // don't set t's parent.
 
 		Collection<ParseTree> work = Collections.<ParseTree>singleton(dummyRoot);

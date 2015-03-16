@@ -199,7 +199,7 @@ public class Trees {
 			TerminalNode tnode = (TerminalNode)t;
 			if ( tnode.getSymbol().getType()==index ) nodes.add(t);
 		}
-		else if ( !findTokens && t instanceof ParserRuleContext ) {
+		else if ( !findTokens && t instanceof ParserRuleContext) {
 			ParserRuleContext ctx = (ParserRuleContext)t;
 			if ( ctx.getRuleIndex() == index ) nodes.add(t);
 		}
@@ -235,7 +235,7 @@ public class Trees {
 			ParserRuleContext r = getRootOfSubtreeEnclosingRegion(child, startTokenIndex, stopTokenIndex);
 			if ( r!=null ) return r;
 		}
-		if ( t instanceof ParserRuleContext ) {
+		if ( t instanceof ParserRuleContext) {
 			ParserRuleContext r = (ParserRuleContext) t;
 			if ( startTokenIndex>=r.getStart().getTokenIndex() && // is range fully contained in t?
 				stopTokenIndex<=r.getStop().getTokenIndex() )

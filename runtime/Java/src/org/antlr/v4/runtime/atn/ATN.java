@@ -30,7 +30,7 @@
 
 package org.antlr.v4.runtime.atn;
 
-import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.ParserRuleContextImpl;
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.IntervalSet;
@@ -163,7 +163,7 @@ public class ATN {
 	 * symbols, {@link Token#EOF} is added to the returned set.
 	 *
 	 * <p>If {@code context} is {@code null}, it is treated as
-	 * {@link ParserRuleContext#EMPTY}.</p>
+	 * {@link ParserRuleContextImpl#EMPTY}.</p>
 	 *
 	 * @param stateNumber the ATN state number
 	 * @param context the full parse context

@@ -268,7 +268,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 
 	/**
 	 * Track the {@link ParserRuleContext} objects during the parse and hook
-	 * them up using the {@link ParserRuleContext#children} list so that it
+	 * them up using the {@link ParserRuleContext#getChildren()} list so that it
 	 * forms a parse tree. The {@link ParserRuleContext} returned from the start
 	 * rule represents the root of the parse tree.
 	 *
@@ -278,7 +278,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 	 * points at it.</p>
 	 *
 	 * <p>When we build parse trees, we are adding all of these contexts to
-	 * {@link ParserRuleContext#children} list. Contexts are then not candidates
+	 * {@link ParserRuleContext#getChildren()} list. Contexts are then not candidates
 	 * for garbage collection.</p>
 	 */
 	public void setBuildParseTree(boolean buildParseTrees) {
@@ -300,7 +300,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 	 * Trim the internal lists of the parse tree during parsing to conserve memory.
 	 * This property is set to {@code false} by default for a newly constructed parser.
 	 *
-	 * @param trimParseTrees {@code true} to trim the capacity of the {@link ParserRuleContext#children}
+	 * @param trimParseTrees {@code true} to trim the capacity of the {@link ParserRuleContext#getChildren()}
 	 * list to its size after a rule is parsed.
 	 */
 	public void setTrimParseTree(boolean trimParseTrees) {
@@ -314,7 +314,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 	}
 
 	/**
-	 * @return {@code true} if the {@link ParserRuleContext#children} list is trimmed
+	 * @return {@code true} if the {@link ParserRuleContext#getChildren()} list is trimmed
 	 * using the default {@link Parser.TrimToSizeListener} during the parse process.
 	 */
 	public boolean getTrimParseTree() {

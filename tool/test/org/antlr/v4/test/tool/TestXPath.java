@@ -3,7 +3,6 @@ package org.antlr.v4.test.tool;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RuleContext;
-import org.antlr.v4.runtime.RuleContextImpl;
 import org.antlr.v4.runtime.misc.Pair;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
@@ -13,9 +12,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TestXPath extends BaseTest {
 	public static final String grammar =
@@ -215,7 +212,7 @@ public class TestXPath extends BaseTest {
 
 		List<String> nodes = new ArrayList<String>();
 		for (ParseTree t : XPath.findAll(tree, xpath, parser) ) {
-			if ( t instanceof RuleContextImpl) {
+			if ( t instanceof RuleContext) {
 				RuleContext r = (RuleContext)t;
 				nodes.add(parser.getRuleNames()[r.getRuleIndex()]);
 			}

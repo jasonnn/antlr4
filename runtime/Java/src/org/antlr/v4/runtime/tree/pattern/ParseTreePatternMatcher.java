@@ -30,16 +30,7 @@
 
 package org.antlr.v4.runtime.tree.pattern;
 
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.BailErrorStrategy;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.Lexer;
-import org.antlr.v4.runtime.ListTokenSource;
-import org.antlr.v4.runtime.Parser;
-import org.antlr.v4.runtime.ParserInterpreter;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.RecognitionException;
-import org.antlr.v4.runtime.Token;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.ATN;
 import org.antlr.v4.runtime.misc.MultiMap;
 import org.antlr.v4.runtime.misc.ParseCancellationException;
@@ -323,7 +314,7 @@ public class ParseTreePatternMatcher {
 			return mismatchedNode;
 		}
 
-		if ( tree instanceof ParserRuleContext && patternTree instanceof ParserRuleContext ) {
+		if ( tree instanceof ParserRuleContext && patternTree instanceof ParserRuleContext) {
 			ParserRuleContext r1 = (ParserRuleContext)tree;
 			ParserRuleContext r2 = (ParserRuleContext)patternTree;
 			ParseTree mismatchedNode = null;

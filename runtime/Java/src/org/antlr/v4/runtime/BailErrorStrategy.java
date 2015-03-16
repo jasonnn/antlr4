@@ -36,7 +36,7 @@ import org.antlr.v4.runtime.misc.ParseCancellationException;
  * This implementation of {@link ANTLRErrorStrategy} responds to syntax errors
  * by immediately canceling the parse operation with a
  * {@link ParseCancellationException}. The implementation ensures that the
- * {@link ParserRuleContext#exception} field is set for all parse tree nodes
+ * {@link ParserRuleContextImpl#exception} field is set for all parse tree nodes
  * that were not completed prior to encountering the error.
  *
  * <p>

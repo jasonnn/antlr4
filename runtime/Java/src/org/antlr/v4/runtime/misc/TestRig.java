@@ -30,14 +30,7 @@
 
 package org.antlr.v4.runtime.misc;
 
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.DiagnosticErrorListener;
-import org.antlr.v4.runtime.Lexer;
-import org.antlr.v4.runtime.Parser;
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.TokenStream;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.PredictionMode;
 
 import javax.print.PrintException;
@@ -246,7 +239,7 @@ public class TestRig {
 
 			try {
 				Method startRule = parserClass.getMethod(startRuleName);
-				ParserRuleContext tree = (ParserRuleContext)startRule.invoke(parser, (Object[])null);
+				ParserRuleContextImpl tree = (ParserRuleContextImpl)startRule.invoke(parser, (Object[])null);
 
 				if ( printTree ) {
 					System.out.println(tree.toStringTree(parser));

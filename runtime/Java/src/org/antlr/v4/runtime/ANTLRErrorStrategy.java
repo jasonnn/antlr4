@@ -113,8 +113,8 @@ public interface ANTLRErrorStrategy {
 	 * Tests whether or not {@code recognizer} is in the process of recovering
 	 * from an error. In error recovery mode, {@link Parser#consume} adds
 	 * symbols to the parse tree by calling
-	 * {@link ParserRuleContext#addErrorNode(Token)} instead of
-	 * {@link ParserRuleContext#addChild(Token)}.
+	 * {@link ParserRuleContextImpl#addErrorNode(Token)} instead of
+	 * {@link ParserRuleContextImpl#addChild(Token)}.
 	 *
 	 * @param recognizer the parser instance
 	 * @return {@code true} if the parser is currently recovering from a parse

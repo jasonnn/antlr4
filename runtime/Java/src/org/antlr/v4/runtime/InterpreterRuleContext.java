@@ -30,18 +30,18 @@
 package org.antlr.v4.runtime;
 
 /**
- * This class extends {@link ParserRuleContext} by allowing the value of
+ * This class extends {@link ParserRuleContextImpl} by allowing the value of
  * {@link #getRuleIndex} to be explicitly set for the context.
  *
  * <p>
- * {@link ParserRuleContext} does not include field storage for the rule index
+ * {@link ParserRuleContextImpl} does not include field storage for the rule index
  * since the context classes created by the code generator override the
  * {@link #getRuleIndex} method to return the correct value for that context.
  * Since the parser interpreter does not use the context classes generated for a
  * parser, this class (with slightly more memory overhead per node) is used to
  * provide equivalent functionality.</p>
  */
-public class InterpreterRuleContext extends ParserRuleContext {
+public class InterpreterRuleContext extends ParserRuleContextImpl {
 	/**
 	 * This is the backing field for {@link #getRuleIndex}.
 	 */
@@ -70,11 +70,11 @@ public class InterpreterRuleContext extends ParserRuleContext {
 		return ruleIndex;
 	}
 
-	/** Copy a {@link ParserRuleContext} or {@link InterpreterRuleContext}
+	/** Copy a {@link ParserRuleContextImpl} or {@link InterpreterRuleContext}
 	 *  stack to a {@link InterpreterRuleContext} tree.
 	 *  Return {@link null} if {@code ctx} is null.
 	 */
-	public static InterpreterRuleContext fromParserRuleContext(ParserRuleContext ctx) {
+	public static InterpreterRuleContext fromParserRuleContext(ParserRuleContextImpl ctx) {
 		if ( ctx==null ) return null;
 		InterpreterRuleContext dup = new InterpreterRuleContext();
 		dup.copyFrom(ctx);

@@ -84,7 +84,7 @@ public class DiagnosticErrorListener extends BaseErrorListener {
 	}
 
 	@Override
-	public void reportAmbiguity(Parser recognizer,
+	public void reportAmbiguity(IParser recognizer,
 								DFA dfa,
 								int startIndex,
 								int stopIndex,
@@ -99,13 +99,13 @@ public class DiagnosticErrorListener extends BaseErrorListener {
 		String format = "reportAmbiguity d=%s: ambigAlts=%s, input='%s'";
 		String decision = getDecisionDescription(recognizer, dfa);
 		BitSet conflictingAlts = getConflictingAlts(ambigAlts, configs);
-		String text = recognizer.getTokenStream().getText(Interval.of(startIndex, stopIndex));
+		String text = recognizer.getInputStream().getText(Interval.of(startIndex, stopIndex));
 		String message = String.format(format, decision, conflictingAlts, text);
 		recognizer.notifyErrorListeners(message);
 	}
 
 	@Override
-	public void reportAttemptingFullContext(Parser recognizer,
+	public void reportAttemptingFullContext(IParser recognizer,
 											DFA dfa,
 											int startIndex,
 											int stopIndex,
@@ -114,13 +114,13 @@ public class DiagnosticErrorListener extends BaseErrorListener {
 	{
 		String format = "reportAttemptingFullContext d=%s, input='%s'";
 		String decision = getDecisionDescription(recognizer, dfa);
-		String text = recognizer.getTokenStream().getText(Interval.of(startIndex, stopIndex));
+		String text = recognizer.getInputStream().getText(Interval.of(startIndex, stopIndex));
 		String message = String.format(format, decision, text);
 		recognizer.notifyErrorListeners(message);
 	}
 
 	@Override
-	public void reportContextSensitivity(Parser recognizer,
+	public void reportContextSensitivity(IParser recognizer,
 										 DFA dfa,
 										 int startIndex,
 										 int stopIndex,
@@ -129,12 +129,12 @@ public class DiagnosticErrorListener extends BaseErrorListener {
 	{
 		String format = "reportContextSensitivity d=%s, input='%s'";
 		String decision = getDecisionDescription(recognizer, dfa);
-		String text = recognizer.getTokenStream().getText(Interval.of(startIndex, stopIndex));
+		String text = recognizer.getInputStream().getText(Interval.of(startIndex, stopIndex));
 		String message = String.format(format, decision, text);
 		recognizer.notifyErrorListeners(message);
 	}
 
-	protected String getDecisionDescription(Parser recognizer, DFA dfa) {
+	protected String getDecisionDescription(IParser recognizer, DFA dfa) {
 		int decision = dfa.decision;
 		int ruleIndex = dfa.atnStartState.ruleIndex;
 

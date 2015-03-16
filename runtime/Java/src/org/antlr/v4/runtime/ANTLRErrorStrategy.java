@@ -52,7 +52,7 @@ public interface ANTLRErrorStrategy {
 	 * Reset the error handler state for the specified {@code recognizer}.
 	 * @param recognizer the parser instance
 	 */
-	void reset(Parser recognizer);
+	void reset(IParser recognizer);
 
 	/**
 	 * This method is called when an unexpected symbol is encountered during an
@@ -72,7 +72,7 @@ public interface ANTLRErrorStrategy {
 	 * @throws RecognitionException if the error strategy was not able to
 	 * recover from the unexpected input symbol
 	 */
-	Token recoverInline(Parser recognizer) throws RecognitionException;
+	Token recoverInline(IParser recognizer) throws RecognitionException;
 
 	/**
 	 * This method is called to recover from exception {@code e}. This method is
@@ -86,7 +86,7 @@ public interface ANTLRErrorStrategy {
 	 * @throws RecognitionException if the error strategy could not recover from
 	 * the recognition exception
 	 */
-	void recover(Parser recognizer, RecognitionException e) throws RecognitionException;
+	void recover(IParser recognizer, RecognitionException e) throws RecognitionException;
 
 	/**
 	 * This method provides the error handler with an opportunity to handle
@@ -107,7 +107,7 @@ public interface ANTLRErrorStrategy {
 	 * strategy but cannot be automatically recovered at the current state in
 	 * the parsing process
 	 */
-	void sync(Parser recognizer) throws RecognitionException;
+	void sync(IParser recognizer) throws RecognitionException;
 
 	/**
 	 * Tests whether or not {@code recognizer} is in the process of recovering
@@ -120,7 +120,7 @@ public interface ANTLRErrorStrategy {
 	 * @return {@code true} if the parser is currently recovering from a parse
 	 * error, otherwise {@code false}
 	 */
-	boolean inErrorRecoveryMode(Parser recognizer);
+	boolean inErrorRecoveryMode(IParser recognizer);
 
 	/**
 	 * This method is called by when the parser successfully matches an input
@@ -128,7 +128,7 @@ public interface ANTLRErrorStrategy {
 	 *
 	 * @param recognizer the parser instance
 	 */
-	void reportMatch(Parser recognizer);
+	void reportMatch(IParser recognizer);
 
 	/**
 	 * Report any kind of {@link RecognitionException}. This method is called by
@@ -137,5 +137,5 @@ public interface ANTLRErrorStrategy {
 	 * @param recognizer the parser instance
 	 * @param e the recognition exception to report
 	 */
-	void reportError(Parser recognizer, RecognitionException e);
+	void reportError(IParser recognizer, RecognitionException e);
 }

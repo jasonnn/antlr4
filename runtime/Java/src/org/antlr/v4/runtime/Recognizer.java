@@ -30,19 +30,14 @@
 
 package org.antlr.v4.runtime;
 
-import org.antlr.v4.runtime.atn.ATN;
 import org.antlr.v4.runtime.atn.ATNSimulator;
 import org.antlr.v4.runtime.atn.ParseInfo;
 import org.antlr.v4.runtime.misc.Utils;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public abstract class Recognizer<Symbol, ATNInterpreter extends ATNSimulator> {
+public abstract class Recognizer<Symbol, ATNInterpreter extends ATNSimulator> implements IRecognizer<Symbol,ATNInterpreter>{
 	public static final int EOF=-1;
 
 	private static final Map<Vocabulary, Map<String, Integer>> tokenTypeMapCache =
@@ -60,23 +55,13 @@ public abstract class Recognizer<Symbol, ATNInterpreter extends ATNSimulator> {
 
 	private int _stateNumber = -1;
 
-	/** Used to print out token names like ID during debugging and
-	 *  error reporting.  The generated parsers implement a method
-	 *  that overrides this to point to their String[] tokenNames.
-	 *
-	 * @deprecated Use {@link #getVocabulary()} instead.
-	 */
-	@Deprecated
-	public abstract String[] getTokenNames();
-
-	public abstract String[] getRuleNames();
-
 	/**
 	 * Get the vocabulary used by the recognizer.
 	 *
 	 * @return A {@link Vocabulary} instance providing information about the
 	 * vocabulary used by the grammar.
 	 */
+	@Override
 	@SuppressWarnings("deprecation")
 	public Vocabulary getVocabulary() {
 		return VocabularyImpl.fromTokenNames(getTokenNames());
@@ -87,6 +72,7 @@ public abstract class Recognizer<Symbol, ATNInterpreter extends ATNSimulator> {
 	 *
 	 * <p>Used for XPath and tree pattern compilation.</p>
 	 */
+	@Override
 	public Map<String, Integer> getTokenTypeMap() {
 		Vocabulary vocabulary = getVocabulary();
 		synchronized (tokenTypeMapCache) {
@@ -119,6 +105,7 @@ public abstract class Recognizer<Symbol, ATNInterpreter extends ATNSimulator> {
 	 *
 	 * <p>Used for XPath and tree pattern compilation.</p>
 	 */
+	@Override
 	public Map<String, Integer> getRuleIndexMap() {
 		String[] ruleNames = getRuleNames();
 		if (ruleNames == null) {
@@ -136,6 +123,7 @@ public abstract class Recognizer<Symbol, ATNInterpreter extends ATNSimulator> {
 		}
 	}
 
+	@Override
 	public int getTokenType(String tokenName) {
 		Integer ttype = getTokenTypeMap().get(tokenName);
 		if ( ttype!=null ) return ttype;
@@ -149,27 +137,17 @@ public abstract class Recognizer<Symbol, ATNInterpreter extends ATNSimulator> {
 	 * <p>For interpreters, we don't know their serialized ATN despite having
 	 * created the interpreter from it.</p>
 	 */
+	@Override
 	public String getSerializedATN() {
 		throw new UnsupportedOperationException("there is no serialized ATN");
 	}
-
-	/** For debugging and other purposes, might want the grammar name.
-	 *  Have ANTLR generate an implementation for this method.
-	 */
-	public abstract String getGrammarFileName();
-
-	/**
-	 * Get the {@link ATN} used by the recognizer for prediction.
-	 *
-	 * @return The {@link ATN} used by the recognizer for prediction.
-	 */
-	public abstract ATN getATN();
 
 	/**
 	 * Get the ATN interpreter used by the recognizer for prediction.
 	 *
 	 * @return The ATN interpreter used by the recognizer for prediction.
 	 */
+	@Override
 	public ATNInterpreter getInterpreter() {
 		return _interp;
 	}
@@ -179,6 +157,7 @@ public abstract class Recognizer<Symbol, ATNInterpreter extends ATNSimulator> {
 	 *
 	 * @since 4.3
 	 */
+	@Override
 	public ParseInfo getParseInfo() {
 		return null;
 	}
@@ -189,11 +168,13 @@ public abstract class Recognizer<Symbol, ATNInterpreter extends ATNSimulator> {
 	 * @param interpreter The ATN interpreter used by the recognizer for
 	 * prediction.
 	 */
+	@Override
 	public void setInterpreter(ATNInterpreter interpreter) {
 		_interp = interpreter;
 	}
 
 	/** What is the error header, normally line/character position information? */
+	@Override
 	public String getErrorHeader(RecognitionException e) {
 		int line = e.getOffendingToken().getLine();
 		int charPositionInLine = e.getOffendingToken().getCharPositionInLine();
@@ -213,6 +194,7 @@ public abstract class Recognizer<Symbol, ATNInterpreter extends ATNSimulator> {
 	 * feature when necessary. For example, see
 	 * {@link DefaultErrorStrategy#getTokenErrorDisplay}.
 	 */
+	@Override
 	@Deprecated
 	public String getTokenErrorDisplay(Token t) {
 		if ( t==null ) return "<no token>";
@@ -234,6 +216,7 @@ public abstract class Recognizer<Symbol, ATNInterpreter extends ATNSimulator> {
 	/**
 	 * @exception NullPointerException if {@code listener} is {@code null}.
 	 */
+	@Override
 	public void addErrorListener(ANTLRErrorListener listener) {
 		if (listener == null) {
 			throw new NullPointerException("listener cannot be null.");
@@ -242,36 +225,44 @@ public abstract class Recognizer<Symbol, ATNInterpreter extends ATNSimulator> {
 		_listeners.add(listener);
 	}
 
+	@Override
 	public void removeErrorListener(ANTLRErrorListener listener) {
 		_listeners.remove(listener);
 	}
 
+	@Override
 	public void removeErrorListeners() {
 		_listeners.clear();
 	}
 
 
+	@Override
 	public List<? extends ANTLRErrorListener> getErrorListeners() {
 		return _listeners;
 	}
 
+	@Override
 	public ANTLRErrorListener getErrorListenerDispatch() {
 		return new ProxyErrorListener(getErrorListeners());
 	}
 
 	// subclass needs to override these if there are sempreds or actions
 	// that the ATN interp needs to execute
+	@Override
 	public boolean sempred(RuleContext _localctx, int ruleIndex, int actionIndex) {
 		return true;
 	}
 
+	@Override
 	public boolean precpred(RuleContext localctx, int precedence) {
 		return true;
 	}
 
+	@Override
 	public void action(RuleContext _localctx, int ruleIndex, int actionIndex) {
 	}
 
+	@Override
 	public final int getState() {
 		return _stateNumber;
 	}
@@ -283,6 +274,7 @@ public abstract class Recognizer<Symbol, ATNInterpreter extends ATNSimulator> {
 	 *  invoking rules. Combine this and we have complete ATN
 	 *  configuration information.
 	 */
+	@Override
 	public final void setState(int atnState) {
 //		System.err.println("setState "+atnState);
 		_stateNumber = atnState;
@@ -291,10 +283,5 @@ public abstract class Recognizer<Symbol, ATNInterpreter extends ATNSimulator> {
 
 	public abstract IntStream getInputStream();
 
-	public abstract void setInputStream(IntStream input);
 
-
-	public abstract TokenFactory<?> getTokenFactory();
-
-	public abstract void setTokenFactory(TokenFactory<?> input);
 }

@@ -67,7 +67,7 @@ public class BailErrorStrategy extends DefaultErrorStrategy {
 	 *  original {@link RecognitionException}.
      */
     @Override
-    public void recover(Parser recognizer, RecognitionException e) {
+    public void recover(IParser recognizer, RecognitionException e) {
 		for (RuleContext context = recognizer.getContext(); context != null; context = context.getParent()) {
 			context.setException(e);
 		}
@@ -79,7 +79,7 @@ public class BailErrorStrategy extends DefaultErrorStrategy {
      *  successfully recovers, it won't throw an exception.
      */
     @Override
-    public Token recoverInline(Parser recognizer)
+    public Token recoverInline(IParser recognizer)
         throws RecognitionException
     {
 		InputMismatchException e = new InputMismatchException(recognizer);
@@ -92,5 +92,5 @@ public class BailErrorStrategy extends DefaultErrorStrategy {
 
     /** Make sure we don't attempt to recover from problems in subrules. */
     @Override
-    public void sync(Parser recognizer) { }
+    public void sync(IParser recognizer) { }
 }

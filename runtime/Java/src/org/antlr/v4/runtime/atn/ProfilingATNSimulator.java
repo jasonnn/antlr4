@@ -30,7 +30,7 @@
 
 package org.antlr.v4.runtime.atn;
 
-import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.IParser;
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.dfa.DFA;
@@ -64,7 +64,7 @@ public class ProfilingATNSimulator extends ParserATNSimulator {
  	 */
 	protected int conflictingAltResolvedBySLL;
 
-	public ProfilingATNSimulator(Parser parser) {
+	public ProfilingATNSimulator(IParser parser) {
 		super(parser,
 				parser.getInterpreter().atn,
 				parser.getInterpreter().decisionToDFA,

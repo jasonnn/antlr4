@@ -40,7 +40,7 @@ import org.antlr.v4.runtime.tree.pattern.ParseTreePatternMatcher;
 import java.util.*;
 
 /** This is all the parsing support code essentially; most of it is error recovery stuff. */
-public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
+public abstract class Parser  extends Recognizer<Token, ParserATNSimulator> implements IParser{
 	public class TraceListener implements ParseTreeListener {
 		@Override
 		public void enterEveryRule(RuleContext ctx) {
@@ -783,13 +783,13 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 	 *  @throws RecognitionException Throws upon syntax error while matching
 	 *                               ambig input.
 	 */
-	public static List<RuleContext> getAmbiguousParseTrees(Parser originalParser,
+	public static List<RuleContext> getAmbiguousParseTrees(IParser originalParser,
 																 AmbiguityInfo ambiguityInfo,
 																 int startRuleIndex)
 		throws RecognitionException
 	{
 		List<RuleContext> trees = new ArrayList<RuleContext>();
-		int saveTokenInputPosition = originalParser.getTokenStream().index();
+		int saveTokenInputPosition = originalParser.getInputStream().index();
 		try {
 			// Create a new parser interpreter to parse the ambiguous subphrase
 			ParserInterpreter parser;
@@ -803,7 +803,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 											   originalParser.getVocabulary(),
 											   Arrays.asList(originalParser.getRuleNames()),
 											   deserialized,
-											   originalParser.getTokenStream());
+											   originalParser.getInputStream());
 			}
 
 			// Make sure that we don't get any error messages from using this temporary parser
@@ -831,7 +831,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 			}
 		}
 		finally {
-			originalParser.getTokenStream().seek(saveTokenInputPosition);
+			originalParser.getInputStream().seek(saveTokenInputPosition);
 		}
 
 		return trees;

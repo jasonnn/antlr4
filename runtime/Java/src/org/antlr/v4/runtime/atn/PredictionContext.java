@@ -30,7 +30,7 @@
 
 package org.antlr.v4.runtime.atn;
 
-import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.IRecognizer;
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.AbstractRuleContext;
 import org.antlr.v4.runtime.misc.DoubleKeyMap;
@@ -669,17 +669,17 @@ public abstract class PredictionContext {
 		}
 	}
 
-	public String toString(Recognizer<?,?> recog) {
+	public String toString(IRecognizer<?,?> recog) {
 		return toString();
 //		return toString(recog, ParserRuleContext.EMPTY);
 	}
 
-	public String[] toStrings(Recognizer<?, ?> recognizer, int currentState) {
-		return toStrings(recognizer, EMPTY, currentState);
+	public String[] toStrings(IRecognizer<?, ?> IRecognizer, int currentState) {
+		return toStrings(IRecognizer, EMPTY, currentState);
 	}
 
 	// FROM SAM
-	public String[] toStrings(Recognizer<?, ?> recognizer, PredictionContext stop, int currentState) {
+	public String[] toStrings(IRecognizer<?, ?> IRecognizer, PredictionContext stop, int currentState) {
 		List<String> result = new ArrayList<String>();
 
 		outer:
@@ -707,15 +707,15 @@ public abstract class PredictionContext {
 					offset += bits;
 				}
 
-				if ( recognizer!=null ) {
+				if ( IRecognizer !=null ) {
 					if (localBuffer.length() > 1) {
 						// first char is '[', if more than that this isn't the first rule
 						localBuffer.append(' ');
 					}
 
-					ATN atn = recognizer.getATN();
+					ATN atn = IRecognizer.getATN();
 					ATNState s = atn.states.get(stateNumber);
-					String ruleName = recognizer.getRuleNames()[s.ruleIndex];
+					String ruleName = IRecognizer.getRuleNames()[s.ruleIndex];
 					localBuffer.append(ruleName);
 				}
 				else if ( p.getReturnState(index)!= EMPTY_RETURN_STATE) {

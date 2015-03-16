@@ -33,7 +33,7 @@ package org.antlr.v4.runtime;
  *  when the current input does not match the expected token.
  */
 public class InputMismatchException extends RecognitionException {
-	public InputMismatchException(Parser recognizer) {
+	public InputMismatchException(IParser recognizer) {
 		super(recognizer, recognizer.getInputStream(), recognizer.getContext());
 		this.setOffendingToken(recognizer.getCurrentToken());
 	}

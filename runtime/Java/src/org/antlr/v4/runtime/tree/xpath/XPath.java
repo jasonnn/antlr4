@@ -56,9 +56,9 @@ public class XPath {
 
 	protected String path;
 	protected XPathElement[] elements;
-	protected Parser parser;
+	protected IParser parser;
 
-	public XPath(Parser parser, String path) {
+	public XPath(IParser parser, String path) {
 		this.parser = parser;
 		this.path = path;
 		elements = split(path);
@@ -175,7 +175,7 @@ loop:
 	}
 
 
-	public static Collection<ParseTree> findAll(ParseTree tree, String xpath, Parser parser) {
+	public static Collection<ParseTree> findAll(ParseTree tree, String xpath, IParser parser) {
 		XPath p = new XPath(parser, xpath);
 		return p.evaluate(tree);
 	}

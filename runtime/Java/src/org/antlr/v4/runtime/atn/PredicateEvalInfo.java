@@ -30,7 +30,7 @@
 
 package org.antlr.v4.runtime.atn;
 
-import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.IRecognizer;
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.TokenStream;
 
@@ -79,7 +79,7 @@ public class PredicateEvalInfo extends DecisionEventInfo {
 	 * context was evaluated during SLL prediction
 	 *
 	 * @see ParserATNSimulator#evalSemanticContext(SemanticContext, RuleContext, int, boolean)
-	 * @see SemanticContext#eval(Recognizer, RuleContext)
+	 * @see SemanticContext#eval(IRecognizer, RuleContext)
 	 */
 	public PredicateEvalInfo(int decision,
 							 TokenStream input, int startIndex, int stopIndex,

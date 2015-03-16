@@ -281,7 +281,7 @@ public class ParserATNSimulator extends ATNSimulator {
 	public static final boolean dfa_debug = false;
 	public static final boolean retry_debug = false;
 
-	protected final Parser parser;
+	protected final IParser parser;
 
 	public final DFA[] decisionToDFA;
 
@@ -312,7 +312,7 @@ public class ParserATNSimulator extends ATNSimulator {
 		this(null, atn, decisionToDFA, sharedContextCache);
 	}
 
-	public ParserATNSimulator(Parser parser, ATN atn,
+	public ParserATNSimulator(IParser parser, ATN atn,
 							  DFA[] decisionToDFA,
 							  PredictionContextCache sharedContextCache)
 	{
@@ -1987,7 +1987,7 @@ public class ParserATNSimulator extends ATNSimulator {
         if ( debug || retry_debug ) {
 			Interval interval = Interval.of(startIndex, stopIndex);
 			System.out.println("reportAttemptingFullContext decision="+dfa.decision+":"+configs+
-                               ", input="+parser.getTokenStream().getText(interval));
+                               ", input="+parser.getInputStream().getText(interval));
         }
         if ( parser!=null ) parser.getErrorListenerDispatch().reportAttemptingFullContext(parser, dfa, startIndex, stopIndex, conflictingAlts, configs);
     }
@@ -1996,7 +1996,7 @@ public class ParserATNSimulator extends ATNSimulator {
         if ( debug || retry_debug ) {
 			Interval interval = Interval.of(startIndex, stopIndex);
             System.out.println("reportContextSensitivity decision="+dfa.decision+":"+configs+
-                               ", input="+parser.getTokenStream().getText(interval));
+                               ", input="+parser.getInputStream().getText(interval));
         }
         if ( parser!=null ) parser.getErrorListenerDispatch().reportContextSensitivity(parser, dfa, startIndex, stopIndex, prediction, configs);
     }
@@ -2013,7 +2013,7 @@ public class ParserATNSimulator extends ATNSimulator {
 			Interval interval = Interval.of(startIndex, stopIndex);
 			System.out.println("reportAmbiguity "+
 							   ambigAlts+":"+configs+
-                               ", input="+parser.getTokenStream().getText(interval));
+                               ", input="+parser.getInputStream().getText(interval));
         }
         if ( parser!=null ) parser.getErrorListenerDispatch().reportAmbiguity(parser, dfa, startIndex, stopIndex,
 																			  exact, ambigAlts, configs);
@@ -2031,7 +2031,7 @@ public class ParserATNSimulator extends ATNSimulator {
 	/**
 	 * @since 4.3
 	 */
-	public Parser getParser() {
+	public IParser getParser() {
 		return parser;
 	}
 }

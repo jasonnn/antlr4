@@ -52,7 +52,7 @@ public interface ANTLRErrorListener {
 	 * in-line, without returning from the surrounding rule (via the single
 	 * token insertion and deletion mechanism).</p>
 	 *
-	 * @param recognizer
+	 * @param IRecognizer
      *        What parser got the error. From this
 	 * 		  object, you can access the context as well
 	 * 		  as the input stream.
@@ -73,12 +73,12 @@ public interface ANTLRErrorListener {
 	 *        the parser was able to recover in line without exiting the
 	 *        surrounding rule.
 	 */
-	public void syntaxError(Recognizer<?, ?> recognizer,
-							Object offendingSymbol,
-							int line,
-							int charPositionInLine,
-							String msg,
-							RecognitionException e);
+	void syntaxError(IRecognizer<?, ?> IRecognizer,
+					 Object offendingSymbol,
+					 int line,
+					 int charPositionInLine,
+					 String msg,
+					 RecognitionException e);
 
 	/**
 	 * This method is called by the parser when a full-context prediction
@@ -120,7 +120,7 @@ public interface ANTLRErrorListener {
 	 * @param configs the ATN configuration set where the ambiguity was
 	 * identified
 	 */
-	void reportAmbiguity(Parser recognizer,
+	void reportAmbiguity(IParser recognizer,
 						 DFA dfa,
 						 int startIndex,
 						 int stopIndex,
@@ -151,7 +151,7 @@ public interface ANTLRErrorListener {
 	 * @param configs the ATN configuration set where the SLL conflict was
 	 * detected
 	 */
-	void reportAttemptingFullContext(Parser recognizer,
+	void reportAttemptingFullContext(IParser recognizer,
 									 DFA dfa,
 									 int startIndex,
 									 int stopIndex,
@@ -196,7 +196,7 @@ public interface ANTLRErrorListener {
 	 * @param configs the ATN configuration set where the unambiguous prediction
 	 * was determined
 	 */
-	void reportContextSensitivity(Parser recognizer,
+	void reportContextSensitivity(IParser recognizer,
 								  DFA dfa,
 								  int startIndex,
 								  int stopIndex,

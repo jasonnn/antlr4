@@ -296,7 +296,7 @@ public class ParserRuleContextImpl extends AbstractRuleContext implements RuleCo
 	public Token getStop() { return stop; }
 
     /** Used for rule context info debugging during parse-time, not so much for ATN debugging */
-    public String toInfoString(Parser recognizer) {
+    public String toInfoString(IParser recognizer) {
         List<String> rules = recognizer.getRuleInvocationStack(this);
         Collections.reverse(rules);
         return "ParserRuleContext"+rules+"{" +
@@ -350,7 +350,7 @@ public class ParserRuleContextImpl extends AbstractRuleContext implements RuleCo
 		return toString((List<String>)null, null);
 	}
 
-	public final String toString(Recognizer<?,?> recog) {
+	public final String toString(IRecognizer<?,?> recog) {
 		return toString(recog, ParserRuleContextImpl.EMPTY);
 	}
 
@@ -359,7 +359,7 @@ public class ParserRuleContextImpl extends AbstractRuleContext implements RuleCo
 	}
 
 	// recog null unless ParserRuleContext, in which case we use subclass toString(...)
-	public String toString(Recognizer<?,?> recog, RuleContext stop) {
+	public String toString(IRecognizer<?,?> recog, RuleContext stop) {
 		String[] ruleNames = recog != null ? recog.getRuleNames() : null;
 		List<String> ruleNamesList = ruleNames != null ? Arrays.asList(ruleNames) : null;
 		return toString(ruleNamesList, stop);

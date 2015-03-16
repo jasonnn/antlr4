@@ -54,7 +54,7 @@ public class ProxyErrorListener implements ANTLRErrorListener {
 	}
 
 	@Override
-	public void syntaxError(Recognizer<?, ?> recognizer,
+	public void syntaxError(IRecognizer<?, ?> IRecognizer,
 							Object offendingSymbol,
 							int line,
 							int charPositionInLine,
@@ -62,12 +62,12 @@ public class ProxyErrorListener implements ANTLRErrorListener {
 							RecognitionException e)
 	{
 		for (ANTLRErrorListener listener : delegates) {
-			listener.syntaxError(recognizer, offendingSymbol, line, charPositionInLine, msg, e);
+			listener.syntaxError(IRecognizer, offendingSymbol, line, charPositionInLine, msg, e);
 		}
 	}
 
 	@Override
-	public void reportAmbiguity(Parser recognizer,
+	public void reportAmbiguity(IParser recognizer,
 								DFA dfa,
 								int startIndex,
 								int stopIndex,
@@ -81,7 +81,7 @@ public class ProxyErrorListener implements ANTLRErrorListener {
 	}
 
 	@Override
-	public void reportAttemptingFullContext(Parser recognizer,
+	public void reportAttemptingFullContext(IParser recognizer,
 											DFA dfa,
 											int startIndex,
 											int stopIndex,
@@ -94,7 +94,7 @@ public class ProxyErrorListener implements ANTLRErrorListener {
 	}
 
 	@Override
-	public void reportContextSensitivity(Parser recognizer,
+	public void reportContextSensitivity(IParser recognizer,
 										 DFA dfa,
 										 int startIndex,
 										 int stopIndex,

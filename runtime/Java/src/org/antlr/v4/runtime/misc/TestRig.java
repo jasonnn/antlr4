@@ -205,7 +205,7 @@ public class TestRig {
 		}
 	}
 
-	protected void process(Lexer lexer, Class<? extends Parser> parserClass, Parser parser, InputStream is, Reader r) throws IOException, IllegalAccessException, InvocationTargetException, PrintException {
+	protected void process(Lexer lexer, Class<? extends IParser> parserClass, Parser parser, InputStream is, Reader r) throws IOException, IllegalAccessException, InvocationTargetException, PrintException {
 		try {
 			ANTLRInputStream input = new ANTLRInputStream(r);
 			lexer.setInputStream(input);

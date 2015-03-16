@@ -40,7 +40,7 @@ import org.antlr.v4.runtime.misc.IntervalSet;
  */
 public class RecognitionException extends RuntimeException {
 	/** The {@link Recognizer} where this exception originated. */
-	private final Recognizer<?, ?> recognizer;
+	private final IRecognizer<?, ?> recognizer;
 
 	private final RuleContext ctx;
 
@@ -55,7 +55,7 @@ public class RecognitionException extends RuntimeException {
 
 	private int offendingState = -1;
 
-	public RecognitionException(Recognizer<?, ?> recognizer,
+	public RecognitionException(IRecognizer<?, ?> recognizer,
 								IntStream input,
 								RuleContext ctx)
 	{
@@ -66,15 +66,15 @@ public class RecognitionException extends RuntimeException {
 	}
 
 	public RecognitionException(String message,
-								Recognizer<?, ?> recognizer,
+								IRecognizer<?, ?> IRecognizer,
 								IntStream input,
 								RuleContext ctx)
 	{
 		super(message);
-		this.recognizer = recognizer;
+		this.recognizer = IRecognizer;
 		this.input = input;
 		this.ctx = ctx;
-		if ( recognizer!=null ) this.offendingState = recognizer.getState();
+		if ( IRecognizer !=null ) this.offendingState = IRecognizer.getState();
 	}
 
 	/**
@@ -155,7 +155,7 @@ public class RecognitionException extends RuntimeException {
 	 * @return The recognizer where this exception occurred, or {@code null} if
 	 * the recognizer is not available.
 	 */
-	public Recognizer<?, ?> getRecognizer() {
+	public IRecognizer<?, ?> getRecognizer() {
 		return recognizer;
 	}
 }

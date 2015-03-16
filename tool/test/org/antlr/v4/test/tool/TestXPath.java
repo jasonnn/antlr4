@@ -1,5 +1,6 @@
 package org.antlr.v4.test.tool;
 
+import org.antlr.v4.runtime.IParser;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RuleContext;

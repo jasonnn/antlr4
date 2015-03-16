@@ -30,7 +30,7 @@
 
 package org.antlr.v4.runtime.atn;
 
-import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.IRecognizer;
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.misc.MurmurHash;
 import org.antlr.v4.runtime.misc.Utils;
@@ -71,7 +71,7 @@ public abstract class SemanticContext {
 	 * prediction, so we passed in the outer context here in case of context
 	 * dependent predicate evaluation.</p>
 	 */
-    public abstract boolean eval(Recognizer<?,?> parser, RuleContext parserCallStack);
+    public abstract boolean eval(IRecognizer<?,?> parser, RuleContext parserCallStack);
 
 	/**
 	 * Evaluate the precedence predicates for the context and reduce the result.
@@ -91,7 +91,7 @@ public abstract class SemanticContext {
 	 * semantic context after precedence predicates are evaluated.</li>
 	 * </ul>
 	 */
-	public SemanticContext evalPrecedence(Recognizer<?,?> parser, RuleContext parserCallStack) {
+	public SemanticContext evalPrecedence(IRecognizer<?,?> parser, RuleContext parserCallStack) {
 		return this;
 	}
 
@@ -113,7 +113,7 @@ public abstract class SemanticContext {
         }
 
         @Override
-        public boolean eval(Recognizer<?,?> parser, RuleContext parserCallStack) {
+        public boolean eval(IRecognizer<?,?> parser, RuleContext parserCallStack) {
             RuleContext localctx = isCtxDependent ? parserCallStack : null;
             return parser.sempred(localctx, ruleIndex, predIndex);
         }
@@ -156,12 +156,12 @@ public abstract class SemanticContext {
 		}
 
 		@Override
-		public boolean eval(Recognizer<?, ?> parser, RuleContext parserCallStack) {
+		public boolean eval(IRecognizer<?, ?> parser, RuleContext parserCallStack) {
 			return parser.precpred(parserCallStack, precedence);
 		}
 
 		@Override
-		public SemanticContext evalPrecedence(Recognizer<?, ?> parser, RuleContext parserCallStack) {
+		public SemanticContext evalPrecedence(IRecognizer<?, ?> parser, RuleContext parserCallStack) {
 			if (parser.precpred(parserCallStack, precedence)) {
 				return SemanticContext.NONE;
 			}
@@ -272,7 +272,7 @@ public abstract class SemanticContext {
 		 * unordered.</p>
 		 */
 		@Override
-		public boolean eval(Recognizer<?,?> parser, RuleContext parserCallStack) {
+		public boolean eval(IRecognizer<?,?> parser, RuleContext parserCallStack) {
 			for (SemanticContext opnd : opnds) {
 				if ( !opnd.eval(parser, parserCallStack) ) return false;
 			}
@@ -280,7 +280,7 @@ public abstract class SemanticContext {
         }
 
 		@Override
-		public SemanticContext evalPrecedence(Recognizer<?, ?> parser, RuleContext parserCallStack) {
+		public SemanticContext evalPrecedence(IRecognizer<?, ?> parser, RuleContext parserCallStack) {
 			boolean differs = false;
 			List<SemanticContext> operands = new ArrayList<SemanticContext>();
 			for (SemanticContext context : opnds) {
@@ -369,7 +369,7 @@ public abstract class SemanticContext {
 		 * unordered.</p>
 		 */
 		@Override
-        public boolean eval(Recognizer<?,?> parser, RuleContext parserCallStack) {
+        public boolean eval(IRecognizer<?,?> parser, RuleContext parserCallStack) {
 			for (SemanticContext opnd : opnds) {
 				if ( opnd.eval(parser, parserCallStack) ) return true;
 			}
@@ -377,7 +377,7 @@ public abstract class SemanticContext {
         }
 
 		@Override
-		public SemanticContext evalPrecedence(Recognizer<?, ?> parser, RuleContext parserCallStack) {
+		public SemanticContext evalPrecedence(IRecognizer<?, ?> parser, RuleContext parserCallStack) {
 			boolean differs = false;
 			List<SemanticContext> operands = new ArrayList<SemanticContext>();
 			for (SemanticContext context : opnds) {

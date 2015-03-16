@@ -30,7 +30,7 @@
 
 package org.antlr.v4.runtime.tree;
 
-import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.IParser;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.Interval;
 
@@ -72,7 +72,7 @@ public class TerminalNodeImpl implements TerminalNode {
 	public String getText() { return symbol.getText(); }
 
 	@Override
-	public String toStringTree(Parser parser) {
+	public String toStringTree(IParser parser) {
 		return toString();
 	}
 

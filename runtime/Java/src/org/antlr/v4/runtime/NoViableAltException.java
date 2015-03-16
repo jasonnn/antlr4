@@ -49,7 +49,7 @@ public class NoViableAltException extends RecognitionException {
 
 	private final Token startToken;
 
-	public NoViableAltException(Parser recognizer) { // LL(1) error
+	public NoViableAltException(IParser recognizer) { // LL(1) error
 		this(recognizer,
 			 recognizer.getInputStream(),
 			 recognizer.getCurrentToken(),
@@ -58,7 +58,7 @@ public class NoViableAltException extends RecognitionException {
 				recognizer.getContext());
 	}
 
-	public NoViableAltException(Parser recognizer,
+	public NoViableAltException(IParser recognizer,
 								TokenStream input,
 								Token startToken,
 								Token offendingToken,

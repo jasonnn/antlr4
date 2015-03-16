@@ -30,14 +30,10 @@
 package org.antlr.v4.runtime;
 
 import org.antlr.v4.runtime.misc.Interval;
-import org.antlr.v4.runtime.tree.ErrorNode;
-import org.antlr.v4.runtime.tree.ErrorNodeImpl;
-import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeListener;
-import org.antlr.v4.runtime.tree.TerminalNode;
-import org.antlr.v4.runtime.tree.TerminalNodeImpl;
+import org.antlr.v4.runtime.tree.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -63,7 +59,7 @@ import java.util.List;
  *  group values such as this aggregate.  The getters/setters are there to
  *  satisfy the superclass interface.
  */
-public class ParserRuleContextImpl extends RuleContextImpl implements ParserRuleContext {
+public class ParserRuleContextImpl extends AbstractRuleContext implements RuleContext {
 	private List<ParseTree> children;
 
 	//	public List<Integer> states;
@@ -79,7 +75,7 @@ public class ParserRuleContextImpl extends RuleContextImpl implements ParserRule
 	 *  confusion with creating node with parent. Does not copy children.
 	 */
 	@Override
-	public void copyFrom(ParserRuleContext ctx) {
+	public void copyFrom(RuleContext ctx) {
 		this.setParent(ctx.getParent());
 		this.setInvokingState(ctx.getInvokingState());
 
@@ -87,7 +83,7 @@ public class ParserRuleContextImpl extends RuleContextImpl implements ParserRule
 		this.stop = ctx.getStop();
 	}
 
-	public ParserRuleContextImpl(ParserRuleContext parent, int invokingStateNumber) {
+	public ParserRuleContextImpl(RuleContext parent, int invokingStateNumber) {
 		super(parent, invokingStateNumber);
 	}
 
@@ -149,6 +145,11 @@ public class ParserRuleContextImpl extends RuleContextImpl implements ParserRule
 	/** Override to make type more specific */
 	public ParserRuleContextImpl getParent() {
 		return (ParserRuleContextImpl)super.getParent();
+	}
+
+	@Override
+	public RuleContext getPayload() {
+		return this;
 	}
 
 	@Override
@@ -225,12 +226,12 @@ public class ParserRuleContextImpl extends RuleContextImpl implements ParserRule
 	}
 
 	@Override
-	public <T extends ParserRuleContext> T getRuleContext(Class<? extends T> ctxType, int i) {
+	public <T extends RuleContext> T getRuleContext(Class<? extends T> ctxType, int i) {
 		return getChild(ctxType, i);
 	}
 
 	@Override
-	public <T extends ParserRuleContext> List<T> getRuleContexts(Class<? extends T> ctxType) {
+	public <T extends RuleContext> List<T> getRuleContexts(Class<? extends T> ctxType) {
 		if ( children==null ) {
 			return Collections.emptyList();
 		}
@@ -342,5 +343,62 @@ public class ParserRuleContextImpl extends RuleContextImpl implements ParserRule
 	@Override
 	public void setChildren(List<ParseTree> children) {
 		this.children = children;
+	}
+
+	@Override
+	public String toString() {
+		return toString((List<String>)null, (RuleContext)null);
+	}
+
+	public final String toString(Recognizer<?,?> recog) {
+		return toString(recog, ParserRuleContextImpl.EMPTY);
+	}
+
+	public final String toString(List<String> ruleNames) {
+		return toString(ruleNames, null);
+	}
+
+	// recog null unless ParserRuleContext, in which case we use subclass toString(...)
+	public String toString(Recognizer<?,?> recog, RuleContext stop) {
+		String[] ruleNames = recog != null ? recog.getRuleNames() : null;
+		List<String> ruleNamesList = ruleNames != null ? Arrays.asList(ruleNames) : null;
+		return toString(ruleNamesList, stop);
+	}
+
+	public String toString(List<String> ruleNames, RuleContext stop) {
+		StringBuilder buf = new StringBuilder();
+		RuleContext p = this;
+		buf.append("[");
+		while (p != null && p != stop) {
+			if (ruleNames == null) {
+				if (!p.isEmpty()) {
+					buf.append(p.getInvokingState());
+				}
+			}
+			else {
+				int ruleIndex = p.getRuleIndex();
+				String ruleName = ruleIndex >= 0 && ruleIndex < ruleNames.size() ? ruleNames.get(ruleIndex) : Integer.toString(ruleIndex);
+				buf.append(ruleName);
+			}
+
+			if (p.getParent() != null && (ruleNames != null || !p.getParent().isEmpty())) {
+				buf.append(" ");
+			}
+
+			p = p.getParent();
+		}
+
+		buf.append("]");
+		return buf.toString();
+	}
+
+	public int depth() {
+		int n = 0;
+		RuleContext p = this;
+		while ( p!=null ) {
+			p = p.getParent();
+			n++;
+		}
+		return n;
 	}
 }

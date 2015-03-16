@@ -30,7 +30,7 @@
 
 package org.antlr.v4.runtime.tree;
 
-import org.antlr.v4.runtime.RuleContextImpl;
+import org.antlr.v4.runtime.AbstractRuleContext;
 import org.antlr.v4.runtime.Token;
 
 /** The basic notion of a tree has a parent, a payload, and a list of children.
@@ -45,7 +45,7 @@ public interface Tree {
 	/**
 	 * This method returns whatever object represents the data at this note. For
 	 * example, for parse trees, the payload can be a {@link Token} representing
-	 * a leaf node or a {@link RuleContextImpl} object representing a rule
+	 * a leaf node or a {@link AbstractRuleContext} object representing a rule
 	 * invocation. For abstract syntax trees (ASTs), this is a {@link Token}
 	 * object.
 	 */

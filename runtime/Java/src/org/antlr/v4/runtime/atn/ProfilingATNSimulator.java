@@ -31,7 +31,7 @@
 package org.antlr.v4.runtime.atn;
 
 import org.antlr.v4.runtime.Parser;
-import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.dfa.DFAState;
@@ -77,7 +77,7 @@ public class ProfilingATNSimulator extends ParserATNSimulator {
 	}
 
 	@Override
-	public int adaptivePredict(TokenStream input, int decision, ParserRuleContext outerContext) {
+	public int adaptivePredict(TokenStream input, int decision, RuleContext outerContext) {
 		try {
 			this._sllStopIndex = -1;
 			this._llStopIndex = -1;
@@ -176,7 +176,7 @@ public class ProfilingATNSimulator extends ParserATNSimulator {
 	}
 
 	@Override
-	protected boolean evalSemanticContext(SemanticContext pred, ParserRuleContext parserCallStack, int alt, boolean fullCtx) {
+	protected boolean evalSemanticContext(SemanticContext pred, RuleContext parserCallStack, int alt, boolean fullCtx) {
 		boolean result = super.evalSemanticContext(pred, parserCallStack, alt, fullCtx);
 		if (!(pred instanceof SemanticContext.PrecedencePredicate)) {
 			boolean fullContext = _llStopIndex >= 0;

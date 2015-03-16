@@ -302,7 +302,7 @@ public class ParserATNSimulator extends ATNSimulator {
 	// LAME globals to avoid parameters!!!!! I need these down deep in predTransition
 	protected TokenStream _input;
 	protected int _startIndex;
-	protected ParserRuleContext _outerContext;
+	protected RuleContext _outerContext;
 	protected DFA _dfa;
 
 	/** Testing only! */
@@ -336,7 +336,7 @@ public class ParserATNSimulator extends ATNSimulator {
 	}
 
 	public int adaptivePredict(TokenStream input, int decision,
-							   ParserRuleContext outerContext)
+							   RuleContext outerContext)
 	{
 		if ( debug || debug_list_atn_decisions )  {
 			System.out.println("adaptivePredict decision "+decision+
@@ -373,8 +373,8 @@ public class ParserATNSimulator extends ATNSimulator {
 					String msg = "predictATN decision "+ dfa.decision+
 							" exec LA(1)=="+ getLookaheadName(input);
 
-							if(outerContext instanceof RuleContextImpl){
-									 msg = msg+ ", outerContext="+ ((RuleContextImpl)outerContext).toString(parser);
+							if(outerContext instanceof ParserRuleContextImpl){
+									 msg = msg+ ", outerContext="+ ((ParserRuleContextImpl)outerContext).toString(parser);
 							} else {
 								msg = msg+", outerContext="+outerContext.toString();
 							}
@@ -448,7 +448,7 @@ public class ParserATNSimulator extends ATNSimulator {
 	 */
 	protected int execATN(DFA dfa, DFAState s0,
 					   TokenStream input, int startIndex,
-					   ParserRuleContext outerContext)
+					   RuleContext outerContext)
 	{
 		if ( debug || debug_list_atn_decisions) {
 			System.out.println("execATN decision "+dfa.decision+
@@ -659,7 +659,7 @@ public class ParserATNSimulator extends ATNSimulator {
 										 DFAState D, // how far we got in SLL DFA before failing over
 										 ATNConfigSet s0,
 										 TokenStream input, int startIndex,
-										 ParserRuleContext outerContext)
+										 RuleContext outerContext)
 	{
 		if ( debug || debug_list_atn_decisions ) {
 			System.out.println("execATNWithFullContext "+s0);
@@ -1312,7 +1312,7 @@ public class ParserATNSimulator extends ATNSimulator {
 	 * identified and {@link #adaptivePredict} should report an error instead.
 	 */
 	protected int getSynValidOrSemInvalidAltThatFinishedDecisionEntryRule(ATNConfigSet configs,
-																		  ParserRuleContext outerContext)
+																		  RuleContext outerContext)
 	{
 		Pair<ATNConfigSet,ATNConfigSet> sets =
 			splitAccordingToSemanticValidity(configs, outerContext);
@@ -1354,7 +1354,7 @@ public class ParserATNSimulator extends ATNSimulator {
  	 */
 	protected Pair<ATNConfigSet,ATNConfigSet> splitAccordingToSemanticValidity(
 		ATNConfigSet configs,
-		ParserRuleContext outerContext)
+		RuleContext outerContext)
 	{
 		ATNConfigSet succeeded = new ATNConfigSet(configs.fullCtx);
 		ATNConfigSet failed = new ATNConfigSet(configs.fullCtx);
@@ -1382,7 +1382,7 @@ public class ParserATNSimulator extends ATNSimulator {
 	 *  includes pairs with null predicates.
 	 */
 	protected BitSet evalSemanticContext(DFAState.PredPrediction[] predPredictions,
-									  ParserRuleContext outerContext,
+									  RuleContext outerContext,
 									  boolean complete)
 	{
 		BitSet predictions = new BitSet();
@@ -1443,7 +1443,7 @@ public class ParserATNSimulator extends ATNSimulator {
 	 *
 	 * @since 4.3
 	 */
-	protected boolean evalSemanticContext(SemanticContext pred, ParserRuleContext parserCallStack, int alt, boolean fullCtx) {
+	protected boolean evalSemanticContext(SemanticContext pred, RuleContext parserCallStack, int alt, boolean fullCtx) {
 		return pred.eval(parser, parserCallStack);
 	}
 
@@ -1872,7 +1872,7 @@ public class ParserATNSimulator extends ATNSimulator {
 
 
 	protected NoViableAltException noViableAlt(TokenStream input,
-											ParserRuleContext outerContext,
+											RuleContext outerContext,
 											ATNConfigSet configs,
 											int startIndex)
 	{

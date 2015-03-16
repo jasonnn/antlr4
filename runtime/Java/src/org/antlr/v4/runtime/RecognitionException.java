@@ -57,7 +57,7 @@ public class RecognitionException extends RuntimeException {
 
 	public RecognitionException(Recognizer<?, ?> recognizer,
 								IntStream input,
-								ParserRuleContext ctx)
+								RuleContext ctx)
 	{
 		this.recognizer = recognizer;
 		this.input = input;
@@ -68,7 +68,7 @@ public class RecognitionException extends RuntimeException {
 	public RecognitionException(String message,
 								Recognizer<?, ?> recognizer,
 								IntStream input,
-								ParserRuleContext ctx)
+								RuleContext ctx)
 	{
 		super(message);
 		this.recognizer = recognizer;
@@ -113,11 +113,11 @@ public class RecognitionException extends RuntimeException {
 	}
 
 	/**
-	 * Gets the {@link RuleContextImpl} at the time this exception was thrown.
+	 * Gets the {@link AbstractRuleContext} at the time this exception was thrown.
 	 *
 	 * <p>If the context is not available, this method returns {@code null}.</p>
 	 *
-	 * @return The {@link RuleContextImpl} at the time this exception was thrown.
+	 * @return The {@link AbstractRuleContext} at the time this exception was thrown.
 	 * If the context is not available, this method returns {@code null}.
 	 */
 	public RuleContext getCtx() {

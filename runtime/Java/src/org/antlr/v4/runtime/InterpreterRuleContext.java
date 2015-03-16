@@ -57,7 +57,7 @@ public class InterpreterRuleContext extends ParserRuleContextImpl {
 	 * @param invokingStateNumber The invoking state number.
 	 * @param ruleIndex The rule index for the current context.
 	 */
-	public InterpreterRuleContext(ParserRuleContext parent,
+	public InterpreterRuleContext(RuleContext parent,
 								  int invokingStateNumber,
 								  int ruleIndex)
 	{

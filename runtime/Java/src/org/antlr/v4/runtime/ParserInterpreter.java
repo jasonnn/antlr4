@@ -84,8 +84,8 @@ public class ParserInterpreter extends Parser {
 	private final Vocabulary vocabulary;
 
 	/** Tracks LR rules for adjusting the contexts */
-	protected final Deque<Pair<ParserRuleContext, Integer>> _parentContextStack =
-		new ArrayDeque<Pair<ParserRuleContext, Integer>>();
+	protected final Deque<Pair<RuleContext, Integer>> _parentContextStack =
+		new ArrayDeque<Pair<RuleContext, Integer>>();
 
 	/** We need a map from (decision,inputIndex)->forced alt for computing ambiguous
 	 *  parse trees. For now, we allow exactly one override.
@@ -187,7 +187,7 @@ public class ParserInterpreter extends Parser {
 	}
 
 	/** Begin parsing at startRuleIndex */
-	public ParserRuleContext parse(int startRuleIndex) {
+	public RuleContext parse(int startRuleIndex) {
 		RuleStartState startRuleStartState = atn.ruleToStartState[startRuleIndex];
 
 		InterpreterRuleContext rootContext = new InterpreterRuleContext(null, ATNState.INVALID_STATE_NUMBER, startRuleIndex);
@@ -205,8 +205,8 @@ public class ParserInterpreter extends Parser {
 				// pop; return from rule
 				if ( _ctx.isEmpty() ) {
 					if (startRuleStartState.isPrecedenceRule) {
-						ParserRuleContext result = _ctx;
-						Pair<ParserRuleContext, Integer> parentContext = _parentContextStack.pop();
+						RuleContext result = _ctx;
+						Pair<RuleContext, Integer> parentContext = _parentContextStack.pop();
 						unrollRecursionContexts(parentContext.a);
 						return result;
 					}
@@ -236,8 +236,8 @@ public class ParserInterpreter extends Parser {
 	}
 
 	@Override
-	public void enterRecursionRule(ParserRuleContext localctx, int state, int ruleIndex, int precedence) {
-		Pair<ParserRuleContext, Integer> pair = new Pair<ParserRuleContext, Integer>(_ctx, localctx.getInvokingState());
+	public void enterRecursionRule(RuleContext localctx, int state, int ruleIndex, int precedence) {
+		Pair<RuleContext, Integer> pair = new Pair<RuleContext, Integer>(_ctx, localctx.getInvokingState());
 		_parentContextStack.push(pair);
 		super.enterRecursionRule(localctx, state, ruleIndex, precedence);
 	}
@@ -333,7 +333,7 @@ public class ParserInterpreter extends Parser {
 	protected void visitRuleStopState(ATNState p) {
 		RuleStartState ruleStartState = atn.ruleToStartState[p.ruleIndex];
 		if (ruleStartState.isPrecedenceRule) {
-			Pair<ParserRuleContext, Integer> parentContext = _parentContextStack.pop();
+			Pair<RuleContext, Integer> parentContext = _parentContextStack.pop();
 			unrollRecursionContexts(parentContext.a);
 			setState(parentContext.b);
 		}

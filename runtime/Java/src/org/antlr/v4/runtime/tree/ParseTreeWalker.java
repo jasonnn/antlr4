@@ -30,8 +30,8 @@
 
 package org.antlr.v4.runtime.tree;
 
-import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.RuleContextImpl;
+import org.antlr.v4.runtime.RuleContext;
+import org.antlr.v4.runtime.AbstractRuleContext;
 
 public class ParseTreeWalker {
     public static final ParseTreeWalker DEFAULT = new ParseTreeWalker();
@@ -57,17 +57,17 @@ public class ParseTreeWalker {
 	/**
 	 * The discovery of a rule node, involves sending two events: the generic
 	 * {@link ParseTreeListener#enterEveryRule} and a
-	 * {@link RuleContextImpl}-specific event. First we trigger the generic and then
+	 * {@link AbstractRuleContext}-specific event. First we trigger the generic and then
 	 * the rule specific. We to them in reverse order upon finishing the node.
 	 */
     protected void enterRule(ParseTreeListener listener, RuleNode r) {
-		ParserRuleContext ctx = (ParserRuleContext)r.getRuleContext();
+		RuleContext ctx = (RuleContext)r.getRuleContext();
 		listener.enterEveryRule(ctx);
 		ctx.enterRule(listener);
     }
 
     protected void exitRule(ParseTreeListener listener, RuleNode r) {
-		ParserRuleContext ctx = (ParserRuleContext)r.getRuleContext();
+		RuleContext ctx = (RuleContext)r.getRuleContext();
 		ctx.exitRule(listener);
 		listener.exitEveryRule(ctx);
     }

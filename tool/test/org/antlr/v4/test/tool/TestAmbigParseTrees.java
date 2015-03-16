@@ -5,7 +5,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.LexerInterpreter;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.ParserInterpreter;
-import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.atn.ATNState;
 import org.antlr.v4.runtime.atn.AmbiguityInfo;
 import org.antlr.v4.runtime.atn.BasicBlockStartState;
@@ -217,7 +217,7 @@ public class TestAmbigParseTrees {
 
 		// PARSE
 		int ruleIndex = g.rules.get(startRule).index;
-		ParserRuleContext parseTree = parser.parse(ruleIndex);
+		RuleContext parseTree = parser.parse(ruleIndex);
 		assertEquals(overallTree, parseTree.toStringTree(parser));
 		System.out.println();
 
@@ -226,12 +226,12 @@ public class TestAmbigParseTrees {
 		assertEquals(1, ambiguities.size());
 		AmbiguityInfo ambiguityInfo = ambiguities.get(0);
 
-		List<ParserRuleContext> ambiguousParseTrees = Parser.getAmbiguousParseTrees(parser, ambiguityInfo, ruleIndex);
+		List<RuleContext> ambiguousParseTrees = Parser.getAmbiguousParseTrees(parser, ambiguityInfo, ruleIndex);
 		assertEquals(expectedAmbigAlts, ambiguityInfo.ambigAlts.toString());
 
 		assertEquals(ambiguityInfo.ambigAlts.cardinality(), ambiguousParseTrees.size());
 		for (int i = 0; i<ambiguousParseTrees.size(); i++) {
-			ParserRuleContext t = ambiguousParseTrees.get(i);
+			RuleContext t = ambiguousParseTrees.get(i);
 			assertEquals(expectedParseTrees[i], t.toStringTree(parser));
 		}
 	}

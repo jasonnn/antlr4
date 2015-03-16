@@ -1,6 +1,6 @@
 package org.antlr.v4.runtime.tree.xpath;
 
-import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.Tree;
 import org.antlr.v4.runtime.tree.Trees;
@@ -21,8 +21,8 @@ public class XPathRuleElement extends XPathElement {
 				// return all children of t that match nodeName
 		List<ParseTree> nodes = new ArrayList<ParseTree>();
 		for (Tree c : Trees.getChildren(t)) {
-			if ( c instanceof ParserRuleContext) {
-				ParserRuleContext ctx = (ParserRuleContext)c;
+			if ( c instanceof RuleContext) {
+				RuleContext ctx = (RuleContext)c;
 				if ( (ctx.getRuleIndex() == ruleIndex && !invert) ||
 					 (ctx.getRuleIndex() != ruleIndex && invert) )
 				{

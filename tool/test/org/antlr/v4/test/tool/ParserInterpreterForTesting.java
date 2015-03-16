@@ -32,13 +32,9 @@ package org.antlr.v4.test.tool;
 
 import org.antlr.v4.Tool;
 import org.antlr.v4.runtime.Parser;
-import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.TokenStream;
-import org.antlr.v4.runtime.atn.ATN;
-import org.antlr.v4.runtime.atn.ATNState;
-import org.antlr.v4.runtime.atn.DecisionState;
-import org.antlr.v4.runtime.atn.ParserATNSimulator;
-import org.antlr.v4.runtime.atn.PredictionContextCache;
+import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.tool.Grammar;
 
@@ -101,7 +97,7 @@ public class ParserInterpreterForTesting {
 	}
 
 	public int adaptivePredict(TokenStream input, int decision,
-							   ParserRuleContext outerContext)
+							   RuleContext outerContext)
 	{
 		return atnSimulator.adaptivePredict(input, decision, outerContext);
 	}

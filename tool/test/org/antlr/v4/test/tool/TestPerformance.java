@@ -1512,7 +1512,7 @@ public class TestPerformance extends BaseTest {
 		}
 
 		@Override
-		public int adaptivePredict(TokenStream input, int decision, ParserRuleContext outerContext) {
+		public int adaptivePredict(TokenStream input, int decision, RuleContext outerContext) {
 			try {
 				this.decision = decision;
 				decisionInvocations[decision]++;
@@ -1524,7 +1524,7 @@ public class TestPerformance extends BaseTest {
 		}
 
 		@Override
-		protected int execATNWithFullContext(DFA dfa, DFAState D, ATNConfigSet s0, TokenStream input, int startIndex, ParserRuleContext outerContext) {
+		protected int execATNWithFullContext(DFA dfa, DFAState D, ATNConfigSet s0, TokenStream input, int startIndex, RuleContext outerContext) {
 			fullContextFallback[decision]++;
 			return super.execATNWithFullContext(dfa, D, s0, input, startIndex, outerContext);
 		}
@@ -1853,14 +1853,14 @@ public class TestPerformance extends BaseTest {
 		}
 
 		@Override
-		public void enterEveryRule(ParserRuleContext ctx) {
+		public void enterEveryRule(RuleContext ctx) {
 			checksum.update(ENTER_RULE);
 			updateChecksum(checksum, ctx.getRuleIndex());
 			updateChecksum(checksum, ctx.getStart());
 		}
 
 		@Override
-		public void exitEveryRule(ParserRuleContext ctx) {
+		public void exitEveryRule(RuleContext ctx) {
 			checksum.update(EXIT_RULE);
 			updateChecksum(checksum, ctx.getRuleIndex());
 			updateChecksum(checksum, ctx.getStop());

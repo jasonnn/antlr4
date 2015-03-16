@@ -63,7 +63,7 @@ import java.util.WeakHashMap;
 public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 	public class TraceListener implements ParseTreeListener {
 		@Override
-		public void enterEveryRule(ParserRuleContext ctx) {
+		public void enterEveryRule(RuleContext ctx) {
 			System.out.println("enter   " + getRuleNames()[ctx.getRuleIndex()] +
 							   ", LT(1)=" + _input.LT(1).getText());
 		}
@@ -79,7 +79,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 		}
 
 		@Override
-		public void exitEveryRule(ParserRuleContext ctx) {
+		public void exitEveryRule(RuleContext ctx) {
 			System.out.println("exit    "+getRuleNames()[ctx.getRuleIndex()]+
 							   ", LT(1)="+_input.LT(1).getText());
 		}
@@ -89,7 +89,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 		public static final TrimToSizeListener INSTANCE = new TrimToSizeListener();
 
 		@Override
-		public void enterEveryRule(ParserRuleContext ctx) { }
+		public void enterEveryRule(RuleContext ctx) { }
 
 		@Override
 		public void visitTerminal(TerminalNode node) { }
@@ -98,7 +98,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 		public void visitErrorNode(ErrorNode node) {	}
 
 		@Override
-		public void exitEveryRule(ParserRuleContext ctx) {
+		public void exitEveryRule(RuleContext ctx) {
 			if (ctx.getChildren() instanceof ArrayList) {
 				((ArrayList<?>) ctx.getChildren()).trimToSize();
 			}
@@ -139,10 +139,10 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 	}
 
 	/**
-	 * The {@link ParserRuleContext} object for the currently executing rule.
+	 * The {@link RuleContext} object for the currently executing rule.
 	 * This is always non-null during the parsing process.
 	 */
-	protected ParserRuleContext _ctx;
+	protected RuleContext _ctx;
 
 	/**
 	 * Specifies whether or not the parser should construct a parse tree during
@@ -206,7 +206,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 	 * strategy to attempt recovery. If {@link #getBuildParseTree} is
 	 * {@code true} and the token index of the symbol returned by
 	 * {@link ANTLRErrorStrategy#recoverInline} is -1, the symbol is added to
-	 * the parse tree by calling {@link ParserRuleContext#addErrorNode}.</p>
+	 * the parse tree by calling {@link RuleContext#addErrorNode}.</p>
 	 *
 	 * @param ttype the token type to match
 	 * @return the matched symbol
@@ -241,7 +241,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 	 * strategy to attempt recovery. If {@link #getBuildParseTree} is
 	 * {@code true} and the token index of the symbol returned by
 	 * {@link ANTLRErrorStrategy#recoverInline} is -1, the symbol is added to
-	 * the parse tree by calling {@link ParserRuleContext#addErrorNode}.</p>
+	 * the parse tree by calling {@link RuleContext#addErrorNode}.</p>
 	 *
 	 * @return the matched symbol
 	 * @throws RecognitionException if the current input symbol did not match
@@ -267,9 +267,9 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 	}
 
 	/**
-	 * Track the {@link ParserRuleContext} objects during the parse and hook
-	 * them up using the {@link ParserRuleContext#getChildren()} list so that it
-	 * forms a parse tree. The {@link ParserRuleContext} returned from the start
+	 * Track the {@link RuleContext} objects during the parse and hook
+	 * them up using the {@link RuleContext#getChildren()} list so that it
+	 * forms a parse tree. The {@link RuleContext} returned from the start
 	 * rule represents the root of the parse tree.
 	 *
 	 * <p>Note that if we are not building parse trees, rule contexts only point
@@ -278,7 +278,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 	 * points at it.</p>
 	 *
 	 * <p>When we build parse trees, we are adding all of these contexts to
-	 * {@link ParserRuleContext#getChildren()} list. Contexts are then not candidates
+	 * {@link RuleContext#getChildren()} list. Contexts are then not candidates
 	 * for garbage collection.</p>
 	 */
 	public void setBuildParseTree(boolean buildParseTrees) {
@@ -300,7 +300,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 	 * Trim the internal lists of the parse tree during parsing to conserve memory.
 	 * This property is set to {@code false} by default for a newly constructed parser.
 	 *
-	 * @param trimParseTrees {@code true} to trim the capacity of the {@link ParserRuleContext#getChildren()}
+	 * @param trimParseTrees {@code true} to trim the capacity of the {@link RuleContext#getChildren()}
 	 * list to its size after a rule is parsed.
 	 */
 	public void setTrimParseTree(boolean trimParseTrees) {
@@ -314,7 +314,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 	}
 
 	/**
-	 * @return {@code true} if the {@link ParserRuleContext#getChildren()} list is trimmed
+	 * @return {@code true} if the {@link RuleContext#getChildren()} list is trimmed
 	 * using the default {@link Parser.TrimToSizeListener} during the parse process.
 	 */
 	public boolean getTrimParseTree() {
@@ -574,11 +574,11 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 	 * </pre>
 	 *
 	 * If the parser is not in error recovery mode, the consumed symbol is added
-	 * to the parse tree using {@link ParserRuleContext#addChild(Token)}, and
+	 * to the parse tree using {@link RuleContext#addChild(Token)}, and
 	 * {@link ParseTreeListener#visitTerminal} is called on any parse listeners.
 	 * If the parser <em>is</em> in error recovery mode, the consumed symbol is
 	 * added to the parse tree using
-	 * {@link ParserRuleContext#addErrorNode(Token)}, and
+	 * {@link RuleContext#addErrorNode(Token)}, and
 	 * {@link ParseTreeListener#visitErrorNode} is called on any parse
 	 * listeners.
 	 */
@@ -610,7 +610,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 	}
 
 	protected void addContextToParseTree() {
-		ParserRuleContext parent = _ctx.getParent();
+		RuleContext parent = _ctx.getParent();
 		// add current context to parent if we have a parent
 		if ( parent!=null )	{
 			parent.addChild(_ctx);
@@ -621,7 +621,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 	 * Always called by generated parsers upon entry to a rule. Access field
 	 * {@link #_ctx} get the current context.
 	 */
-	public void enterRule(ParserRuleContext localctx, int state, int ruleIndex) {
+	public void enterRule(RuleContext localctx, int state, int ruleIndex) {
 		setState(state);
 		_ctx = localctx;
 		_ctx.setStart(_input.LT(1));
@@ -637,11 +637,11 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 		_ctx = _ctx.getParent();
     }
 
-	public void enterOuterAlt(ParserRuleContext localctx, int altNum) {
+	public void enterOuterAlt(RuleContext localctx, int altNum) {
 		// if we have new localctx, make sure we replace existing ctx
 		// that is previous child of parse tree
 		if ( _buildParseTrees && _ctx != localctx ) {
-			ParserRuleContext parent = _ctx.getParent();
+			RuleContext parent = _ctx.getParent();
 			if ( parent!=null )	{
 				parent.removeLastChild();
 				parent.addChild(localctx);
@@ -666,14 +666,14 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 
 	/**
 	 * @deprecated Use
-	 * {@link #enterRecursionRule(ParserRuleContext, int, int, int)} instead.
+	 * {@link #enterRecursionRule(RuleContext, int, int, int)} instead.
 	 */
 	@Deprecated
-	public void enterRecursionRule(ParserRuleContext localctx, int ruleIndex) {
+	public void enterRecursionRule(RuleContext localctx, int ruleIndex) {
 		enterRecursionRule(localctx, getATN().ruleToStartState[ruleIndex].stateNumber, ruleIndex, 0);
 	}
 
-	public void enterRecursionRule(ParserRuleContext localctx, int state, int ruleIndex, int precedence) {
+	public void enterRecursionRule(RuleContext localctx, int state, int ruleIndex, int precedence) {
 		setState(state);
 		_precedenceStack.push(precedence);
 		_ctx = localctx;
@@ -686,8 +686,8 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 	/** Like {@link #enterRule} but for recursive rules.
 	 *  Make the current context the child of the incoming localctx.
 	 */
-	public void pushNewRecursionContext(ParserRuleContext localctx, int state, int ruleIndex) {
-		ParserRuleContext previous = _ctx;
+	public void pushNewRecursionContext(RuleContext localctx, int state, int ruleIndex) {
+		RuleContext previous = _ctx;
 		previous.setParent(localctx);
 		previous.setInvokingState(state);
 		previous.setStop(_input.LT(-1));
@@ -703,10 +703,10 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 		}
 	}
 
-	public void unrollRecursionContexts(ParserRuleContext _parentctx) {
+	public void unrollRecursionContexts(RuleContext _parentctx) {
 		_precedenceStack.pop();
 		_ctx.setStop(_input.LT(-1));
-		ParserRuleContext retctx = _ctx; // save current ctx (return value)
+		RuleContext retctx = _ctx; // save current ctx (return value)
 
 		// unroll so _ctx is as it was before call to recursive method
 		if ( _parseListeners != null ) {
@@ -728,8 +728,8 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 		}
 	}
 
-	public ParserRuleContext getInvokingContext(int ruleIndex) {
-		ParserRuleContext p = _ctx;
+	public RuleContext getInvokingContext(int ruleIndex) {
+		RuleContext p = _ctx;
 		while ( p!=null ) {
 			if ( p.getRuleIndex() == ruleIndex ) return p;
 			p = p.getParent();
@@ -737,11 +737,11 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 		return null;
 	}
 
-	public ParserRuleContext getContext() {
+	public RuleContext getContext() {
 		return _ctx;
 	}
 
-	public void setContext(ParserRuleContext ctx) {
+	public void setContext(RuleContext ctx) {
 		_ctx = ctx;
 	}
 
@@ -800,12 +800,12 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 	 *  @throws RecognitionException Throws upon syntax error while matching
 	 *                               ambig input.
 	 */
-	public static List<ParserRuleContext> getAmbiguousParseTrees(Parser originalParser,
+	public static List<RuleContext> getAmbiguousParseTrees(Parser originalParser,
 																 AmbiguityInfo ambiguityInfo,
 																 int startRuleIndex)
 		throws RecognitionException
 	{
-		List<ParserRuleContext> trees = new ArrayList<ParserRuleContext>();
+		List<RuleContext> trees = new ArrayList<RuleContext>();
 		int saveTokenInputPosition = originalParser.getTokenStream().index();
 		try {
 			// Create a new parser interpreter to parse the ambiguous subphrase
@@ -839,8 +839,8 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 				parser.overrideDecision = ambiguityInfo.decision;
 				parser.overrideDecisionInputIndex = ambiguityInfo.startIndex;
 				parser.overrideDecisionAlt = alt;
-				ParserRuleContext t = parser.parse(startRuleIndex);
-				ParserRuleContext ambigSubTree =
+				RuleContext t = parser.parse(startRuleIndex);
+				RuleContext ambigSubTree =
 					Trees.getRootOfSubtreeEnclosingRegion(t, ambiguityInfo.startIndex,
 														  ambiguityInfo.stopIndex);
 				trees.add(ambigSubTree);
@@ -871,7 +871,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
     public boolean isExpectedToken(int symbol) {
 //   		return getInterpreter().atn.nextTokens(_ctx);
         ATN atn = getInterpreter().atn;
-		ParserRuleContext ctx = _ctx;
+		RuleContext ctx = _ctx;
         ATNState s = atn.states.get(getState());
         IntervalSet following = atn.nextTokens(s);
         if (following.contains(symbol)) {
@@ -923,7 +923,7 @@ public abstract class Parser extends Recognizer<Token, ParserATNSimulator> {
 		return -1;
 	}
 
-	public ParserRuleContext getRuleContext() { return _ctx; }
+	public RuleContext getRuleContext() { return _ctx; }
 
 	/** Return List&lt;String&gt; of the rule names in your parser instance
 	 *  leading up to a call to the current rule.  You could override if

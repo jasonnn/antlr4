@@ -5,11 +5,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.List;
+import java.util.*;
 
 /**
  * Represent a subset of XPath XML path syntax for use in identifying nodes in
@@ -190,7 +186,7 @@ loop:
 	 * {@link #evaluate}.
 	 */
 	public Collection<ParseTree> evaluate(final ParseTree t) {
-		ParserRuleContext dummyRoot = new ParserRuleContextImpl();
+		RuleContext dummyRoot = new ParserRuleContextImpl();
 		dummyRoot.setChildren(Collections.singletonList(t)); // don't set t's parent.
 
 		Collection<ParseTree> work = Collections.<ParseTree>singleton(dummyRoot);

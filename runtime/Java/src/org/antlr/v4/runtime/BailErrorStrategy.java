@@ -68,7 +68,7 @@ public class BailErrorStrategy extends DefaultErrorStrategy {
      */
     @Override
     public void recover(Parser recognizer, RecognitionException e) {
-		for (ParserRuleContext context = recognizer.getContext(); context != null; context = context.getParent()) {
+		for (RuleContext context = recognizer.getContext(); context != null; context = context.getParent()) {
 			context.setException(e);
 		}
 
@@ -83,7 +83,7 @@ public class BailErrorStrategy extends DefaultErrorStrategy {
         throws RecognitionException
     {
 		InputMismatchException e = new InputMismatchException(recognizer);
-		for (ParserRuleContext context = recognizer.getContext(); context != null; context = context.getParent()) {
+		for (RuleContext context = recognizer.getContext(); context != null; context = context.getParent()) {
 			context.setException(e);
 		}
 

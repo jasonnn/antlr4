@@ -30,11 +30,11 @@
 
 package org.antlr.v4.runtime.tree;
 
-import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.RuleContext;
 
 public interface ParseTreeListener {
 	void visitTerminal(TerminalNode node);
 	void visitErrorNode(ErrorNode node);
-    void enterEveryRule(ParserRuleContext ctx);
-    void exitEveryRule(ParserRuleContext ctx);
+    void enterEveryRule(RuleContext ctx);
+    void exitEveryRule(RuleContext ctx);
 }

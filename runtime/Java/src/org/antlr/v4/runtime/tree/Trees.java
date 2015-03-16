@@ -31,7 +31,7 @@
 package org.antlr.v4.runtime.tree;
 
 import org.antlr.v4.runtime.Parser;
-import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.Utils;
 import org.antlr.v4.runtime.tree.gui.TreePostScriptGenerator;
@@ -199,8 +199,8 @@ public class Trees {
 			TerminalNode tnode = (TerminalNode)t;
 			if ( tnode.getSymbol().getType()==index ) nodes.add(t);
 		}
-		else if ( !findTokens && t instanceof ParserRuleContext) {
-			ParserRuleContext ctx = (ParserRuleContext)t;
+		else if ( !findTokens && t instanceof RuleContext) {
+			RuleContext ctx = (RuleContext)t;
 			if ( ctx.getRuleIndex() == index ) nodes.add(t);
 		}
 		// check children
@@ -225,18 +225,18 @@ public class Trees {
 	 *
 	 *  @since 4.5.1
 	 */
-	public static ParserRuleContext getRootOfSubtreeEnclosingRegion(ParseTree t,
+	public static RuleContext getRootOfSubtreeEnclosingRegion(ParseTree t,
 																	int startTokenIndex, // inclusive
 																	int stopTokenIndex)  // inclusive
 	{
 		int n = t.getChildCount();
 		for (int i = 0; i<n; i++) {
 			ParseTree child = t.getChild(i);
-			ParserRuleContext r = getRootOfSubtreeEnclosingRegion(child, startTokenIndex, stopTokenIndex);
+			RuleContext r = getRootOfSubtreeEnclosingRegion(child, startTokenIndex, stopTokenIndex);
 			if ( r!=null ) return r;
 		}
-		if ( t instanceof ParserRuleContext) {
-			ParserRuleContext r = (ParserRuleContext) t;
+		if ( t instanceof RuleContext) {
+			RuleContext r = (RuleContext) t;
 			if ( startTokenIndex>=r.getStart().getTokenIndex() && // is range fully contained in t?
 				stopTokenIndex<=r.getStop().getTokenIndex() )
 			{

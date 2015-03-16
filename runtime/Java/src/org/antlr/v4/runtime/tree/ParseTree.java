@@ -31,15 +31,15 @@
 package org.antlr.v4.runtime.tree;
 
 import org.antlr.v4.runtime.Parser;
-import org.antlr.v4.runtime.RuleContextImpl;
+import org.antlr.v4.runtime.AbstractRuleContext;
 import org.antlr.v4.runtime.Token;
 
-/** An interface to access the tree of {@link RuleContextImpl} objects created
+/** An interface to access the tree of {@link AbstractRuleContext} objects created
  *  during a parse that makes the data structure look like a simple parse tree.
  *  This node represents both internal nodes, rule invocations,
  *  and leaf nodes, token matches.
  *
- *  <p>The payload is either a {@link Token} or a {@link RuleContextImpl} object.</p>
+ *  <p>The payload is either a {@link Token} or a {@link AbstractRuleContext} object.</p>
  */
 public interface ParseTree extends SyntaxTree {
 	// the following methods narrow the return type; they are not additional methods

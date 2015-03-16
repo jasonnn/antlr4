@@ -32,6 +32,7 @@ package org.antlr.v4.runtime;
 import org.antlr.v4.runtime.misc.Interval;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeVisitor;
+import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.Trees;
 import org.antlr.v4.runtime.tree.gui.TreeViewer;
 
@@ -92,36 +93,24 @@ import java.util.concurrent.Future;
  *
  *  @see ParserRuleContextImpl
  */
-public class RuleContextImpl implements RuleContext {
+public abstract class AbstractRuleContext implements RuleNode {
 	public static final ParserRuleContextImpl EMPTY = new ParserRuleContextImpl();
 
 	private RuleContext parent;
 
 	private int invokingState = -1;
 
-	public RuleContextImpl() {}
+	public AbstractRuleContext() {}
 
-	public RuleContextImpl(RuleContext parent, int invokingState) {
+	public AbstractRuleContext(RuleContext parent, int invokingState) {
 		this.parent = parent;
 		//if ( parent!=null ) System.out.println("invoke "+stateNumber+" from "+parent);
 		this.invokingState = invokingState;
 	}
 
-	@Override
-	public int depth() {
-		int n = 0;
-		RuleContext p = this;
-		while ( p!=null ) {
-			p = p.getParent();
-			n++;
-		}
-		return n;
-	}
-
 	/** A context is empty if there is no invoking state; meaning nobody called
 	 *  current context.
 	 */
-	@Override
 	public boolean isEmpty() {
 		return invokingState == -1;
 	}
@@ -133,15 +122,15 @@ public class RuleContextImpl implements RuleContext {
 		return Interval.INVALID;
 	}
 
-	@Override
-	public RuleContext getRuleContext() { return this; }
+//	@Override
+	public RuleContext getRuleContext() { return (RuleContext) getPayload(); }
 
 	/** What context invoked this rule? */
 	@Override
 	public RuleContext getParent() { return parent; }
-
-	@Override
-	public RuleContext getPayload() { return this; }
+//
+//	@Override
+//	public RuleContext getPayload() { return this; }
 
 	/** Return the combined text of all child nodes. This method only considers
 	 *  tokens which have been added to the parse tree.
@@ -164,7 +153,6 @@ public class RuleContextImpl implements RuleContext {
 		return builder.toString();
 	}
 
-	@Override
 	public int getRuleIndex() { return -1; }
 
 	@Override
@@ -244,69 +232,19 @@ public class RuleContextImpl implements RuleContext {
 		return toStringTree((List<String>)null);
 	}
 
-	@Override
-	public String toString() {
-		return toString((List<String>)null, (RuleContext)null);
-	}
-
-	public final String toString(Recognizer<?,?> recog) {
-		return toString(recog, ParserRuleContextImpl.EMPTY);
-	}
-
-	public final String toString(List<String> ruleNames) {
-		return toString(ruleNames, null);
-	}
-
-	// recog null unless ParserRuleContext, in which case we use subclass toString(...)
-	public String toString(Recognizer<?,?> recog, RuleContext stop) {
-		String[] ruleNames = recog != null ? recog.getRuleNames() : null;
-		List<String> ruleNamesList = ruleNames != null ? Arrays.asList(ruleNames) : null;
-		return toString(ruleNamesList, stop);
-	}
-
-	public String toString(List<String> ruleNames, RuleContext stop) {
-		StringBuilder buf = new StringBuilder();
-		RuleContext p = this;
-		buf.append("[");
-		while (p != null && p != stop) {
-			if (ruleNames == null) {
-				if (!p.isEmpty()) {
-					buf.append(p.getInvokingState());
-				}
-			}
-			else {
-				int ruleIndex = p.getRuleIndex();
-				String ruleName = ruleIndex >= 0 && ruleIndex < ruleNames.size() ? ruleNames.get(ruleIndex) : Integer.toString(ruleIndex);
-				buf.append(ruleName);
-			}
-
-			if (p.getParent() != null && (ruleNames != null || !p.getParent().isEmpty())) {
-				buf.append(" ");
-			}
-
-			p = p.getParent();
-		}
-
-		buf.append("]");
-		return buf.toString();
-	}
-
 	/** What state invoked the rule associated with this context?
 	 *  The "return address" is the followState of invokingState
 	 *  If parent is null, this should be -1 this context object represents
 	 *  the start rule.
 	 */
-	@Override
 	public int getInvokingState() {
 		return invokingState;
 	}
 
-	@Override
 	public void setInvokingState(int invokingState) {
 		this.invokingState = invokingState;
 	}
 
-	@Override
 	public void setParent(RuleContext parent) {
 		this.parent = parent;
 	}

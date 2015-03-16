@@ -34,7 +34,7 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.LexerInterpreter;
 import org.antlr.v4.runtime.ParserInterpreter;
-import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.atn.DecisionInfo;
 import org.antlr.v4.tool.Grammar;
 import org.antlr.v4.tool.LexerGrammar;
@@ -266,7 +266,7 @@ public class TestParserProfiler extends BaseTest {
 			if ( r==null ) {
 				return parser.getParseInfo().getDecisionInfo();
 			}
-			ParserRuleContext t = parser.parse(r.index);
+			RuleContext t = parser.parse(r.index);
 //			try {
 //				Utils.waitForClose(t.inspect(parser).get());
 //			}

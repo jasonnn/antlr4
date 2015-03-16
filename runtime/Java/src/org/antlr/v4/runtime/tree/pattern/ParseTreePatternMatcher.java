@@ -314,9 +314,9 @@ public class ParseTreePatternMatcher {
 			return mismatchedNode;
 		}
 
-		if ( tree instanceof ParserRuleContext && patternTree instanceof ParserRuleContext) {
-			ParserRuleContext r1 = (ParserRuleContext)tree;
-			ParserRuleContext r2 = (ParserRuleContext)patternTree;
+		if ( tree instanceof RuleContext && patternTree instanceof RuleContext) {
+			RuleContext r1 = (RuleContext)tree;
+			RuleContext r2 = (RuleContext)patternTree;
 			ParseTree mismatchedNode = null;
 			// (expr ...) and <expr>
 			RuleTagToken ruleTagToken = getRuleTagToken(r2);

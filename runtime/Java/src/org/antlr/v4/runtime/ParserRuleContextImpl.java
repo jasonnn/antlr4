@@ -347,7 +347,7 @@ public class ParserRuleContextImpl extends AbstractRuleContext implements RuleCo
 
 	@Override
 	public String toString() {
-		return toString((List<String>)null, (RuleContext)null);
+		return toString((List<String>)null, null);
 	}
 
 	public final String toString(Recognizer<?,?> recog) {

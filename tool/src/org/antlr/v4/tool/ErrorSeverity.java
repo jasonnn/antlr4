@@ -63,6 +63,6 @@ public enum ErrorSeverity {
      *
      * @param text The human readable string representing the serverity level
      */
-    private ErrorSeverity(String text) { this.text = text; }
+    ErrorSeverity(String text) { this.text = text; }
 }
 

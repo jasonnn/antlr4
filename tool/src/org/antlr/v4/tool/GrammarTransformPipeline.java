@@ -31,11 +31,7 @@
 package org.antlr.v4.tool;
 
 import org.antlr.runtime.CommonToken;
-import org.antlr.runtime.tree.CommonTree;
-import org.antlr.runtime.tree.CommonTreeNodeStream;
-import org.antlr.runtime.tree.Tree;
-import org.antlr.runtime.tree.TreeVisitor;
-import org.antlr.runtime.tree.TreeVisitorAction;
+import org.antlr.runtime.tree.*;
 import org.antlr.v4.Tool;
 import org.antlr.v4.analysis.LeftRecursiveRuleTransformer;
 import org.antlr.v4.parse.ANTLRParser;
@@ -44,20 +40,9 @@ import org.antlr.v4.parse.GrammarASTAdaptor;
 import org.antlr.v4.parse.GrammarToken;
 import org.antlr.v4.runtime.misc.DoubleKeyMap;
 import org.antlr.v4.runtime.misc.Pair;
-import org.antlr.v4.tool.ast.AltAST;
-import org.antlr.v4.tool.ast.BlockAST;
-import org.antlr.v4.tool.ast.GrammarAST;
-import org.antlr.v4.tool.ast.GrammarASTWithOptions;
-import org.antlr.v4.tool.ast.GrammarRootAST;
-import org.antlr.v4.tool.ast.RuleAST;
-import org.antlr.v4.tool.ast.TerminalAST;
+import org.antlr.v4.tool.ast.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /** Handle left-recursion and block-set transforms */
 public class GrammarTransformPipeline {
@@ -326,11 +311,13 @@ public class GrammarTransformPipeline {
 	 *                in combined AST.  Anything cut out is dup'd before
 	 *                adding to lexer to avoid "who's ur daddy" issues
 	 */
+	@SuppressWarnings("SuspiciousToArrayCall")
 	public GrammarRootAST extractImplicitLexer(Grammar combinedGrammar) {
 		GrammarRootAST combinedAST = combinedGrammar.ast;
 		//tool.log("grammar", "before="+combinedAST.toStringTree());
 		GrammarASTAdaptor adaptor = new GrammarASTAdaptor(combinedAST.token.getInputStream());
-		GrammarAST[] elements = combinedAST.getChildren().toArray(new GrammarAST[0]);
+		List<?> combinedChildren = combinedAST.getChildren();
+		GrammarAST[] elements = combinedChildren.toArray(new GrammarAST[combinedChildren.size()]);
 
 		// MAKE A GRAMMAR ROOT and ID
 		String lexerName = combinedAST.getChild(0).getText()+"Lexer";
@@ -346,7 +333,8 @@ public class GrammarTransformPipeline {
 		if ( optionsRoot!=null && optionsRoot.getChildCount()!=0 ) {
 			GrammarAST lexerOptionsRoot = (GrammarAST)adaptor.dupNode(optionsRoot);
 			lexerAST.addChild(lexerOptionsRoot);
-			GrammarAST[] options = optionsRoot.getChildren().toArray(new GrammarAST[0]);
+			List<?> rootChildren = optionsRoot.getChildren();
+			GrammarAST[] options = rootChildren.toArray(new GrammarAST[rootChildren.size()]);
 			for (GrammarAST o : options) {
 				String optionName = o.getChild(0).getText();
 				if ( Grammar.lexerOptions.contains(optionName) &&
@@ -386,7 +374,8 @@ public class GrammarTransformPipeline {
 		List<GrammarAST> rulesWeMoved = new ArrayList<GrammarAST>();
 		GrammarASTWithOptions[] rules;
 		if (combinedRulesRoot.getChildCount() > 0) {
-			rules = combinedRulesRoot.getChildren().toArray(new GrammarASTWithOptions[0]);
+			List<?> combinedRootChildren = combinedRulesRoot.getChildren();
+			rules = combinedRootChildren.toArray(new GrammarASTWithOptions[combinedRootChildren.size()]);
 		}
 		else {
 			rules = new GrammarASTWithOptions[0];

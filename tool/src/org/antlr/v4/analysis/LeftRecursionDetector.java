@@ -102,7 +102,7 @@ public class LeftRecursionDetector {
 			if ( t instanceof RuleTransition ) {
 				RuleTransition rt = (RuleTransition) t;
 				Rule r = g.getRule(rt.ruleIndex);
-				if ( rulesVisitedPerRuleCheck.contains((RuleStartState)t.target) ) {
+				if ( rulesVisitedPerRuleCheck.contains(t.target) ) {
 					addRulesToCycle(enclosingRule, r);
 				}
 				else {
@@ -111,7 +111,7 @@ public class LeftRecursionDetector {
 					// send new visitedStates set per rule invocation
 					boolean nullable = check(r, t.target, new HashSet<ATNState>());
 					// we're back from visiting that rule
-					rulesVisitedPerRuleCheck.remove((RuleStartState)t.target);
+					rulesVisitedPerRuleCheck.remove(t.target);
 					if ( nullable ) {
 						stateReachesStopState |= check(enclosingRule, rt.followState, visitedStates);
 					}

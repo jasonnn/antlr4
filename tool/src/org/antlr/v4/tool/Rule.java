@@ -31,20 +31,10 @@
 package org.antlr.v4.tool;
 
 import org.antlr.v4.runtime.misc.Pair;
-import org.antlr.v4.tool.ast.ActionAST;
-import org.antlr.v4.tool.ast.AltAST;
-import org.antlr.v4.tool.ast.GrammarAST;
-import org.antlr.v4.tool.ast.PredAST;
-import org.antlr.v4.tool.ast.RuleAST;
+import org.antlr.v4.tool.ast.*;
 import org.stringtemplate.v4.misc.MultiMap;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class Rule implements AttributeResolver {
 	/** Rule refs have a predefined set of attributes as well as
@@ -298,14 +288,12 @@ public class Rule implements AttributeResolver {
 	@Override
 	public boolean resolvesToToken(String x, ActionAST node) {
 		LabelElementPair anyLabelDef = getAnyLabelDef(x);
-		if ( anyLabelDef!=null && anyLabelDef.type==LabelType.TOKEN_LABEL ) return true;
-		return false;
+		return anyLabelDef != null && anyLabelDef.type == LabelType.TOKEN_LABEL;
 	}
 
 	@Override
 	public boolean resolvesToAttributeDict(String x, ActionAST node) {
-		if ( resolvesToToken(x, node) ) return true;
-		return false;
+		return resolvesToToken(x, node);
 	}
 
 	public Rule resolveToRule(String x) {

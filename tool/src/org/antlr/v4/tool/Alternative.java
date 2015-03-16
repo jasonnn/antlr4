@@ -82,8 +82,7 @@ public class Alternative implements AttributeResolver {
 	public boolean resolvesToToken(String x, ActionAST node) {
 		if ( tokenRefs.get(x)!=null ) return true;
 		LabelElementPair anyLabelDef = getAnyLabelDef(x);
-		if ( anyLabelDef!=null && anyLabelDef.type==LabelType.TOKEN_LABEL ) return true;
-		return false;
+		return anyLabelDef != null && anyLabelDef.type == LabelType.TOKEN_LABEL;
 	}
 
 	@Override
@@ -91,8 +90,7 @@ public class Alternative implements AttributeResolver {
 		if ( resolvesToToken(x, node) ) return true;
         if ( ruleRefs.get(x)!=null ) return true; // rule ref in this alt?
         LabelElementPair anyLabelDef = getAnyLabelDef(x);
-        if ( anyLabelDef!=null && anyLabelDef.type==LabelType.RULE_LABEL ) return true;
-		return false;
+		return anyLabelDef != null && anyLabelDef.type == LabelType.RULE_LABEL;
 	}
 
 	/**  $x		Attribute: rule arguments, return values, predefined rule prop.

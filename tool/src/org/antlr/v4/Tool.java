@@ -30,12 +30,7 @@
 
 package org.antlr.v4;
 
-import org.antlr.runtime.ANTLRFileStream;
-import org.antlr.runtime.ANTLRStringStream;
-import org.antlr.runtime.CharStream;
-import org.antlr.runtime.CommonTokenStream;
-import org.antlr.runtime.ParserRuleReturnScope;
-import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.*;
 import org.antlr.v4.analysis.AnalysisPipeline;
 import org.antlr.v4.automata.ATNFactory;
 import org.antlr.v4.automata.LexerATNFactory;
@@ -43,48 +38,17 @@ import org.antlr.v4.automata.ParserATNFactory;
 import org.antlr.v4.codegen.CodeGenPipeline;
 import org.antlr.v4.codegen.CodeGenerator;
 import org.antlr.v4.misc.Graph;
-import org.antlr.v4.parse.ANTLRParser;
-import org.antlr.v4.parse.GrammarASTAdaptor;
-import org.antlr.v4.parse.GrammarTreeVisitor;
-import org.antlr.v4.parse.ToolANTLRLexer;
-import org.antlr.v4.parse.ToolANTLRParser;
-import org.antlr.v4.parse.v3TreeGrammarException;
+import org.antlr.v4.parse.*;
 import org.antlr.v4.runtime.RuntimeMetaData;
 import org.antlr.v4.runtime.misc.LogManager;
 import org.antlr.v4.semantics.SemanticPipeline;
-import org.antlr.v4.tool.ANTLRMessage;
-import org.antlr.v4.tool.ANTLRToolListener;
-import org.antlr.v4.tool.BuildDependencyGenerator;
-import org.antlr.v4.tool.DOTGenerator;
-import org.antlr.v4.tool.DefaultToolListener;
-import org.antlr.v4.tool.ErrorManager;
-import org.antlr.v4.tool.ErrorType;
-import org.antlr.v4.tool.Grammar;
-import org.antlr.v4.tool.GrammarTransformPipeline;
-import org.antlr.v4.tool.LexerGrammar;
-import org.antlr.v4.tool.Rule;
-import org.antlr.v4.tool.ast.ActionAST;
-import org.antlr.v4.tool.ast.GrammarAST;
-import org.antlr.v4.tool.ast.GrammarASTErrorNode;
-import org.antlr.v4.tool.ast.GrammarRootAST;
-import org.antlr.v4.tool.ast.RuleAST;
-import org.antlr.v4.tool.ast.TerminalAST;
+import org.antlr.v4.tool.*;
+import org.antlr.v4.tool.ast.*;
 import org.stringtemplate.v4.STGroup;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.*;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Tool {
@@ -101,7 +65,7 @@ public class Tool {
 	public static final List<String> ALL_GRAMMAR_EXTENSIONS =
 		Collections.unmodifiableList(Arrays.asList(GRAMMAR_EXTENSION, LEGACY_GRAMMAR_EXTENSION));
 
-	public static enum OptionArgType { NONE, STRING } // NONE implies boolean
+	public enum OptionArgType { NONE, STRING } // NONE implies boolean
 	public static class Option {
 		String fieldName;
 		String name;

@@ -61,7 +61,7 @@ import java.util.Map;
  *  our pattern.
  */
 public class LeftRecursiveRuleAnalyzer extends LeftRecursiveRuleWalker {
-	public static enum ASSOC { left, right }
+	public enum ASSOC { left, right }
 
 	public Tool tool;
 	public String ruleName;

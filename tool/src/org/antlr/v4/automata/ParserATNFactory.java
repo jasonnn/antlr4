@@ -753,11 +753,8 @@ public class ParserATNFactory implements ATNFactory {
 	public ATNState newState() { return newState(null); }
 
 	public boolean expectNonGreedy(BlockAST blkAST) {
-		if ( blockHasWildcardAlt(blkAST) ) {
-			return true;
-		}
+		return blockHasWildcardAlt(blkAST);
 
-		return false;
 	}
 
 	/**

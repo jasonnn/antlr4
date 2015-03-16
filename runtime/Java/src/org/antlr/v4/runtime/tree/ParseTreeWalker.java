@@ -30,8 +30,8 @@
 
 package org.antlr.v4.runtime.tree;
 
-import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.AbstractRuleContext;
+import org.antlr.v4.runtime.RuleContext;
 
 public class ParseTreeWalker {
     public static final ParseTreeWalker DEFAULT = new ParseTreeWalker();
@@ -61,13 +61,13 @@ public class ParseTreeWalker {
 	 * the rule specific. We to them in reverse order upon finishing the node.
 	 */
     protected void enterRule(ParseTreeListener listener, RuleNode r) {
-		RuleContext ctx = (RuleContext)r.getRuleContext();
+		RuleContext ctx = r.getRuleContext();
 		listener.enterEveryRule(ctx);
 		ctx.enterRule(listener);
     }
 
     protected void exitRule(ParseTreeListener listener, RuleNode r) {
-		RuleContext ctx = (RuleContext)r.getRuleContext();
+		RuleContext ctx = r.getRuleContext();
 		ctx.exitRule(listener);
 		listener.exitEveryRule(ctx);
     }

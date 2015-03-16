@@ -130,7 +130,7 @@ loop:
 					throw new IllegalArgumentException("Unknowth path element "+el);
 			}
 		}
-		return elements.toArray(new XPathElement[0]);
+		return elements.toArray(new XPathElement[elements.size()]);
 	}
 
 	/**

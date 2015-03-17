@@ -45,15 +45,15 @@ public class FailedPredicateException extends RecognitionException {
 	private final int predicateIndex;
 	private final String predicate;
 
-	public FailedPredicateException(IParser recognizer) {
+	public FailedPredicateException(Parser recognizer) {
 		this(recognizer, null);
 	}
 
-	public FailedPredicateException(IParser recognizer, String predicate) {
+	public FailedPredicateException(Parser recognizer, String predicate) {
 		this(recognizer, predicate, null);
 	}
 
-	public FailedPredicateException(IParser recognizer,
+	public FailedPredicateException(Parser recognizer,
 									String predicate,
 									String message)
 	{

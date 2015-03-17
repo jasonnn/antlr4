@@ -1,11 +1,6 @@
 package org.antlr.v4.test.tool;
 
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.LexerInterpreter;
-import org.antlr.v4.runtime.Parser;
-import org.antlr.v4.runtime.ParserInterpreter;
-import org.antlr.v4.runtime.RuleContext;
+import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.atn.ATNState;
 import org.antlr.v4.runtime.atn.AmbiguityInfo;
 import org.antlr.v4.runtime.atn.BasicBlockStartState;
@@ -226,7 +221,7 @@ public class TestAmbigParseTrees {
 		assertEquals(1, ambiguities.size());
 		AmbiguityInfo ambiguityInfo = ambiguities.get(0);
 
-		List<RuleContext> ambiguousParseTrees = Parser.getAmbiguousParseTrees(parser, ambiguityInfo, ruleIndex);
+		List<RuleContext> ambiguousParseTrees = AbstractParser.getAmbiguousParseTrees(parser, ambiguityInfo, ruleIndex);
 		assertEquals(expectedAmbigAlts, ambiguityInfo.ambigAlts.toString());
 
 		assertEquals(ambiguityInfo.ambigAlts.cardinality(), ambiguousParseTrees.size());

@@ -43,7 +43,7 @@ import java.util.BitSet;
  */
 public class BaseErrorListener implements ANTLRErrorListener {
 	@Override
-	public void syntaxError(IRecognizer<?, ?> IRecognizer,
+	public void syntaxError(Recognizer<?, ?> IRecognizer,
 							Object offendingSymbol,
 							int line,
 							int charPositionInLine,
@@ -53,7 +53,7 @@ public class BaseErrorListener implements ANTLRErrorListener {
 	}
 
 	@Override
-	public void reportAmbiguity(IParser recognizer,
+	public void reportAmbiguity(Parser recognizer,
 								DFA dfa,
 								int startIndex,
 								int stopIndex,
@@ -64,7 +64,7 @@ public class BaseErrorListener implements ANTLRErrorListener {
 	}
 
 	@Override
-	public void reportAttemptingFullContext(IParser recognizer,
+	public void reportAttemptingFullContext(Parser recognizer,
 											DFA dfa,
 											int startIndex,
 											int stopIndex,
@@ -74,7 +74,7 @@ public class BaseErrorListener implements ANTLRErrorListener {
 	}
 
 	@Override
-	public void reportContextSensitivity(IParser recognizer,
+	public void reportContextSensitivity(Parser recognizer,
 										 DFA dfa,
 										 int startIndex,
 										 int stopIndex,

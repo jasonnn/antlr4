@@ -84,7 +84,7 @@ public class DiagnosticErrorListener extends BaseErrorListener {
 	}
 
 	@Override
-	public void reportAmbiguity(IParser recognizer,
+	public void reportAmbiguity(Parser recognizer,
 								DFA dfa,
 								int startIndex,
 								int stopIndex,
@@ -105,7 +105,7 @@ public class DiagnosticErrorListener extends BaseErrorListener {
 	}
 
 	@Override
-	public void reportAttemptingFullContext(IParser recognizer,
+	public void reportAttemptingFullContext(Parser recognizer,
 											DFA dfa,
 											int startIndex,
 											int stopIndex,
@@ -120,7 +120,7 @@ public class DiagnosticErrorListener extends BaseErrorListener {
 	}
 
 	@Override
-	public void reportContextSensitivity(IParser recognizer,
+	public void reportContextSensitivity(Parser recognizer,
 										 DFA dfa,
 										 int startIndex,
 										 int stopIndex,
@@ -134,7 +134,7 @@ public class DiagnosticErrorListener extends BaseErrorListener {
 		recognizer.notifyErrorListeners(message);
 	}
 
-	protected String getDecisionDescription(IParser recognizer, DFA dfa) {
+	protected String getDecisionDescription(Parser recognizer, DFA dfa) {
 		int decision = dfa.decision;
 		int ruleIndex = dfa.atnStartState.ruleIndex;
 

@@ -43,7 +43,7 @@ import java.util.List;
  *  uses simplified match() and error recovery mechanisms in the interest
  *  of speed.
  */
-public abstract class Lexer extends Recognizer<Integer, LexerATNSimulator>
+public abstract class Lexer extends AbstractRecognizer<Integer, LexerATNSimulator>
 	implements TokenSource
 {
 	public static final int DEFAULT_MODE = 0;

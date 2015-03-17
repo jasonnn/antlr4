@@ -566,11 +566,11 @@ public abstract class BaseTest {
 		throws Exception
 	{
 		Pair<Parser, Lexer> pl = getParserAndLexer(input, parserName, lexerName);
-		IParser parser = pl.a;
+		Parser parser = pl.a;
 		return execStartRule(startRuleName, parser);
 	}
 
-	public ParseTree execStartRule(String startRuleName, IParser parser)
+	public ParseTree execStartRule(String startRuleName, Parser parser)
 		throws IllegalAccessException, InvocationTargetException,
 			   NoSuchMethodException
 	{

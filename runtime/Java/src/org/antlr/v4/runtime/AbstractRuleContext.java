@@ -169,7 +169,7 @@ public abstract class AbstractRuleContext implements RuleNode {
 	public <T> T accept(ParseTreeVisitor<? extends T> visitor) { return visitor.visitChildren(this); }
 
 	/** Call this method to view a parse tree in a dialog box visually. */
-	public Future<JDialog> inspect(IParser parser) {
+	public Future<JDialog> inspect(Parser parser) {
 		List<String> ruleNames = parser != null ? Arrays.asList(parser.getRuleNames()) : null;
 		return inspect(ruleNames);
 	}
@@ -180,7 +180,7 @@ public abstract class AbstractRuleContext implements RuleNode {
 	}
 
 	/** Save this tree in a postscript file */
-	public void save(IParser parser, String fileName)
+	public void save(Parser parser, String fileName)
 		throws IOException, PrintException
 	{
 		List<String> ruleNames = parser != null ? Arrays.asList(parser.getRuleNames()) : null;
@@ -188,7 +188,7 @@ public abstract class AbstractRuleContext implements RuleNode {
 	}
 
 	/** Save this tree in a postscript file using a particular font name and size */
-	public void save(IParser parser, String fileName,
+	public void save(Parser parser, String fileName,
 					 String fontName, int fontSize)
 		throws IOException
 	{
@@ -216,7 +216,7 @@ public abstract class AbstractRuleContext implements RuleNode {
 	 *  We have to know the recognizer so we can get rule names.
 	 */
 	@Override
-	public String toStringTree(IParser recog) {
+	public String toStringTree(Parser recog) {
 		return Trees.toStringTree(this, recog);
 	}
 

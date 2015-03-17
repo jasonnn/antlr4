@@ -337,7 +337,7 @@ public class TestPerformance extends BaseTest {
 
     private static final Lexer[] sharedLexers = new Lexer[NUMBER_OF_THREADS];
 
-    private static final IParser[] sharedParsers = new IParser[NUMBER_OF_THREADS];
+    private static final Parser[] sharedParsers = new Parser[NUMBER_OF_THREADS];
 
     private static final ParseTreeListener[] sharedListeners = new ParseTreeListener[NUMBER_OF_THREADS];
 
@@ -919,7 +919,7 @@ public class TestPerformance extends BaseTest {
 
 		if (RUN_PARSER && sharedParsers.length > 0) {
 			int index = FILE_GRANULARITY ? 0 : ((NumberedThread)Thread.currentThread()).getThreadNumber();
-			IParser parser = sharedParsers[index];
+			Parser parser = sharedParsers[index];
             // make sure the individual DFAState objects actually have unique ATNConfig arrays
             final ParserATNSimulator interpreter = parser.getInterpreter();
             final DFA[] decisionToDFA = interpreter.decisionToDFA;
@@ -1210,11 +1210,11 @@ public class TestPerformance extends BaseTest {
                         }
 
 						final long parseStartTime = System.nanoTime();
-						IParser parser = sharedParsers[thread];
+						Parser parser = sharedParsers[thread];
                         if (REUSE_PARSER && parser != null) {
                             parser.setInputStream(tokens);
                         } else {
-							IParser previousParser = parser;
+							Parser previousParser = parser;
 
 							if (USE_PARSER_INTERPRETER) {
 								Parser referenceParser = parserCtor.newInstance(tokens);
@@ -1295,10 +1295,10 @@ public class TestPerformance extends BaseTest {
 							if (REUSE_PARSER && parser != null) {
 								parser.setInputStream(tokens);
 							} else {
-								IParser previousParser = parser;
+								Parser previousParser = parser;
 
 								if (USE_PARSER_INTERPRETER) {
-									IParser referenceParser = parserCtor.newInstance(tokens);
+									Parser referenceParser = parserCtor.newInstance(tokens);
 									parser = new ParserInterpreter(referenceParser.getGrammarFileName(), referenceParser.getVocabulary(), Arrays.asList(referenceParser.getRuleNames()), referenceParser.getATN(), tokens);
 								}
 								else {
@@ -1384,7 +1384,7 @@ public class TestPerformance extends BaseTest {
 		public final long[] parserComputedTransitions;
 		public final long[] parserFullContextTransitions;
 
-		public FileParseResult(String sourceName, int checksum, ParseTree parseTree, int tokenCount, long startTime, Lexer lexer, IParser parser) {
+		public FileParseResult(String sourceName, int checksum, ParseTree parseTree, int tokenCount, long startTime, Lexer lexer, Parser parser) {
 			this.sourceName = sourceName;
 			this.checksum = checksum;
 			this.parseTree = parseTree;
@@ -1501,7 +1501,7 @@ public class TestPerformance extends BaseTest {
 			fullContextTransitions = new long[atn.decisionToState.size()];
 		}
 
-		public StatisticsParserATNSimulator(IParser parser, ATN atn, DFA[] decisionToDFA, PredictionContextCache sharedContextCache) {
+		public StatisticsParserATNSimulator(Parser parser, ATN atn, DFA[] decisionToDFA, PredictionContextCache sharedContextCache) {
 			super(parser, atn, decisionToDFA, sharedContextCache);
 			decisionInvocations = new long[atn.decisionToState.size()];
 			fullContextFallback = new long[atn.decisionToState.size()];
@@ -1557,7 +1557,7 @@ public class TestPerformance extends BaseTest {
 		public static DescriptiveErrorListener INSTANCE = new DescriptiveErrorListener();
 
 		@Override
-		public void syntaxError(IRecognizer<?, ?> IRecognizer, Object offendingSymbol,
+		public void syntaxError(Recognizer<?, ?> IRecognizer, Object offendingSymbol,
 								int line, int charPositionInLine,
 								String msg, RecognitionException e)
 		{
@@ -1580,7 +1580,7 @@ public class TestPerformance extends BaseTest {
 		private ATNConfigSet _sllConfigs;
 
 		@Override
-		public void reportAmbiguity(IParser recognizer, DFA dfa, int startIndex, int stopIndex, boolean exact, BitSet ambigAlts, ATNConfigSet configs) {
+		public void reportAmbiguity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, boolean exact, BitSet ambigAlts, ATNConfigSet configs) {
 			if (COMPUTE_TRANSITION_STATS && DETAILED_DFA_STATE_STATS) {
 				BitSet sllPredictions = getConflictingAlts(_sllConflict, _sllConfigs);
 				int sllPrediction = sllPredictions.nextSetBit(0);
@@ -1604,7 +1604,7 @@ public class TestPerformance extends BaseTest {
 		}
 
 		@Override
-		public void reportAttemptingFullContext(IParser recognizer, DFA dfa, int startIndex, int stopIndex, BitSet conflictingAlts, ATNConfigSet configs) {
+		public void reportAttemptingFullContext(Parser recognizer, DFA dfa, int startIndex, int stopIndex, BitSet conflictingAlts, ATNConfigSet configs) {
 			_sllConflict = conflictingAlts;
 			_sllConfigs = configs;
 			if (!REPORT_FULL_CONTEXT) {
@@ -1621,7 +1621,7 @@ public class TestPerformance extends BaseTest {
 		}
 
 		@Override
-		public void reportContextSensitivity(IParser recognizer, DFA dfa, int startIndex, int stopIndex, int prediction, ATNConfigSet configs) {
+		public void reportContextSensitivity(Parser recognizer, DFA dfa, int startIndex, int stopIndex, int prediction, ATNConfigSet configs) {
 			if (COMPUTE_TRANSITION_STATS && DETAILED_DFA_STATE_STATS) {
 				BitSet sllPredictions = getConflictingAlts(_sllConflict, _sllConfigs);
 				int sllPrediction = sllPredictions.nextSetBit(0);

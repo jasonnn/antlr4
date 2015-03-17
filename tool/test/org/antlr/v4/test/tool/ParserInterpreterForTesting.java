@@ -31,7 +31,7 @@
 package org.antlr.v4.test.tool;
 
 import org.antlr.v4.Tool;
-import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.AbstractParser;
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.TokenStream;
 import org.antlr.v4.runtime.atn.*;
@@ -39,7 +39,7 @@ import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.tool.Grammar;
 
 public class ParserInterpreterForTesting {
-	public static class DummyParser extends Parser {
+	public static class DummyParser extends AbstractParser {
 		public final ATN atn;
 		public final DFA[] decisionToDFA; // not shared for interp
 		public final PredictionContextCache sharedContextCache =

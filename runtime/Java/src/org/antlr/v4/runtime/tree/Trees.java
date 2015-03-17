@@ -30,7 +30,7 @@
 
 package org.antlr.v4.runtime.tree;
 
-import org.antlr.v4.runtime.IParser;
+import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.misc.Utils;
@@ -94,7 +94,7 @@ public class Trees {
 	 *  node payloads to get the text for the nodes.  Detect
 	 *  parse trees and extract data appropriately.
 	 */
-	public static String toStringTree(Tree t, IParser recog) {
+	public static String toStringTree(Tree t, Parser recog) {
 		String[] ruleNames = recog != null ? recog.getRuleNames() : null;
 		List<String> ruleNamesList = ruleNames != null ? Arrays.asList(ruleNames) : null;
 		return toStringTree(t, ruleNamesList);
@@ -120,7 +120,7 @@ public class Trees {
 		return buf.toString();
 	}
 
-	public static String getNodeText(Tree t, IParser recog) {
+	public static String getNodeText(Tree t, Parser recog) {
 		String[] ruleNames = recog != null ? recog.getRuleNames() : null;
 		List<String> ruleNamesList = ruleNames != null ? Arrays.asList(ruleNames) : null;
 		return getNodeText(t, ruleNamesList);

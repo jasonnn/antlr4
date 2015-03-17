@@ -52,7 +52,7 @@ import java.util.Deque;
  *
  *  See TestParserInterpreter for examples.
  */
-public class ParserInterpreter extends Parser {
+public class ParserInterpreter extends AbstractParser {
 	protected final String grammarFileName;
 	protected final ATN atn;
 	/** This identifies StarLoopEntryState's that begin the (...)*

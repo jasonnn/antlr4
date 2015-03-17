@@ -165,9 +165,6 @@ public class TestRig {
 		if ( !startRuleName.equals(LEXER_START_RULE_NAME) ) {
 			String parserName = grammarName+"Parser";
 			parserClass = cl.loadClass(parserName).asSubclass(Parser.class);
-			if ( parserClass==null ) {
-				System.err.println("Can't load "+parserName);
-			}
 			Constructor<? extends Parser> parserCtor = parserClass.getConstructor(TokenStream.class);
 			parser = parserCtor.newInstance((TokenStream)null);
 		}
@@ -205,7 +202,7 @@ public class TestRig {
 		}
 	}
 
-	protected void process(Lexer lexer, Class<? extends IParser> parserClass, Parser parser, InputStream is, Reader r) throws IOException, IllegalAccessException, InvocationTargetException, PrintException {
+	protected void process(Lexer lexer, Class<? extends Parser> parserClass, Parser parser, InputStream is, Reader r) throws IOException, IllegalAccessException, InvocationTargetException, PrintException {
 		try {
 			ANTLRInputStream input = new ANTLRInputStream(r);
 			lexer.setInputStream(input);
@@ -234,7 +231,7 @@ public class TestRig {
 				parser.getInterpreter().setPredictionMode(PredictionMode.SLL);
 			}
 
-			parser.setTokenStream(tokens);
+			parser.setInputStream(tokens);
 			parser.setTrace(trace);
 
 			try {

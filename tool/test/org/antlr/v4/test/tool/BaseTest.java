@@ -593,7 +593,7 @@ public abstract class BaseTest {
 		throws Exception
 	{
 		final Class<? extends Lexer> lexerClass = loadLexerClassFromTempDir(lexerName);
-		final Class<? extends IParser> parserClass = loadParserClassFromTempDir(parserName);
+		final Class<? extends Parser> parserClass = loadParserClassFromTempDir(parserName);
 
 		ANTLRInputStream in = new ANTLRInputStream(new StringReader(input));
 

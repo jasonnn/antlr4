@@ -30,7 +30,7 @@
 
 package org.antlr.v4.runtime.tree;
 
-import org.antlr.v4.runtime.IParser;
+import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.AbstractRuleContext;
 import org.antlr.v4.runtime.Token;
 
@@ -60,5 +60,5 @@ public interface ParseTree extends SyntaxTree {
 	/** Specialize toStringTree so that it can print out more information
 	 * 	based upon the parser.
 	 */
-	String toStringTree(IParser parser);
+	String toStringTree(Parser parser);
 }

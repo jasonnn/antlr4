@@ -1,287 +1,88 @@
-/*
- * [The "BSD license"]
- *  Copyright (c) 2012 Terence Parr
- *  Copyright (c) 2012 Sam Harwell
- *  All rights reserved.
- *
- *  Redistribution and use in source and binary forms, with or without
- *  modification, are permitted provided that the following conditions
- *  are met:
- *
- *  1. Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer.
- *  2. Redistributions in binary form must reproduce the above copyright
- *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution.
- *  3. The name of the author may not be used to endorse or promote products
- *     derived from this software without specific prior written permission.
- *
- *  THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
- *  IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- *  OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
- *  IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT,
- *  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
- *  NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
- *  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
- *  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
- *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
- *  THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-
 package org.antlr.v4.runtime;
 
+import org.antlr.v4.runtime.atn.ATN;
 import org.antlr.v4.runtime.atn.ATNSimulator;
 import org.antlr.v4.runtime.atn.ParseInfo;
-import org.antlr.v4.runtime.misc.Utils;
 
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.List;
+import java.util.Map;
 
-public abstract class Recognizer<Symbol, ATNInterpreter extends ATNSimulator> implements IRecognizer<Symbol,ATNInterpreter>{
-	public static final int EOF=-1;
+/**
+ * Created by jason on 3/16/15.
+ */
+public interface Recognizer<SYMBOL,ATNInterpreter extends ATNSimulator> {
+    /** Used to print out token names like ID during debugging and
+     *  error reporting.  The generated parsers implement a method
+     *  that overrides this to point to their String[] tokenNames.
+     *
+     * @deprecated Use {@link #getVocabulary()} instead.
+     */
+    @Deprecated
+    String[] getTokenNames();
 
-	private static final Map<Vocabulary, Map<String, Integer>> tokenTypeMapCache =
-		new WeakHashMap<Vocabulary, Map<String, Integer>>();
-	private static final Map<String[], Map<String, Integer>> ruleIndexMapCache =
-		new WeakHashMap<String[], Map<String, Integer>>();
+    String[] getRuleNames();
 
+    @SuppressWarnings("deprecation")
+    Vocabulary getVocabulary();
 
-	private List<ANTLRErrorListener> _listeners =
-		new CopyOnWriteArrayList<ANTLRErrorListener>() {{
-			add(ConsoleErrorListener.INSTANCE);
-		}};
+    Map<String, Integer> getTokenTypeMap();
 
-	protected ATNInterpreter _interp;
+    Map<String, Integer> getRuleIndexMap();
 
-	private int _stateNumber = -1;
+    int getTokenType(String tokenName);
 
-	/**
-	 * Get the vocabulary used by the recognizer.
-	 *
-	 * @return A {@link Vocabulary} instance providing information about the
-	 * vocabulary used by the grammar.
-	 */
-	@Override
-	@SuppressWarnings("deprecation")
-	public Vocabulary getVocabulary() {
-		return VocabularyImpl.fromTokenNames(getTokenNames());
-	}
+    String getSerializedATN();
 
-	/**
-	 * Get a map from token names to token types.
-	 *
-	 * <p>Used for XPath and tree pattern compilation.</p>
-	 */
-	@Override
-	public Map<String, Integer> getTokenTypeMap() {
-		Vocabulary vocabulary = getVocabulary();
-		synchronized (tokenTypeMapCache) {
-			Map<String, Integer> result = tokenTypeMapCache.get(vocabulary);
-			if (result == null) {
-				result = new HashMap<String, Integer>();
-				for (int i = 0; i < getATN().maxTokenType; i++) {
-					String literalName = vocabulary.getLiteralName(i);
-					if (literalName != null) {
-						result.put(literalName, i);
-					}
+    /** For debugging and other purposes, might want the grammar name.
+     *  Have ANTLR generate an implementation for this method.
+     */
+    String getGrammarFileName();
 
-					String symbolicName = vocabulary.getSymbolicName(i);
-					if (symbolicName != null) {
-						result.put(symbolicName, i);
-					}
-				}
+    /**
+     * Get the {@link ATN} used by the recognizer for prediction.
+     *
+     * @return The {@link ATN} used by the recognizer for prediction.
+     */
+    ATN getATN();
 
-				result.put("EOF", Token.EOF);
-				result = Collections.unmodifiableMap(result);
-				tokenTypeMapCache.put(vocabulary, result);
-			}
+    ATNInterpreter getInterpreter();
 
-			return result;
-		}
-	}
+    ParseInfo getParseInfo();
 
-	/**
-	 * Get a map from rule names to rule indexes.
-	 *
-	 * <p>Used for XPath and tree pattern compilation.</p>
-	 */
-	@Override
-	public Map<String, Integer> getRuleIndexMap() {
-		String[] ruleNames = getRuleNames();
-		if (ruleNames == null) {
-			throw new UnsupportedOperationException("The current recognizer does not provide a list of rule names.");
-		}
+    void setInterpreter(ATNInterpreter interpreter);
 
-		synchronized (ruleIndexMapCache) {
-			Map<String, Integer> result = ruleIndexMapCache.get(ruleNames);
-			if (result == null) {
-				result = Collections.unmodifiableMap(Utils.toMap(ruleNames));
-				ruleIndexMapCache.put(ruleNames, result);
-			}
+    String getErrorHeader(RecognitionException e);
 
-			return result;
-		}
-	}
+    @Deprecated
+    String getTokenErrorDisplay(Token t);
 
-	@Override
-	public int getTokenType(String tokenName) {
-		Integer ttype = getTokenTypeMap().get(tokenName);
-		if ( ttype!=null ) return ttype;
-		return Token.INVALID_TYPE;
-	}
+    void addErrorListener(ANTLRErrorListener listener);
 
-	/**
-	 * If this recognizer was generated, it will have a serialized ATN
-	 * representation of the grammar.
-	 *
-	 * <p>For interpreters, we don't know their serialized ATN despite having
-	 * created the interpreter from it.</p>
-	 */
-	@Override
-	public String getSerializedATN() {
-		throw new UnsupportedOperationException("there is no serialized ATN");
-	}
+    void removeErrorListener(ANTLRErrorListener listener);
 
-	/**
-	 * Get the ATN interpreter used by the recognizer for prediction.
-	 *
-	 * @return The ATN interpreter used by the recognizer for prediction.
-	 */
-	@Override
-	public ATNInterpreter getInterpreter() {
-		return _interp;
-	}
+    void removeErrorListeners();
 
-	/** If profiling during the parse/lex, this will return DecisionInfo records
-	 *  for each decision in recognizer in a ParseInfo object.
-	 *
-	 * @since 4.3
-	 */
-	@Override
-	public ParseInfo getParseInfo() {
-		return null;
-	}
+    List<? extends ANTLRErrorListener> getErrorListeners();
 
-	/**
-	 * Set the ATN interpreter used by the recognizer for prediction.
-	 *
-	 * @param interpreter The ATN interpreter used by the recognizer for
-	 * prediction.
-	 */
-	@Override
-	public void setInterpreter(ATNInterpreter interpreter) {
-		_interp = interpreter;
-	}
+    ANTLRErrorListener getErrorListenerDispatch();
 
-	/** What is the error header, normally line/character position information? */
-	@Override
-	public String getErrorHeader(RecognitionException e) {
-		int line = e.getOffendingToken().getLine();
-		int charPositionInLine = e.getOffendingToken().getCharPositionInLine();
-		return "line "+line+":"+charPositionInLine;
-	}
+    // subclass needs to override these if there are sempreds or actions
+    // that the ATN interp needs to execute
+    boolean sempred(RuleContext _localctx, int ruleIndex, int actionIndex);
 
-	/** How should a token be displayed in an error message? The default
-	 *  is to display just the text, but during development you might
-	 *  want to have a lot of information spit out.  Override in that case
-	 *  to use t.toString() (which, for CommonToken, dumps everything about
-	 *  the token). This is better than forcing you to override a method in
-	 *  your token objects because you don't have to go modify your lexer
-	 *  so that it creates a new Java type.
-	 *
-	 * @deprecated This method is not called by the ANTLR 4 Runtime. Specific
-	 * implementations of {@link ANTLRErrorStrategy} may provide a similar
-	 * feature when necessary. For example, see
-	 * {@link DefaultErrorStrategy#getTokenErrorDisplay}.
-	 */
-	@Override
-	@Deprecated
-	public String getTokenErrorDisplay(Token t) {
-		if ( t==null ) return "<no token>";
-		String s = t.getText();
-		if ( s==null ) {
-			if ( t.getType()==Token.EOF ) {
-				s = "<EOF>";
-			}
-			else {
-				s = "<"+t.getType()+">";
-			}
-		}
-		s = s.replace("\n","\\n");
-		s = s.replace("\r","\\r");
-		s = s.replace("\t","\\t");
-		return "'"+s+"'";
-	}
+    boolean precpred(RuleContext localctx, int precedence);
 
-	/**
-	 * @exception NullPointerException if {@code listener} is {@code null}.
-	 */
-	@Override
-	public void addErrorListener(ANTLRErrorListener listener) {
-		if (listener == null) {
-			throw new NullPointerException("listener cannot be null.");
-		}
+    void action(RuleContext _localctx, int ruleIndex, int actionIndex);
 
-		_listeners.add(listener);
-	}
+    int getState();
 
-	@Override
-	public void removeErrorListener(ANTLRErrorListener listener) {
-		_listeners.remove(listener);
-	}
+    void setState(int atnState);
 
-	@Override
-	public void removeErrorListeners() {
-		_listeners.clear();
-	}
+    IntStream getInputStream();
 
+    void setInputStream(IntStream input);
 
-	@Override
-	public List<? extends ANTLRErrorListener> getErrorListeners() {
-		return _listeners;
-	}
+    TokenFactory<?> getTokenFactory();
 
-	@Override
-	public ANTLRErrorListener getErrorListenerDispatch() {
-		return new ProxyErrorListener(getErrorListeners());
-	}
-
-	// subclass needs to override these if there are sempreds or actions
-	// that the ATN interp needs to execute
-	@Override
-	public boolean sempred(RuleContext _localctx, int ruleIndex, int actionIndex) {
-		return true;
-	}
-
-	@Override
-	public boolean precpred(RuleContext localctx, int precedence) {
-		return true;
-	}
-
-	@Override
-	public void action(RuleContext _localctx, int ruleIndex, int actionIndex) {
-	}
-
-	@Override
-	public final int getState() {
-		return _stateNumber;
-	}
-
-	/** Indicate that the recognizer has changed internal state that is
-	 *  consistent with the ATN state passed in.  This way we always know
-	 *  where we are in the ATN as the parser goes along. The rule
-	 *  context objects form a stack that lets us see the stack of
-	 *  invoking rules. Combine this and we have complete ATN
-	 *  configuration information.
-	 */
-	@Override
-	public final void setState(int atnState) {
-//		System.err.println("setState "+atnState);
-		_stateNumber = atnState;
-//		if ( traceATNStates ) _ctx.trace(atnState);
-	}
-
-	public abstract IntStream getInputStream();
-
-
+    void setTokenFactory(TokenFactory<?> input);
 }

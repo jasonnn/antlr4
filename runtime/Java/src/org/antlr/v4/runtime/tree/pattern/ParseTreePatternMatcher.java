@@ -119,7 +119,7 @@ public class ParseTreePatternMatcher {
 	/**
 	 * This is the backing field for {@link #getParser()}.
 	 */
-	private final IParser parser;
+	private final Parser parser;
 
 	protected String start = "<";
 	protected String stop = ">";
@@ -131,7 +131,7 @@ public class ParseTreePatternMatcher {
 	 * the tree patterns. The parser is used as a convenient mechanism to get
 	 * the grammar name, plus token, rule names.
 	 */
-	public ParseTreePatternMatcher(Lexer lexer, IParser parser) {
+	public ParseTreePatternMatcher(Lexer lexer, Parser parser) {
 		this.lexer = lexer;
 		this.parser = parser;
 	}
@@ -252,7 +252,7 @@ public class ParseTreePatternMatcher {
 	 * used to parse the pattern into a parse tree.
 	 */
 
-	public IParser getParser() {
+	public Parser getParser() {
 		return parser;
 	}
 

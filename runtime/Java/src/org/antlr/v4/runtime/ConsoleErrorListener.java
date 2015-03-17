@@ -52,7 +52,7 @@ public class ConsoleErrorListener extends BaseErrorListener {
 	 * </pre>
 	 */
 	@Override
-	public void syntaxError(IRecognizer<?, ?> IRecognizer,
+	public void syntaxError(Recognizer<?, ?> IRecognizer,
 							Object offendingSymbol,
 							int line,
 							int charPositionInLine,

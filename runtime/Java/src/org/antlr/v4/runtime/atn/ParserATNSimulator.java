@@ -281,7 +281,7 @@ public class ParserATNSimulator extends ATNSimulator {
 	public static final boolean dfa_debug = false;
 	public static final boolean retry_debug = false;
 
-	protected final IParser parser;
+	protected final Parser parser;
 
 	public final DFA[] decisionToDFA;
 
@@ -312,7 +312,7 @@ public class ParserATNSimulator extends ATNSimulator {
 		this(null, atn, decisionToDFA, sharedContextCache);
 	}
 
-	public ParserATNSimulator(IParser parser, ATN atn,
+	public ParserATNSimulator(Parser parser, ATN atn,
 							  DFA[] decisionToDFA,
 							  PredictionContextCache sharedContextCache)
 	{
@@ -2031,7 +2031,7 @@ public class ParserATNSimulator extends ATNSimulator {
 	/**
 	 * @since 4.3
 	 */
-	public IParser getParser() {
+	public Parser getParser() {
 		return parser;
 	}
 }

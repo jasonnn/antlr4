@@ -30,7 +30,7 @@
 
 package org.antlr.v4.runtime.atn;
 
-import org.antlr.v4.runtime.IRecognizer;
+import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.RuleContext;
 import org.antlr.v4.runtime.AbstractRuleContext;
 import org.antlr.v4.runtime.misc.DoubleKeyMap;
@@ -669,17 +669,17 @@ public abstract class PredictionContext {
 		}
 	}
 
-	public String toString(IRecognizer<?,?> recog) {
+	public String toString(Recognizer<?,?> recog) {
 		return toString();
 //		return toString(recog, ParserRuleContext.EMPTY);
 	}
 
-	public String[] toStrings(IRecognizer<?, ?> IRecognizer, int currentState) {
+	public String[] toStrings(Recognizer<?, ?> IRecognizer, int currentState) {
 		return toStrings(IRecognizer, EMPTY, currentState);
 	}
 
 	// FROM SAM
-	public String[] toStrings(IRecognizer<?, ?> IRecognizer, PredictionContext stop, int currentState) {
+	public String[] toStrings(Recognizer<?, ?> IRecognizer, PredictionContext stop, int currentState) {
 		List<String> result = new ArrayList<String>();
 
 		outer:

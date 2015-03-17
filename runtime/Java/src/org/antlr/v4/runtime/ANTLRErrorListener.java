@@ -73,7 +73,7 @@ public interface ANTLRErrorListener {
 	 *        the parser was able to recover in line without exiting the
 	 *        surrounding rule.
 	 */
-	void syntaxError(IRecognizer<?, ?> IRecognizer,
+	void syntaxError(Recognizer<?, ?> IRecognizer,
 					 Object offendingSymbol,
 					 int line,
 					 int charPositionInLine,
@@ -120,7 +120,7 @@ public interface ANTLRErrorListener {
 	 * @param configs the ATN configuration set where the ambiguity was
 	 * identified
 	 */
-	void reportAmbiguity(IParser recognizer,
+	void reportAmbiguity(Parser recognizer,
 						 DFA dfa,
 						 int startIndex,
 						 int stopIndex,
@@ -151,7 +151,7 @@ public interface ANTLRErrorListener {
 	 * @param configs the ATN configuration set where the SLL conflict was
 	 * detected
 	 */
-	void reportAttemptingFullContext(IParser recognizer,
+	void reportAttemptingFullContext(Parser recognizer,
 									 DFA dfa,
 									 int startIndex,
 									 int stopIndex,
@@ -196,7 +196,7 @@ public interface ANTLRErrorListener {
 	 * @param configs the ATN configuration set where the unambiguous prediction
 	 * was determined
 	 */
-	void reportContextSensitivity(IParser recognizer,
+	void reportContextSensitivity(Parser recognizer,
 								  DFA dfa,
 								  int startIndex,
 								  int stopIndex,

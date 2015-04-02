@@ -65,7 +65,7 @@ public class AntlrTestcase {
     }
 
     protected String tmpdir() {
-        return delegate.getGenPath();
+        return delegate.getWorkingDir();
     }
 
     protected String stderrDuringParse() {
@@ -191,7 +191,7 @@ public class AntlrTestcase {
             ErrorQueue equeue = antlr(fileName, false);
 
             String actual = equeue.toString(true);
-            actual = actual.replace(delegate.getGenPath() + File.separator, "");
+            actual = actual.replace(delegate.getWorkingDir() + File.separator, "");
 //            System.err.println(actual);
 //            String msg = input;
 //            msg = msg.replace("\n", "\\n");

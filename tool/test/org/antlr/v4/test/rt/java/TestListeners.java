@@ -1,11 +1,11 @@
 package org.antlr.v4.test.rt.java;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.hamcrest.Matchers.*;
-
-
 import org.antlr.v4.test.AntlrTestcase;
+import org.junit.Test;
+
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class TestListeners extends AntlrTestcase {
 
@@ -84,7 +84,7 @@ public class TestListeners extends AntlrTestcase {
 	@Test
 	public void testTokenGetters_1() throws Exception {
 		String found = testTokenGetters("1 2");
-		assertEquals("(a 1 2)\n1 2 [1, 2]\n", found);
+		assertEquals("(a 1 2)\n1 2 [1, 2]", found);
 		assertThat(stderrDuringParse(), isEmptyOrNullString());
 	}
 
@@ -137,7 +137,7 @@ public class TestListeners extends AntlrTestcase {
 	@Test
 	public void testRuleGetters_1() throws Exception {
 		String found = testRuleGetters("1 2");
-		assertEquals("(a (b 1) (b 2))\n1 2 1\n", found);
+		assertEquals("(a (b 1) (b 2))\n1 2 1", found);
 		assertThat(stderrDuringParse(), isEmptyOrNullString());
 	}
 
@@ -224,7 +224,7 @@ public class TestListeners extends AntlrTestcase {
 	                  "ID  : [a-z]+ ;\n" +
 	                  "WS : [ \\t\\n]+ -> skip ;";
 		String found = execParser("T.g4", grammar, "TParser", "TLexer", "s", "1(2,3)", false);
-		assertEquals("(e (e 1) ( (eList (e 2) , (e 3)) ))\n1\n2\n3\n1 [13 6]\n", found);
+		assertEquals("(e (e 1) ( (eList (e 2) , (e 3)) ))\n1\n2\n3\n1 [13 6]", found);
 		assertThat(stderrDuringParse(), isEmptyOrNullString());
 	}
 

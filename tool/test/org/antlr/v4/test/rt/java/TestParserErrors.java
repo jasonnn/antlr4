@@ -1,11 +1,11 @@
 package org.antlr.v4.test.rt.java;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.hamcrest.Matchers.*;
-
-
 import org.antlr.v4.test.AntlrTestcase;
+import org.junit.Test;
+
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class TestParserErrors extends AntlrTestcase {
 
@@ -268,7 +268,7 @@ public class TestParserErrors extends AntlrTestcase {
 	                  "a : 'a' {System.out.print('a');};\n" +
 	                  "b : 'b' {System.out.print('b');};";
 		String found = execParser("T.g4", grammar, "TParser", "TLexer", "s", "abab", false);
-		assertEquals("abab\n", found);
+		assertEquals("abab", found);
 		assertThat(stderrDuringParse(), isEmptyOrNullString());
 	}
 

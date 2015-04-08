@@ -1,14 +1,13 @@
 package org.antlr.v4.test.rt.java;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.hamcrest.Matchers.*;
-
-
+import org.antlr.v4.test.AntlrTestcase;
 import org.antlr.v4.test.ErrorQueue;
 import org.antlr.v4.tool.Grammar;
+import org.junit.Test;
 
-import org.antlr.v4.test.AntlrTestcase;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class TestCompositeParsers extends AntlrTestcase {
 
@@ -43,7 +42,7 @@ public class TestCompositeParsers extends AntlrTestcase {
 	                  "s : a ;\n" +
 	                  "WS : (' '|'\\n') -> skip ;";
 		String found = execParser("M.g4", grammar, "MParser", "MLexer", "s", "=a", false);
-		assertEquals("S.a\n", found);
+		assertEquals("S.a", found);
 		assertThat(stderrDuringParse(), isEmptyOrNullString());
 	}
 
@@ -79,7 +78,7 @@ public class TestCompositeParsers extends AntlrTestcase {
 	                  "B : 'b' ; // defines B from inherited token space\n" +
 	                  "WS : (' '|'\\n') -> skip ;";
 		String found = execParser("M.g4", grammar, "MParser", "MLexer", "s", "b", false);
-		assertEquals("S.ab\n", found);
+		assertEquals("S.ab", found);
 		assertThat(stderrDuringParse(), isEmptyOrNullString());
 	}
 
@@ -213,7 +212,7 @@ public class TestCompositeParsers extends AntlrTestcase {
 	                  "b : 'b'|'c';\n" +
 	                  "WS : (' '|'\\n') -> skip ;";
 		String found = execParser("M.g4", grammar, "MParser", "MLexer", "a", "c", false);
-		assertEquals("S.a\n", found);
+		assertEquals("S.a", found);
 		assertThat(stderrDuringParse(), isEmptyOrNullString());
 	}
 
@@ -236,7 +235,7 @@ public class TestCompositeParsers extends AntlrTestcase {
 	                  "INT : '0'..'9'+ ;\n" +
 	                  "WS : (' '|'\\n') -> skip;";
 		String found = execParser("M.g4", grammar, "MParser", "MLexer", "prog", "float x = 3;", false);
-		assertEquals("Decl: floatx=3;\n", found);
+		assertEquals("Decl: floatx=3;", found);
 		assertThat(stderrDuringParse(), isEmptyOrNullString());
 	}
 

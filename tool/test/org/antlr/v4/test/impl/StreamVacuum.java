@@ -1,46 +1,31 @@
 package org.antlr.v4.test.impl;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 
 /**
  * Created by jason on 3/24/15.
  */
-public class StreamVacuum implements Runnable {
+public class StreamVacuum extends Thread {
     StringBuilder buf = new StringBuilder();
-    BufferedReader in;
-    Thread sucker;
+    Reader in;
 
     public StreamVacuum(InputStream in) {
-        this.in = new BufferedReader(new InputStreamReader(in));
-    }
-
-    public void start() {
-        sucker = new Thread(this);
-        sucker.start();
+        this.in = new InputStreamReader(in);
     }
 
     @Override
     public void run() {
         try {
-            String line = in.readLine();
-            while (line != null) {
-                buf.append(line);
-                buf.append('\n');
-                line = in.readLine();
+            int next;
+            while ((next=in.read())!=-1){
+                buf.append((char)next);
             }
         } catch (IOException ioe) {
             System.err.println("can't read output from process");
         }
-    }
-
-    /**
-     * wait for the thread to finish
-     */
-    public void join() throws InterruptedException {
-        sucker.join();
     }
 
     @Override

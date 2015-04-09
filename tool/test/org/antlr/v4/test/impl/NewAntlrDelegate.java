@@ -7,6 +7,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.junit.Assert.assertTrue;
 
@@ -14,6 +16,7 @@ import static org.junit.Assert.assertTrue;
  * Created by jason on 4/8/15.
  */
 public class NewAntlrDelegate extends DefaultTestDelegate {
+    private static final Logger log = Logger.getLogger(NewAntlrDelegate.class.getName());
 
    private static String pkgName(Class<?> c) {
         String name = c.getPackage().getName();
@@ -88,13 +91,17 @@ public class NewAntlrDelegate extends DefaultTestDelegate {
                             String lexerName,
                             String input,
                             boolean showDFA) {
-        boolean success = generateAndBuildRecognizer(grammarFileName,
-                                                     grammarStr,
-                                                     null,
-                                                     lexerName);
-        assertTrue(success);
-        writeLexerTestFile(lexerName, showDFA);
-        compile(LEXER_TEST_FILE_NAME);
+        if(!new File(tmpdir,LEXER_TEST+".class").exists()){
+            log.log(Level.INFO,"generating files for: {0}",grammarFileName);
+            boolean success = generateAndBuildRecognizer(grammarFileName,
+                                                         grammarStr,
+                                                         null,
+                                                         lexerName);
+            assertTrue(success);
+            writeLexerTestFile(lexerName, showDFA);
+            compile(LEXER_TEST_FILE_NAME);
+        }
+
 
         GeneratedLexerTest test = createLexerTestInstance();
 
@@ -119,24 +126,27 @@ public class NewAntlrDelegate extends DefaultTestDelegate {
                              String input,
                              boolean debug,
                              boolean profile) {
-        boolean success = generateAndBuildRecognizer(grammarFileName,
-                                                     grammarStr,
-                                                     parserName,
-                                                     lexerName,
-                                                     "-visitor");
-        assertTrue(success);
+        if(!new File(tmpdir,PARSER_TEST+".class").exists()) {
+            log.log(Level.INFO, "generating files for: {0}", grammarFileName);
+            boolean success = generateAndBuildRecognizer(grammarFileName,
+                                                         grammarStr,
+                                                         parserName,
+                                                         lexerName,
+                                                         "-visitor");
+            assertTrue(success);
 
-        if (parserName == null) {
-            writeLexerTestFile(lexerName, false);
-        } else {
-            writeParserTestFile(parserName,
-                                lexerName,
-                                startRuleName,
-                                debug,
-                                profile);
+            if (parserName == null) {
+                writeLexerTestFile(lexerName, false);
+            } else {
+                writeParserTestFile(parserName,
+                                    lexerName,
+                                    startRuleName,
+                                    debug,
+                                    profile);
+            }
+
+            compile(PARSER_TEST_FILE_NAME);
         }
-
-        compile(PARSER_TEST_FILE_NAME);
 
         GeneratedParserTest test = createParserTestInstance();
         test.debug = debug;

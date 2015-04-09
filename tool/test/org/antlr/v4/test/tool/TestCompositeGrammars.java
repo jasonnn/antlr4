@@ -408,7 +408,7 @@ public class TestCompositeGrammars extends AntlrTestcase {
 			"grammar NewJava;\n" +
 			"import Java;\n";
 
-		System.out.println("dir "+tmpdir());
+		//System.out.println("dir "+tmpdir());
 		mkdir(tmpdir());
 		writeFile(tmpdir(), "Java.g4", slave);
 		String found = execParser("NewJava.g4", master, "NewJavaParser", "NewJavaLexer", "compilationUnit", "package Foo;", debug);
@@ -436,7 +436,7 @@ public class TestCompositeGrammars extends AntlrTestcase {
 			"import Java;\n" +
 			"s : e ;\n";
 
-		System.out.println("dir "+tmpdir());
+		//System.out.println("dir "+tmpdir());
 		mkdir(tmpdir());
 		writeFile(tmpdir(), "Java.g4", slave);
 		String found = execParser("T.g4", master, "TParser", "TLexer", "s", "a=b", debug);

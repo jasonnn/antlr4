@@ -1963,7 +1963,7 @@ public class TestPerformance extends AntlrTestcase {
 			"\n" +
 			"rule_%d_%d : EOF;\n";
 
-		System.out.println("dir "+tmpdir());
+		//System.out.println("dir "+tmpdir());
 		mkdir(tmpdir());
 
 		long startTime = System.nanoTime();

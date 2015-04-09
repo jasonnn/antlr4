@@ -60,7 +60,7 @@ public class TestToolSyntaxErrors extends AntlrTestcase {
 
 		"grammar A;;\n" +
 		"a : ID ;\n",
-		"error(" + ErrorType.SYNTAX_ERROR.code + "): A;.g4:1:10: syntax error: ';' came as a complete surprise to me\n",
+		"error(" + ErrorType.SYNTAX_ERROR.code + "): A.g4:1:10: syntax error: ';' came as a complete surprise to me\n",
 
 		"grammar A;\n" +
 		"a @init : ID ;\n",

@@ -31,6 +31,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import static org.junit.Assert.assertEquals;
 
@@ -75,6 +76,7 @@ public class AntlrTestcase {
     protected String load(URL fileName, String encoding) throws IOException {
         return delegate.loadFile(fileName, encoding);
     }
+
     protected ErrorQueue antlr(String grammarFileName, boolean defaultListener, String... extraOptions) {
         return delegate.antlr(grammarFileName, defaultListener, extraOptions);
     }
@@ -136,7 +138,11 @@ public class AntlrTestcase {
         return execLexer(grammarFileName, grammarStr, lexerName, input, false);
     }
 
-    protected String execLexer(String grammarFileName, String grammarStr, String lexerName, String input, boolean showDFA) {
+    protected String execLexer(String grammarFileName,
+                               String grammarStr,
+                               String lexerName,
+                               String input,
+                               boolean showDFA) {
         return delegate.execLexer(grammarFileName, grammarStr, lexerName, input, showDFA);
     }
 
@@ -195,25 +201,27 @@ public class AntlrTestcase {
             String input = pairs[i];
             String expect = pairs[i + 1];
 
-            String[] lines = input.split("\n");
-            String fileName = getFilenameFromFirstLineOfGrammar(lines[0]);
+            String fileName = getGrammarNameFromFirstLine(input);
 
-            writeFile(tmpdir(),fileName,input);
+            writeFile(tmpdir(), fileName, input);
             ErrorQueue equeue = antlr(fileName, false);
 
             String actual = equeue.toString(true);
             actual = actual.replace(delegate.getWorkingDir() + File.separator, "");
-           // System.err.println(actual);
-            String msg = input;
-            msg = msg.replace("\n", "\\n");
-            msg = msg.replace("\r", "\\r");
-            msg = msg.replace("\t", "\\t");
+            // System.err.println(actual);
+//            String msg = input;
+//            msg = msg.replace("\n", "\\n");
+//            msg = msg.replace("\r", "\\r");
+//            msg = msg.replace("\t", "\\t");
 
-            assertEquals(msg,expect, actual);
+            assertEquals(expect, actual);
         }
     }
 
-    public void testActions(String templates, String actionName, String action, String expected) throws org.antlr.runtime.RecognitionException {
+    public void testActions(String templates,
+                            String actionName,
+                            String action,
+                            String expected) throws org.antlr.runtime.RecognitionException {
         int lp = templates.indexOf('(');
         String name = templates.substring(0, lp);
         STGroup group = new STGroupString(templates);
@@ -246,17 +254,18 @@ public class AntlrTestcase {
         }
     }
 
+    static String getGrammarNameFromFirstLine(String grammar) {
+        StringTokenizer tokenizer = new StringTokenizer(grammar, " \t\n\r\f;");
+        String token = tokenizer.nextToken();
 
-    private String getFilenameFromFirstLineOfGrammar(String line) {
-        String fileName = "A" + Tool.GRAMMAR_EXTENSION;
-        int grIndex = line.lastIndexOf("grammar");
-        int semi = line.lastIndexOf(';');
-        if (grIndex >= 0 && semi >= 0) {
-            int space = line.indexOf(' ', grIndex);
-            fileName = line.substring(space + 1, semi) + Tool.GRAMMAR_EXTENSION;
-        }
-        if (fileName.length() == Tool.GRAMMAR_EXTENSION.length()) fileName = "A" + Tool.GRAMMAR_EXTENSION;
-        return fileName;
+        if (("lexer".equals(token) || "parser".equals(token)) && tokenizer.hasMoreTokens())
+            token = tokenizer.nextToken();
+        if ("grammar".equals(token) && tokenizer.hasMoreTokens())
+            token = tokenizer.nextToken();
+        else
+            token = "A";
+
+        return token + Tool.GRAMMAR_EXTENSION;
     }
 
 

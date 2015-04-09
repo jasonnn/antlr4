@@ -169,16 +169,6 @@ public class DefaultTestDelegate extends AbstractTestDelegate {
         return null;
     }
 
-//    public void eraseGeneratedFiles(String endingWith) {
-//        File tmpdirF = new File(tmpdir);
-//        String[] files = tmpdirF.list();
-//        for (int i = 0; files != null && i < files.length; i++) {
-//            if (files[i].endsWith(endingWith)) {
-//              boolean deleted=  new File(tmpdir + File.separatorChar + files[i]).delete();
-//            }
-//        }
-//    }
-
 
     public void eraseGeneratedFiles() {
         erase(new File(tmpdir));
@@ -265,61 +255,10 @@ public class DefaultTestDelegate extends AbstractTestDelegate {
                             String grammarStr,
                             boolean defaultListener,
                             String... extraOptions) {
-
-        System.out.println("dir " + tmpdir);
         mkdir(tmpdir);
         writeFile(tmpdir, grammarFileName, grammarStr);
 
-
-        final List<String> options = new ArrayList<String>();
-        Collections.addAll(options, extraOptions);
-        if (!options.contains("-o")) {
-            options.add("-o");
-            options.add(tmpdir);
-        }
-        if (!options.contains("-lib")) {
-            options.add("-lib");
-            options.add(tmpdir);
-        }
-        if (!options.contains("-encoding")) {
-            options.add("-encoding");
-            options.add("UTF-8");
-        }
-        options.add(new File(tmpdir, grammarFileName).toString());
-
-        final String[] optionsA = new String[options.size()];
-        options.toArray(optionsA);
-        Tool antlr = createTool(optionsA);
-        ErrorQueue equeue = new ErrorQueue(antlr);
-        antlr.addListener(equeue);
-        if (defaultListener) {
-            antlr.addListener(new DefaultToolListener(antlr));
-        }
-        antlr.processGrammarsOnCommandLine();
-
-        if (!defaultListener && !equeue.errors.isEmpty()) {
-            System.err.println("antlr reports errors from " + options);
-            for (int i = 0; i < equeue.errors.size(); i++) {
-                ANTLRMessage msg = equeue.errors.get(i);
-                System.err.println(msg);
-            }
-            System.out.println("!!!\ngrammar:");
-            try {
-                System.out.println(new String(Utils.readFile(tmpdir + "/" + grammarFileName)));
-            } catch (IOException ioe) {
-                System.err.println(ioe.toString());
-            }
-            System.out.println("###");
-        }
-        if (!defaultListener && !equeue.warnings.isEmpty()) {
-            System.err.println("antlr reports warnings from " + options);
-            for (int i = 0; i < equeue.warnings.size(); i++) {
-                ANTLRMessage msg = equeue.warnings.get(i);
-                System.err.println(msg);
-            }
-        }
-
-        return equeue;
+        return antlr(grammarFileName,defaultListener,extraOptions);
     }
 
     @Override
@@ -351,21 +290,23 @@ public class DefaultTestDelegate extends AbstractTestDelegate {
         antlr.processGrammarsOnCommandLine();
 
         if (!defaultListener && !equeue.errors.isEmpty()) {
-            System.err.println("antlr reports errors from " + options);
-            for (int i = 0; i < equeue.errors.size(); i++) {
-                ANTLRMessage msg = equeue.errors.get(i);
-                System.err.println(msg);
+            System.err.println("antlr reports errors from " + tmpdir);
+            System.err.printf("\toptions: %s%n", options);
+            for (ANTLRMessage msg: equeue.errors) {
+                System.err.printf("\t%s%n",msg);
             }
-            System.out.println("!!!\ngrammar:");
+            System.err.println();
+           // System.out.println("!!!\ngrammar:");
             // System.out.println(new String(Utils.readFile(tmpdir + "/" + grammarFileName)));
-            System.out.println("###");
+           // System.out.println("###");
         }
         if (!defaultListener && !equeue.warnings.isEmpty()) {
-            System.err.println("antlr reports warnings from " + options);
-            for (int i = 0; i < equeue.warnings.size(); i++) {
-                ANTLRMessage msg = equeue.warnings.get(i);
-                System.err.println(msg);
+            System.err.println("antlr reports warnings from " + tmpdir);
+            System.err.printf("\toptions: %s%n", options);
+            for (ANTLRMessage msg : equeue.warnings) {
+                System.err.printf("\t%s%n", msg);
             }
+            System.err.println();
         }
 
         return equeue;

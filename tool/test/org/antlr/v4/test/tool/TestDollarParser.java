@@ -2,10 +2,12 @@ package org.antlr.v4.test.tool;
 
 import org.antlr.v4.runtime.IntStream;
 import org.antlr.v4.test.AntlrTestcase;
+import org.hamcrest.Matchers;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.junit.Assert.assertThat;
 
 public class TestDollarParser extends AntlrTestcase {
@@ -19,8 +21,8 @@ public class TestDollarParser extends AntlrTestcase {
                          "ID : 'a'..'z'+ ;\n";
         String found = execParser("T.g4", grammar, "TParser", "TLexer", "a", "x", true);
         //if input isnt loaded from a file it wont have a source name
-        assertThat(found, either(containsString(getClass().getSimpleName()))
-                .or(containsString(IntStream.UNKNOWN_SOURCE_NAME)));
+        assertThat(found,
+                   Matchers.<String>either(containsString(getClass().getSimpleName())).or(containsString(IntStream.UNKNOWN_SOURCE_NAME)));
 
         assertThat(stderrDuringParse(), isEmptyOrNullString());
     }

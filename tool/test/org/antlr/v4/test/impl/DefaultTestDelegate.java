@@ -24,8 +24,6 @@ import static org.junit.Assert.assertTrue;
  * Created by jason on 3/24/15.
  */
 public class DefaultTestDelegate extends AbstractTestDelegate {
-    public static final DefaultTestDelegate INSTANCE = new DefaultTestDelegate();
-
 
     String tmpdir;
     String stderrDuringParse;
@@ -435,5 +433,14 @@ public class DefaultTestDelegate extends AbstractTestDelegate {
     protected void writeLexerTestFile(String lexerName, boolean showDFA) {
         String code = TestCodeGenerator.generateLexerTestCode("Test", showDFA, lexerName);
         writeFile(tmpdir, "Test.java", code);
+    }
+
+    enum Singleton {
+        ;
+        public static final DefaultTestDelegate INSTANCE = new DefaultTestDelegate();
+    }
+
+    public static AntlrTestDelegate getInstace() {
+        return Singleton.INSTANCE;
     }
 }

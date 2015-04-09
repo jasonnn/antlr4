@@ -1,7 +1,10 @@
 package org.antlr.v4.test.impl;
 
 
+import org.junit.runner.Description;
+
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
@@ -10,7 +13,43 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by jason on 4/8/15.
  */
-public class NewAntlrDelegate extends InProcessTestDelegate {
+public class NewAntlrDelegate extends DefaultTestDelegate {
+
+   private static String pkgName(Class<?> c) {
+        String name = c.getPackage().getName();
+        if (name.endsWith("rt.java")) return "rt";
+        if (name.endsWith("tool")) return "tool";
+        return "other";
+    }
+
+
+    @Override
+    public void testWillStart(Description description) {
+
+        if (AntlrTestSettings.CREATE_PER_TEST_DIRECTORIES) {
+
+            String testDirectory = pkgName(description.getTestClass()) +
+                                   File.separatorChar +
+                                   description.getTestClass().getSimpleName() +
+                                   File.separatorChar +
+                                   description.getMethodName();
+
+            tmpdir = new File(AntlrTestSettings.BASE_TEST_DIR, testDirectory).getAbsolutePath();
+
+        } else {
+
+            tmpdir = new File(AntlrTestSettings.BASE_TEST_DIR,
+                              description.getTestClass().getSimpleName()).getAbsolutePath();
+
+
+        }
+        if (!AntlrTestSettings.PRESERVE_TEST_DIR && new File(tmpdir).exists()) {
+            eraseGeneratedFiles();
+        }
+
+    }
+
+
     static final PrintStream ORIG_OUT = System.out;
     static final PrintStream ORIG_ERR = System.err;
 
@@ -19,31 +58,29 @@ public class NewAntlrDelegate extends InProcessTestDelegate {
     final ByteArrayOutputStream baos_err = new ByteArrayOutputStream();
 
     void beginCapture() {
+        out = stderrDuringParse = null;
         baos_out.reset();
         baos_err.reset();
         System.setOut(new PrintStream(baos_out, true));
         System.setErr(new PrintStream(baos_err, true));
-
     }
 
     void endCapture() {
+        System.setOut(ORIG_OUT);
+        System.setErr(ORIG_ERR);
+        String err;
         try {
             out = baos_out.toString("UTF-8");
-            stderrDuringParse = baos_err.toString("UTF-8");
+            err = stderrDuringParse = baos_err.toString("UTF-8");
         } catch (UnsupportedEncodingException e) {
             throw new RuntimeException(e);
         }
-        if (stderrDuringParse.length() > 0) {
-            System.err.println(stderrDuringParse);
-        }
 
+        if (err.length() > 0) {
+            System.err.println(err);
+        }
     }
 
-    static final String LEXER_TEST = "LexerTest";
-    static final String PARSER_TEST = "ParserTest";
-
-    static final String LEXER_TEST_FILE_NAME = LEXER_TEST + ".java";
-    static final String PARSER_TEST_FILE_NAME = PARSER_TEST + ".java";
 
     @Override
     public String execLexer(String grammarFileName,
@@ -62,11 +99,10 @@ public class NewAntlrDelegate extends InProcessTestDelegate {
         GeneratedLexerTest test = createLexerTestInstance();
 
         test.showDFA = showDFA;
-        test.input = input;
 
         beginCapture();
         try {
-            test.testUnchecked();
+            test.test(input);
         } finally {
             endCapture();
         }
@@ -90,8 +126,6 @@ public class NewAntlrDelegate extends InProcessTestDelegate {
                                                      "-visitor");
         assertTrue(success);
 
-        this.stderrDuringParse = null;
-
         if (parserName == null) {
             writeLexerTestFile(lexerName, false);
         } else {
@@ -105,20 +139,16 @@ public class NewAntlrDelegate extends InProcessTestDelegate {
         compile(PARSER_TEST_FILE_NAME);
 
         GeneratedParserTest test = createParserTestInstance();
-        test.input = input;
         test.debug = debug;
         test.profile = profile;
 
         beginCapture();
         try {
-            test.testUnchecked();
+            test.test(input);
         } finally {
             endCapture();
         }
-
-
         return out;
-
     }
 
     @Override
@@ -155,6 +185,21 @@ public class NewAntlrDelegate extends InProcessTestDelegate {
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    static final String LEXER_TEST = "LexerTest";
+    static final String PARSER_TEST = "ParserTest";
+
+    static final String LEXER_TEST_FILE_NAME = LEXER_TEST + ".java";
+    static final String PARSER_TEST_FILE_NAME = PARSER_TEST + ".java";
+
+    enum Singleton {
+        ;
+        public static final NewAntlrDelegate INSTANCE = new NewAntlrDelegate();
+    }
+
+    public static AntlrTestDelegate getInstace() {
+        return Singleton.INSTANCE;
     }
 
 }

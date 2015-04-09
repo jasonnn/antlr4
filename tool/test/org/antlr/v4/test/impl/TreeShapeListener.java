@@ -6,9 +6,14 @@ package org.antlr.v4.test.impl;
 
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.*;
-//Used by generated tests.
-@SuppressWarnings("unused")
+
 public class TreeShapeListener implements ParseTreeListener {
+    public static void check(ParseTree tree) {
+        ParseTreeWalker.DEFAULT.walk(TreeShapeListener.INSTANCE, tree);
+    }
+
+    public static final ParseTreeListener INSTANCE = new TreeShapeListener();
+
     @Override
     public void visitTerminal(TerminalNode node) {
     }

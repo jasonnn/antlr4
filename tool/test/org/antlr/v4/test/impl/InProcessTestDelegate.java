@@ -1,13 +1,11 @@
 package org.antlr.v4.test.impl;
 
 
-
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
+import java.io.File;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -15,15 +13,15 @@ import java.util.logging.Logger;
  * Created by jason on 3/26/15.
  */
 public class InProcessTestDelegate extends DefaultTestDelegate {
-    public static final InProcessTestDelegate INSTANCE = new InProcessTestDelegate();
+
 
     private static final Logger LOGGER = Logger.getLogger(InProcessTestDelegate.class.getName());
 
     @Override
     public String execClass(String className) {
         try {
-            ClassLoader loader = new URLClassLoader(new URL[] { new File(tmpdir).toURI().toURL() }, ClassLoader.getSystemClassLoader());
-            final Class<?> mainClass = loader.loadClass(className);
+
+            final Class<?> mainClass = loadCompiledClass(className);
             final Method mainMethod = mainClass.getDeclaredMethod("main", String[].class);
             PipedInputStream stdoutIn = new PipedInputStream();
             PipedInputStream stderrIn = new PipedInputStream();
@@ -40,13 +38,11 @@ public class InProcessTestDelegate extends DefaultTestDelegate {
                     System.setErr(new PrintStream(stderrOut));
                     stdoutVacuum.start();
                     stderrVacuum.start();
-                    mainMethod.invoke(null, (Object)new String[] { new File(tmpdir, "input").getAbsolutePath() });
-                }
-                finally {
+                    mainMethod.invoke(null, (Object) new String[]{new File(tmpdir, "input").getAbsolutePath()});
+                } finally {
                     System.setErr(originalErr);
                 }
-            }
-            finally {
+            } finally {
                 System.setOut(originalOut);
             }
 
@@ -55,38 +51,23 @@ public class InProcessTestDelegate extends DefaultTestDelegate {
             stdoutVacuum.join();
             stderrVacuum.join();
             String output = stdoutVacuum.toString();
-            if ( stderrVacuum.toString().length()>0 ) {
+            if (stderrVacuum.toString().length() > 0) {
                 this.stderrDuringParse = stderrVacuum.toString();
-                System.err.println("exec stderrVacuum: "+ stderrVacuum);
+                System.err.println("exec stderrVacuum: " + stderrVacuum);
             }
             return output;
-        } catch (MalformedURLException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-            throw new RuntimeException(ex);
-        } catch (IOException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-            throw new RuntimeException(ex);
-        } catch (InterruptedException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-            throw new RuntimeException(ex);
-        } catch (IllegalAccessException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-            throw new RuntimeException(ex);
-        } catch (IllegalArgumentException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-            throw new RuntimeException(ex);
-        } catch (InvocationTargetException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-            throw new RuntimeException(ex);
-        } catch (NoSuchMethodException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-            throw new RuntimeException(ex);
-        } catch (SecurityException ex) {
-            LOGGER.log(Level.SEVERE, null, ex);
-            throw new RuntimeException(ex);
-        } catch (ClassNotFoundException ex) {
+        } catch (Exception ex) {
             LOGGER.log(Level.SEVERE, null, ex);
             throw new RuntimeException(ex);
         }
+    }
+
+    enum Singleton {
+        ;
+        public static final InProcessTestDelegate INSTANCE = new InProcessTestDelegate();
+    }
+
+    public static AntlrTestDelegate getInstace() {
+        return Singleton.INSTANCE;
     }
 }

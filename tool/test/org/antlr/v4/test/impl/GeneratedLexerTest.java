@@ -1,0 +1,46 @@
+package org.antlr.v4.test.impl;
+
+
+import org.antlr.v4.runtime.ANTLRInputStream;
+import org.antlr.v4.runtime.CharStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.Lexer;
+
+/**
+ * Created by jason on 3/29/15.
+ */
+public abstract class GeneratedLexerTest {
+
+    public String input;
+    public boolean showDFA = false;
+
+
+    protected abstract Lexer createLexer(CharStream input);
+
+    public void testUnchecked() {
+        try {
+            test();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
+    public void test() throws Exception {
+        test(input);
+    }
+
+    public void test(String input) throws Exception {
+        CharStream charStream = new ANTLRInputStream(input);
+        Lexer lexer = createLexer(charStream);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        tokens.fill();
+        for (Object token : tokens.getTokens()) {
+            System.out.println(token);
+        }
+
+        if (showDFA) {
+            System.out.print(lexer.getInterpreter().getDFA(Lexer.DEFAULT_MODE).toLexerString());
+        }
+    }
+}

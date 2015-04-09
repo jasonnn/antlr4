@@ -42,7 +42,9 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
+import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 @SuppressWarnings("unused")
 public class TestParserProfiler extends AntlrTestcase {
@@ -243,7 +245,7 @@ public class TestParserProfiler extends AntlrTestcase {
 			" {decision=1, contextSensitivities=0, errors=0, ambiguities=0, SLL_lookahead=6, " +
 			"SLL_ATNTransitions=3, SLL_DFATransitions=3, LL_Fallback=0, LL_lookahead=0, LL_ATNTransitions=0}]\n";
 		assertEquals(expecting, found);
-		assertEquals(null, stderrDuringParse());
+		assertThat(stderrDuringParse(), isEmptyOrNullString());
 	}
 
 	public DecisionInfo[] interpAndGetDecisionInfo(

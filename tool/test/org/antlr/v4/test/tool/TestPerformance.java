@@ -65,6 +65,7 @@ import java.util.zip.Checksum;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -1938,8 +1939,8 @@ public class TestPerformance extends AntlrTestcase {
 
 		String found = execParser("Expr.g4", grammar, "ExprParser", "ExprLexer", "program",
 								  input, false);
-		Assert.assertEquals("", found);
-		Assert.assertEquals(null, stderrDuringParse());
+		assertThat(found, isEmptyOrNullString());
+		assertThat(stderrDuringParse(), isEmptyOrNullString());
 
 		List<String> inputs = new ArrayList<String>();
 		for (int i = 0; i < 10; i++) {
@@ -1949,8 +1950,8 @@ public class TestPerformance extends AntlrTestcase {
 		input = Utils.join(inputs.iterator(), " or\n");
 		found = execParser("Expr.g4", grammar, "ExprParser", "ExprLexer", "program",
 								  input, false);
-		Assert.assertEquals("", found);
-		Assert.assertEquals(null, stderrDuringParse());
+		assertThat(found, isEmptyOrNullString());
+		assertThat(stderrDuringParse(), isEmptyOrNullString());
 	}
 
 	@Test(timeout = 20000)

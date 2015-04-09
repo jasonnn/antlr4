@@ -38,9 +38,9 @@ import org.antlr.v4.tool.Grammar;
 import org.antlr.v4.tool.GrammarSemanticsMessage;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class TestCompositeGrammars extends AntlrTestcase {
 	protected boolean debug = false;
@@ -413,7 +413,7 @@ public class TestCompositeGrammars extends AntlrTestcase {
 		writeFile(tmpdir(), "Java.g4", slave);
 		String found = execParser("NewJava.g4", master, "NewJavaParser", "NewJavaLexer", "compilationUnit", "package Foo;", debug);
 		assertEquals("", found);
-		assertNull(stderrDuringParse());
+		assertThat(stderrDuringParse(), isEmptyOrNullString());
 	}
 
 	/**
@@ -441,6 +441,6 @@ public class TestCompositeGrammars extends AntlrTestcase {
 		writeFile(tmpdir(), "Java.g4", slave);
 		String found = execParser("T.g4", master, "TParser", "TLexer", "s", "a=b", debug);
 		assertEquals("", found);
-		assertNull(stderrDuringParse());
+		assertThat(stderrDuringParse(), isEmptyOrNullString());
 	}
 }

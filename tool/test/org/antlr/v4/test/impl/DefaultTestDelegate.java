@@ -242,11 +242,11 @@ public class DefaultTestDelegate extends AbstractTestDelegate {
         if (parserName == null) {
             writeLexerTestFile(lexerName, false);
         } else {
-            writeTestFile(parserName,
-                          lexerName,
-                          startRuleName,
-                          debug,
-                          profile);
+            writeParserTestFile(parserName,
+                                lexerName,
+                                startRuleName,
+                                debug,
+                                profile);
         }
 
         compile("Test.java");
@@ -417,11 +417,11 @@ public class DefaultTestDelegate extends AbstractTestDelegate {
         return compile(files.toArray(new String[files.size()]));
     }
 
-    protected void writeTestFile(String parserName,
-                                 String lexerName,
-                                 String parserStartRuleName,
-                                 boolean debug,
-                                 boolean profile) {
+    protected void writeParserTestFile(String parserName,
+                                       String lexerName,
+                                       String parserStartRuleName,
+                                       boolean debug,
+                                       boolean profile) {
         String code = TestCodeGenerator.generateParserTestCode("Test",
                                                                parserName,
                                                                lexerName,

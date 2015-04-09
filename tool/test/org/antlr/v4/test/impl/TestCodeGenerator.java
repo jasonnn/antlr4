@@ -26,7 +26,7 @@ public class TestCodeGenerator {
                 "import org.antlr.v4.runtime.tree.*;\n" +
                 "import org.antlr.v4.runtime.atn.*;\n" +
                 "import java.util.Arrays;\n" +
-                "import org.antlr.v4.test.TreeShapeListener;" +
+                "import org.antlr.v4.test.impl.TreeShapeListener;" +
                 "\n" +
                 "public class <className> {\n" +
                 "    public static void main(String[] args) throws Exception {\n" +

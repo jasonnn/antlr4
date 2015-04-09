@@ -3,8 +3,9 @@ package org.antlr.v4.test.tool;
 import org.antlr.v4.test.AntlrTestcase;
 import org.junit.Test;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.junit.Assert.assertThat;
 
 public class TestDollarParser extends AntlrTestcase {
 
@@ -15,8 +16,8 @@ public class TestDollarParser extends AntlrTestcase {
 	                  "  ;\n" +
 	                  "ID : 'a'..'z'+ ;\n";
 		String found = execParser("T.g4", grammar, "TParser", "TLexer", "a", "x", true);
-		assertTrue(found.contains(this.getClass().getSimpleName()));
-		assertNull(stderrDuringParse());
+		assertThat(found, containsString(getClass().getSimpleName()));
+		assertThat(stderrDuringParse(),isEmptyOrNullString());
 	}
 
 }

@@ -34,8 +34,8 @@ import org.antlr.v4.test.AntlrTestcase;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.junit.Assert.*;
 
 /** Test parser execution.
  *
@@ -135,6 +135,6 @@ public class TestParserExec extends AntlrTestcase {
 		String input = "2 9 10 3 1 2 3";
 		String found = execParser("Data.g4", grammar, "DataParser", "DataLexer", "file", input, false);
 		assertEquals("6\n", found);
-		assertNull(stderrDuringParse());
+		assertThat(stderrDuringParse(), isEmptyOrNullString());
 	}
 }

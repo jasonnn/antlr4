@@ -11,26 +11,13 @@ import org.antlr.v4.runtime.Lexer;
  */
 public abstract class GeneratedLexerTest {
 
-    public String input;
     public boolean showDFA = false;
 
 
     protected abstract Lexer createLexer(CharStream input);
 
-    public void testUnchecked() {
-        try {
-            test();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
 
-
-    public void test() throws Exception {
-        test(input);
-    }
-
-    public void test(String input) throws Exception {
+    public void test(String input) {
         CharStream charStream = new ANTLRInputStream(input);
         Lexer lexer = createLexer(charStream);
         CommonTokenStream tokens = new CommonTokenStream(lexer);

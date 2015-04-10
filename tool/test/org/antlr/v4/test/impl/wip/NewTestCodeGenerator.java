@@ -1,6 +1,8 @@
-package org.antlr.v4.test.impl;
+package org.antlr.v4.test.impl.wip;
 
 
+import org.antlr.v4.test.impl.GeneratedLexerTest;
+import org.antlr.v4.test.impl.GeneratedParserTest;
 
 /**
  * Created by jason on 3/28/15.

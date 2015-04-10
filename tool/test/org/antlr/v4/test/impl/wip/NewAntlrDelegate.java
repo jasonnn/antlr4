@@ -1,6 +1,7 @@
-package org.antlr.v4.test.impl;
+package org.antlr.v4.test.impl.wip;
 
 
+import org.antlr.v4.test.impl.*;
 import org.junit.runner.Description;
 
 import java.io.ByteArrayOutputStream;
@@ -18,7 +19,7 @@ import static org.junit.Assert.assertTrue;
 public class NewAntlrDelegate extends DefaultTestDelegate {
     private static final Logger log = Logger.getLogger(NewAntlrDelegate.class.getName());
 
-   private static String pkgName(Class<?> c) {
+    private static String pkgName(Class<?> c) {
         String name = c.getPackage().getName();
         if (name.endsWith("rt.java")) return "rt";
         if (name.endsWith("tool")) return "tool";
@@ -46,7 +47,7 @@ public class NewAntlrDelegate extends DefaultTestDelegate {
 
 
         }
-        if (!AntlrTestSettings.PRESERVE_TEST_DIR && new File(tmpdir).exists()) {
+        if (!AntlrTestSettings.PRESERVE_TEST_DIR && new File(getWorkingDir()).exists()) {
             eraseGeneratedFiles();
         }
 
@@ -91,8 +92,8 @@ public class NewAntlrDelegate extends DefaultTestDelegate {
                             String lexerName,
                             String input,
                             boolean showDFA) {
-        if(!new File(tmpdir,LEXER_TEST+".class").exists()){
-            log.log(Level.INFO,"generating files for: {0}",grammarFileName);
+        if (!new File(getWorkingDir(), LEXER_TEST + ".class").exists()) {
+            log.log(Level.INFO, "generating files for: {0}", grammarFileName);
             boolean success = generateAndBuildRecognizer(grammarFileName,
                                                          grammarStr,
                                                          null,
@@ -126,7 +127,7 @@ public class NewAntlrDelegate extends DefaultTestDelegate {
                              String input,
                              boolean debug,
                              boolean profile) {
-        if(!new File(tmpdir,PARSER_TEST+".class").exists()) {
+        if (!new File(getWorkingDir(), PARSER_TEST + ".class").exists()) {
             log.log(Level.INFO, "generating files for: {0}", grammarFileName);
             boolean success = generateAndBuildRecognizer(grammarFileName,
                                                          grammarStr,
@@ -153,6 +154,7 @@ public class NewAntlrDelegate extends DefaultTestDelegate {
         test.profile = profile;
 
         beginCapture();
+
         try {
             test.test(input);
         } finally {
@@ -167,14 +169,14 @@ public class NewAntlrDelegate extends DefaultTestDelegate {
                                        String parserStartRuleName,
                                        boolean debug,
                                        boolean profile) {
-        writeFile(tmpdir,
+        writeFile(getWorkingDir(),
                   PARSER_TEST_FILE_NAME,
                   NewTestCodeGenerator.generateParserTest(lexerName, parserName, parserStartRuleName));
     }
 
     @Override
     protected void writeLexerTestFile(String lexerName, boolean showDFA) {
-        writeFile(tmpdir, LEXER_TEST_FILE_NAME, NewTestCodeGenerator.generateLexerTest(lexerName));
+        writeFile(getWorkingDir(), LEXER_TEST_FILE_NAME, NewTestCodeGenerator.generateLexerTest(lexerName));
     }
 
     GeneratedParserTest createParserTestInstance() {
@@ -203,9 +205,8 @@ public class NewAntlrDelegate extends DefaultTestDelegate {
     static final String LEXER_TEST_FILE_NAME = LEXER_TEST + ".java";
     static final String PARSER_TEST_FILE_NAME = PARSER_TEST + ".java";
 
-    enum Singleton {
-        ;
-        public static final NewAntlrDelegate INSTANCE = new NewAntlrDelegate();
+    static class Singleton {
+        static final NewAntlrDelegate INSTANCE = new NewAntlrDelegate();
     }
 
     public static AntlrTestDelegate getInstace() {

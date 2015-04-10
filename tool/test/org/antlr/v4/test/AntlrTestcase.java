@@ -52,7 +52,7 @@ public class AntlrTestcase {
 
         @Override
         protected void finished(Description description) {
-            delegate.testDidFinish();
+            delegate.testDidFinish(description);
         }
     };
 

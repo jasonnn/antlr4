@@ -1,6 +1,8 @@
 package org.antlr.v4.test.impl;
 
 
+import org.antlr.v4.test.impl.wip.NewAntlrDelegate;
+
 import java.util.Properties;
 
 /**

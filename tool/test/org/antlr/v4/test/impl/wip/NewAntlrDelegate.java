@@ -4,10 +4,7 @@ package org.antlr.v4.test.impl.wip;
 import org.antlr.v4.test.impl.*;
 import org.junit.runner.Description;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -54,68 +51,36 @@ public class NewAntlrDelegate extends DefaultTestDelegate {
     }
 
 
-    static final PrintStream ORIG_OUT = System.out;
-    static final PrintStream ORIG_ERR = System.err;
-
-    String out;
-    final ByteArrayOutputStream baos_out = new ByteArrayOutputStream();
-    final ByteArrayOutputStream baos_err = new ByteArrayOutputStream();
-
-    void beginCapture() {
-        out = stderrDuringParse = null;
-        baos_out.reset();
-        baos_err.reset();
-        System.setOut(new PrintStream(baos_out, true));
-        System.setErr(new PrintStream(baos_err, true));
-    }
-
-    void endCapture() {
-        System.setOut(ORIG_OUT);
-        System.setErr(ORIG_ERR);
-        String err;
-        try {
-            out = baos_out.toString("UTF-8");
-            err = stderrDuringParse = baos_err.toString("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
-        }
-
-        if (err.length() > 0) {
-            System.err.println(err);
-        }
-    }
-
-
     @Override
     public String execLexer(String grammarFileName,
                             String grammarStr,
                             String lexerName,
                             String input,
                             boolean showDFA) {
-       // if (!new File(getWorkingDir(), LEXER_TEST + ".class").exists()) {
-           // log.log(Level.INFO, "generating files for: {0}", grammarFileName);
-            boolean success = generateAndBuildRecognizer(grammarFileName,
-                                                         grammarStr,
-                                                         null,
-                                                         lexerName);
-            assertTrue(success);
-            writeLexerTestFile(lexerName, showDFA);
-            compile(LEXER_TEST_FILE_NAME);
-      //  }
+        // if (!new File(getWorkingDir(), LEXER_TEST + ".class").exists()) {
+        // log.log(Level.INFO, "generating files for: {0}", grammarFileName);
+        boolean success = generateAndBuildRecognizer(grammarFileName,
+                                                     grammarStr,
+                                                     null,
+                                                     lexerName);
+        assertTrue(success);
+        writeLexerTestFile(lexerName, showDFA);
+        compile(LEXER_TEST_FILE_NAME);
+        //  }
 
 
         GeneratedLexerTest test = createLexerTestInstance();
 
         test.showDFA = showDFA;
+        test.input = input;
 
-        beginCapture();
-        try {
-            test.test(input);
-        } finally {
-            endCapture();
+        GeneratedTestRunner.Result result = GeneratedTestRunner.run(test);
+        String err = stderrDuringParse = result.err;
+        if (err.length() > 0) {
+            System.err.println(err);
         }
 
-        return out;
+        return result.out;
     }
 
     @Override
@@ -127,40 +92,40 @@ public class NewAntlrDelegate extends DefaultTestDelegate {
                              String input,
                              boolean debug,
                              boolean profile) {
-      //  if (!new File(getWorkingDir(), PARSER_TEST + ".class").exists()) {
-            log.log(Level.INFO, "generating files for: {0}", grammarFileName);
-            boolean success = generateAndBuildRecognizer(grammarFileName,
-                                                         grammarStr,
-                                                         parserName,
-                                                         lexerName,
-                                                         "-visitor");
-            assertTrue(success);
+        //  if (!new File(getWorkingDir(), PARSER_TEST + ".class").exists()) {
+        log.log(Level.INFO, "generating files for: {0}", grammarFileName);
+        boolean success = generateAndBuildRecognizer(grammarFileName,
+                                                     grammarStr,
+                                                     parserName,
+                                                     lexerName,
+                                                     "-visitor");
+        assertTrue(success);
 
-            if (parserName == null) {
-                writeLexerTestFile(lexerName, false);
-            } else {
-                writeParserTestFile(parserName,
-                                    lexerName,
-                                    startRuleName,
-                                    debug,
-                                    profile);
-            }
+        if (parserName == null) {
+            writeLexerTestFile(lexerName, false);
+        } else {
+            writeParserTestFile(parserName,
+                                lexerName,
+                                startRuleName,
+                                debug,
+                                profile);
+        }
 
-            compile(PARSER_TEST_FILE_NAME);
-      //  }
+        compile(PARSER_TEST_FILE_NAME);
+        //  }
 
         GeneratedParserTest test = createParserTestInstance();
         test.debug = debug;
         test.profile = profile;
+        test.input = input;
 
-        beginCapture();
-
-        try {
-            test.test(input);
-        } finally {
-            endCapture();
+        GeneratedTestRunner.Result result = GeneratedTestRunner.run(test);
+        String err = stderrDuringParse = result.err;
+        if (err.length() > 0) {
+            System.err.println(err);
         }
-        return out;
+
+        return result.out;
     }
 
     @Override

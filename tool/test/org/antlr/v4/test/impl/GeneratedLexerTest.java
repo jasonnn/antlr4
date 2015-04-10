@@ -9,10 +9,15 @@ import org.antlr.v4.runtime.Lexer;
 /**
  * Created by jason on 3/29/15.
  */
-public abstract class GeneratedLexerTest {
+public abstract class GeneratedLexerTest implements GeneratedTest{
 
     public boolean showDFA = false;
+    public String input;
 
+    @Override
+    public void test() {
+        test(input);
+    }
 
     protected abstract Lexer createLexer(CharStream input);
 

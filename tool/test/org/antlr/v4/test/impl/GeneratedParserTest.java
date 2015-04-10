@@ -8,7 +8,7 @@ import java.util.Arrays;
 /**
  * Created by jason on 3/23/15.
  */
-public abstract class GeneratedParserTest {
+public abstract class GeneratedParserTest implements GeneratedTest{
 
     public boolean debug = false;
     public boolean profile = false;
@@ -21,6 +21,13 @@ public abstract class GeneratedParserTest {
     protected abstract Parser createParser(TokenStream tokens);
 
     protected abstract ParserRuleContext callStartRule(Parser parser);
+
+    public String input;
+
+    @Override
+    public void test() {
+        test(input);
+    }
 
     public void test(String input){
 

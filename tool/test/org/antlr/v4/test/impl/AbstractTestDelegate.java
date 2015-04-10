@@ -1,5 +1,6 @@
 package org.antlr.v4.test.impl;
 
+import org.antlr.v4.Tool;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.Pair;
 import org.antlr.v4.test.ErrorQueue;
@@ -119,5 +120,9 @@ public abstract class AbstractTestDelegate implements AntlrTestDelegate {
         options.add(getWorkingDir() + File.separatorChar + grammarFileName);
 
         return options.toArray(new String[options.size()]);
+    }
+
+    public Tool createTool(String... args) {
+        return new Tool(args);
     }
 }

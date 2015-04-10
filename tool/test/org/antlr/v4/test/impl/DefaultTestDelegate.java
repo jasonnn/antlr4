@@ -58,10 +58,6 @@ public class DefaultTestDelegate extends AbstractTestDelegate {
         }
     }
 
-    public Tool createTool(String... args) {
-        return new Tool(args);
-    }
-
 
     public boolean compile(String... fileNames) {
         List<File> files = new ArrayList<File>();

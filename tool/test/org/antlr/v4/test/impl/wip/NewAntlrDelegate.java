@@ -92,8 +92,8 @@ public class NewAntlrDelegate extends DefaultTestDelegate {
                             String lexerName,
                             String input,
                             boolean showDFA) {
-        if (!new File(getWorkingDir(), LEXER_TEST + ".class").exists()) {
-            log.log(Level.INFO, "generating files for: {0}", grammarFileName);
+       // if (!new File(getWorkingDir(), LEXER_TEST + ".class").exists()) {
+           // log.log(Level.INFO, "generating files for: {0}", grammarFileName);
             boolean success = generateAndBuildRecognizer(grammarFileName,
                                                          grammarStr,
                                                          null,
@@ -101,7 +101,7 @@ public class NewAntlrDelegate extends DefaultTestDelegate {
             assertTrue(success);
             writeLexerTestFile(lexerName, showDFA);
             compile(LEXER_TEST_FILE_NAME);
-        }
+      //  }
 
 
         GeneratedLexerTest test = createLexerTestInstance();
@@ -127,7 +127,7 @@ public class NewAntlrDelegate extends DefaultTestDelegate {
                              String input,
                              boolean debug,
                              boolean profile) {
-        if (!new File(getWorkingDir(), PARSER_TEST + ".class").exists()) {
+      //  if (!new File(getWorkingDir(), PARSER_TEST + ".class").exists()) {
             log.log(Level.INFO, "generating files for: {0}", grammarFileName);
             boolean success = generateAndBuildRecognizer(grammarFileName,
                                                          grammarStr,
@@ -147,7 +147,7 @@ public class NewAntlrDelegate extends DefaultTestDelegate {
             }
 
             compile(PARSER_TEST_FILE_NAME);
-        }
+      //  }
 
         GeneratedParserTest test = createParserTestInstance();
         test.debug = debug;

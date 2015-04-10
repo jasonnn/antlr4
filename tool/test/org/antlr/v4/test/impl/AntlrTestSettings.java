@@ -1,7 +1,7 @@
 package org.antlr.v4.test.impl;
 
 
-import org.antlr.v4.test.impl.wip.NewAntlrDelegate;
+import org.antlr.v4.test.impl.wip.CachingDelegate;
 
 import java.util.Properties;
 
@@ -72,8 +72,9 @@ public class AntlrTestSettings {
     }
 
     public static AntlrTestDelegate getHelper() {
-        if (EXPERIMENTAL) return NewAntlrDelegate.getInstace();
-        if (TEST_IN_PROCESS) return InProcessTestDelegate.getInstace();
-        return DefaultTestDelegate.getInstace();
+        return new CachingDelegate();
+//        if (EXPERIMENTAL) return NewAntlrDelegate.getInstace();
+//        if (TEST_IN_PROCESS) return InProcessTestDelegate.getInstace();
+//        return DefaultTestDelegate.getInstace();
     }
 }

@@ -46,7 +46,6 @@ import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-@SuppressWarnings("unused")
 public class TestParserProfiler extends AntlrTestcase {
 	LexerGrammar lg;
 

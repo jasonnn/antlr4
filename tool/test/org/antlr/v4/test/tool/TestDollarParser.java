@@ -3,7 +3,6 @@ package org.antlr.v4.test.tool;
 import org.antlr.v4.runtime.IntStream;
 import org.antlr.v4.test.AntlrTestcase;
 import org.hamcrest.Matchers;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.containsString;
@@ -12,7 +11,6 @@ import static org.junit.Assert.assertThat;
 
 public class TestDollarParser extends AntlrTestcase {
 
-    @Ignore
     @Test
     public void testSimpleCall() throws Exception {
         String grammar = "grammar T;\n" +

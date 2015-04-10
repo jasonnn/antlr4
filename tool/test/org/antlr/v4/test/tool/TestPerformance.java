@@ -69,7 +69,7 @@ import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
-@SuppressWarnings("unused")
+@SuppressWarnings({"ConstantConditions", "PointlessBooleanExpression"})
 public class TestPerformance extends AntlrTestcase {
     /**
      * Parse all java files under this package within the JDK_SOURCE_ROOT
@@ -856,8 +856,7 @@ public class TestPerformance extends AntlrTestcase {
 				int configs = 0;
 				Set<ATNConfig> uniqueConfigs = new HashSet<ATNConfig>();
 
-				for (int i = 0; i < modeToDFA.length; i++) {
-					DFA dfa = modeToDFA[i];
+				for (DFA dfa : modeToDFA) {
 					if (dfa == null) {
 						continue;
 					}
@@ -903,18 +902,17 @@ public class TestPerformance extends AntlrTestcase {
 				int configs = 0;
 				Set<ATNConfig> uniqueConfigs = new HashSet<ATNConfig>();
 
-                for (int i = 0; i < decisionToDFA.length; i++) {
-                    DFA dfa = decisionToDFA[i];
-                    if (dfa == null) {
-                        continue;
-                    }
+				for (DFA dfa : decisionToDFA) {
+					if (dfa == null) {
+						continue;
+					}
 
-                    states += dfa.states.size();
+					states += dfa.states.size();
 					for (DFAState state : dfa.states.values()) {
 						configs += state.configs.size();
 						uniqueConfigs.addAll(state.configs);
 					}
-                }
+				}
 
                 System.out.format("There are %d parser DFAState instances, %d configs (%d unique).%n", states, configs, uniqueConfigs.size());
 
@@ -999,40 +997,39 @@ public class TestPerformance extends AntlrTestcase {
             int globalConfigCount = 0;
             int[] contextsInDFAState = new int[0];
 
-            for (int i = 0; i < decisionToDFA.length; i++) {
-                DFA dfa = decisionToDFA[i];
-                if (dfa == null) {
-                    continue;
-                }
+			for (DFA dfa : decisionToDFA) {
+				if (dfa == null) {
+					continue;
+				}
 
-                if (SHOW_CONFIG_STATS) {
-                    for (DFAState state : dfa.states.keySet()) {
-                        if (state.configs.size() >= contextsInDFAState.length) {
-                            contextsInDFAState = Arrays.copyOf(contextsInDFAState, state.configs.size() + 1);
-                        }
+				if (SHOW_CONFIG_STATS) {
+					for (DFAState state : dfa.states.keySet()) {
+						if (state.configs.size() >= contextsInDFAState.length) {
+							contextsInDFAState = Arrays.copyOf(contextsInDFAState, state.configs.size() + 1);
+						}
 
-                        if (state.isAcceptState) {
-                            boolean hasGlobal = false;
-                            for (ATNConfig config : state.configs) {
-                                if (config.reachesIntoOuterContext > 0) {
-                                    globalConfigCount++;
-                                    hasGlobal = true;
-                                } else {
-                                    localConfigCount++;
-                                }
-                            }
+						if (state.isAcceptState) {
+							boolean hasGlobal = false;
+							for (ATNConfig config : state.configs) {
+								if (config.reachesIntoOuterContext > 0) {
+									globalConfigCount++;
+									hasGlobal = true;
+								} else {
+									localConfigCount++;
+								}
+							}
 
-                            if (hasGlobal) {
-                                globalDfaCount++;
-                            } else {
-                                localDfaCount++;
-                            }
-                        }
+							if (hasGlobal) {
+								globalDfaCount++;
+							} else {
+								localDfaCount++;
+							}
+						}
 
-                        contextsInDFAState[state.configs.size()]++;
-                    }
-                }
-            }
+						contextsInDFAState[state.configs.size()]++;
+					}
+				}
+			}
 
             if (SHOW_CONFIG_STATS && currentPass == 0) {
                 System.out.format("  DFA accept states: %d total, %d with only local context, %d with a global context%n", localDfaCount + globalDfaCount, localDfaCount, globalDfaCount);
@@ -1057,10 +1054,9 @@ public class TestPerformance extends AntlrTestcase {
 
 	private static long sum(long[] array) {
 		long result = 0;
-		for (int i = 0; i < array.length; i++) {
-			result += array[i];
+		for (long anArray : array) {
+			result += anArray;
 		}
-
 		return result;
 	}
 

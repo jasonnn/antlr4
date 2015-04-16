@@ -13,5 +13,10 @@ public class LexerTestMethod extends JUnitTestMethod {
 		for(int i=0;i<outputLines.length;i++)
 			outputLines[i] = Generator.escape(outputLines[i]);
 	}
-	
+
+	@Override
+	public void accept(TestMethodVisitor visitor) {
+		visitor.visitLexerTest(this);
+	}
+
 }

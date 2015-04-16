@@ -23,12 +23,22 @@ public abstract class JUnitTestMethod {
 		this.expectedErrors = Generator.escape(expectedErrors);
 	}
 
-	public void loadGrammars(File grammarDir, String testFileName) throws Exception {
-		grammar.load(new File(grammarDir, testFileName));
+	/**
+	 *
+	 * @param grammarDir the dir which contains the resources needed by this test method.
+	 *                   i.e.  org/antlr/v4/test/rt/gen/grammars/CompositeLexers
+	 *
+	 * @throws Exception
+	 */
+	public void loadGrammars(File grammarDir) throws Exception {
+
+		grammar.load(grammarDir);
 	}
 
 	public void generateGrammars(STGroup group) {
 		grammar.generate(group);
 	}
+
+	public abstract void accept(TestMethodVisitor visitor);
 
 }

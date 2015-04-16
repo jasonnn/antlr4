@@ -1,6 +1,4 @@
 package org.antlr.v4.test.impl.wip;
-
-
 import org.antlr.v4.test.impl.GeneratedLexerTest;
 import org.antlr.v4.test.impl.GeneratedParserTest;
 
@@ -12,9 +10,15 @@ public class NewTestCodeGenerator {
     static final String PARSER_TEST_FQN = GeneratedParserTest.class.getName();
     static final String LEXER_TEST_FQN = GeneratedLexerTest.class.getName();
 
+    public static String generateParserTest(String lexName, String parserName, String startRule){
+        return generateParserTest("",lexName,parserName,startRule);
+    }
 
-    public static String generateParserTest(String lexName, String parserName, String startRule) {
-        return "import org.antlr.v4.runtime.CharStream;\n" +
+    public static String generateParserTest(String packageName, String lexName, String parserName, String startRule) {
+        String pkgStmnt = (packageName == null || packageName.isEmpty()) ? "" : "package " + packageName + ";\n";
+
+        return pkgStmnt +
+                "import org.antlr.v4.runtime.CharStream;\n" +
                 "import org.antlr.v4.runtime.Lexer;\n" +
                 "import org.antlr.v4.runtime.Parser;\n" +
                 "import org.antlr.v4.runtime.ParserRuleContext;\n" +
@@ -42,8 +46,13 @@ public class NewTestCodeGenerator {
     }
 
     public static String generateLexerTest(String lexerName) {
+        return generateLexerTest("", lexerName);
+    }
 
-        return "import org.antlr.v4.runtime.CharStream;\n" +
+    public static String generateLexerTest(String packageName, String lexerName) {
+        String pkgStmnt = (packageName == null || packageName.isEmpty()) ? "" : "package " + packageName + ";\n";
+        return pkgStmnt +
+                "import org.antlr.v4.runtime.CharStream;\n" +
                 "import org.antlr.v4.runtime.Lexer;\n" +
                 "\n" +
                 "import " + LEXER_TEST_FQN + ";\n" +

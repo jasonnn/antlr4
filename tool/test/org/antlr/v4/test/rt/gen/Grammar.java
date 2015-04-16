@@ -14,17 +14,31 @@ public class Grammar {
 	public String[] lines;
 	public ST template;
 
+	/**
+	 * @param fileName the name of the st file. don't add the  '.st' suffix.
+	 *                 i.e. (for CompositeLexers) LexerDelegatorInvokesDelegateRule
+	 * @param grammarName the name of the grammar contained in the st.
+	 *                    i.e. for CompositeLexers/LexerDelegatorInvokesDelegateRule the grammar name would be 'M'
+	 */
 	public Grammar(String fileName, String grammarName) {
 		this.fileName = fileName;
 		this.grammarName = grammarName;
 	}
 
+	/**
+	 * @param grammarDir the dir containing {@link Grammar#fileName}
+	 * @throws Exception
+	 */
 	public void load(File grammarDir) throws Exception {
+		assert grammarDir.exists();
+		assert grammarDir.isDirectory();
+
 		template = loadGrammar(grammarDir, fileName);
 	}
 
 	protected ST loadGrammar(File grammarDir, String grammarFileName) throws Exception {
 		File file = new File(grammarDir, grammarFileName + ".st");
+
 		InputStream input = new FileInputStream(file);
 		try {
 			byte[] data = new byte[(int)file.length()];

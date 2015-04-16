@@ -15,11 +15,16 @@ public class ConcreteParserTestMethod extends JUnitTestMethod {
 	}
 
 	@Override
-	public void loadGrammars(File grammarDir, String testFileName) throws Exception {
+	public void loadGrammars(File grammarDir) throws Exception {
 	}
 
 	@Override
 	public void generateGrammars(STGroup group) {
+	}
+
+	@Override
+	public void accept(TestMethodVisitor visitor) {
+		visitor.visitConcreteParserTest(this);
 	}
 
 }

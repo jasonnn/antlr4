@@ -6,6 +6,16 @@ import java.io.File;
 
 public class CompositeLexerTestMethod extends LexerTestMethod {
 
+	public static CompositeLexerTestMethod create(File grammarDir, String testFileName,
+												  String name, String grammarName,
+												  String input, String expectedOutput,
+												  String expectedErrors, String... slaves) throws Exception {
+
+		CompositeLexerTestMethod cltm = new CompositeLexerTestMethod(name, grammarName, input, expectedOutput, expectedErrors, slaves);
+		cltm.loadGrammars(grammarDir);
+		return cltm;
+	}
+
 	public Grammar[] slaveGrammars;
 
 	public CompositeLexerTestMethod(String name, String grammarName,
@@ -19,10 +29,10 @@ public class CompositeLexerTestMethod extends LexerTestMethod {
 	}
 
 	@Override
-	public void loadGrammars(File grammarDir, String testFileName) throws Exception {
+	public void loadGrammars(File grammarDir) throws Exception {
 		for(Grammar slave : slaveGrammars)
-			slave.load(new File(grammarDir, testFileName));
-		super.loadGrammars(grammarDir, testFileName);
+			slave.load(grammarDir);
+		super.loadGrammars(grammarDir);
 	}
 
 	@Override
@@ -30,6 +40,11 @@ public class CompositeLexerTestMethod extends LexerTestMethod {
 		for(Grammar slave : slaveGrammars)
 			slave.generate(group);
 		super.generateGrammars(group);
+	}
+
+	@Override
+	public void accept(TestMethodVisitor visitor) {
+		visitor.visitCompositeLexerTest(this);
 	}
 
 }

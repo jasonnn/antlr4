@@ -4,16 +4,14 @@ import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.*;
 
 public class Generator {
 	public static String antlrRoot = "."; // assume root is current working dir
 
 	String target;
+	//org/antlr/v4/test/rt/gen/grammars
 	File input;
 	File output;
 	STGroup group;
@@ -24,36 +22,52 @@ public class Generator {
 		this.output = output;
 	}
 
-	public static void main(String[] args) throws Exception {
-        String[] targets = new String[0];
-        if (args.length >= 1) {
-            antlrRoot = args[0];
-            if (args.length > 1) {
-                targets = new String[args.length - 1];
-                System.arraycopy(args, 1, targets, 0, args.length - 1);
-            }
-
-        }
-        Map<String, File> configs = setup();
-		File source = configs.get("Source");
-
-        if(targets.length>0){
-            for (String target : targets) {
-                File genDir = configs.get(target);
-                assert genDir!=null;
-                new Generator(target,source,genDir).generateTests();
-            }
-        }
-        else {
-            for (Map.Entry<String, File> item : configs.entrySet()) {
-                if (!"Source".equals(item.getKey())) {
-                    Generator gen = new Generator(item.getKey(), source, item.getValue());
-                    gen.generateTests();
-                }
-            }
-        }
-
+	public static Generator javaTarget() throws Exception {
+		Generator g = new Generator("Java",testTemplatesRootDir(),javaGenDir());
+		g.group= g.readTemplates();
+		return g;
 	}
+
+  public static
+  void main(String[] args) throws Exception {
+    String[] targets = new String[0];
+    if (args.length > 0) {
+      for (String arg : args) {
+        if (arg.startsWith("antlr=")) {
+          String path = arg.substring("antlr=".length()); System.out.println("setting antlrRoot to" + path);
+        } else if (arg.startsWith("targets=")) {
+          String targetsStr = arg.substring("targets=".length()); targets = targetsStr.split(",");
+          System.out.println("will do generation for targets: " + Arrays.toString(targets));
+        } else {
+          System.err.println("arg " + arg + " not supported");
+        }
+      }
+    }
+
+    Map<String, File> configs = setup();
+    File source = configs.get("Source");
+
+    if (targets.length > 0) {
+      for (String target : targets) {
+        File genDir = configs.get(target);
+        assert genDir != null;
+        new Generator(target, source, genDir).generateTests();
+      }
+    } else {
+      for (Map.Entry<String, File> item : configs.entrySet()) {
+        if (!"Source".equals(item.getKey())) {
+          try {
+            new Generator(item.getKey(), source, item.getValue()).generateTests();
+          } catch (Exception e) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream(); e.printStackTrace(new PrintStream(baos));
+            System.err.printf("error while generating tests for %s %n %s", item.getKey(), baos.toString("UTF-8"));
+            e.printStackTrace(System.err);
+          }
+
+        }
+      }
+    }
+  }
 
 	private static Map<String, File> setup() throws Exception {
 		Map<String, File> configs = new LinkedHashMap<String, File>();
@@ -70,7 +84,7 @@ public class Generator {
 		return configs;
 	}
 
-	private static File javaGenDir() throws Exception {
+	private static File javaGenDir()  {
 		return new File(antlrRoot+"/tool/test/org/antlr/v4/test/rt/java");
 	}
 
@@ -106,7 +120,7 @@ public class Generator {
 		return new File(antlrRoot+"/../antlr4-javascript/tool/test/org/antlr/v4/test/rt/js/explorer");
 	}
 
-	private static File testTemplatesRootDir() throws Exception {
+	private static File testTemplatesRootDir()  {
 		return new File(antlrRoot+"/tool/test/org/antlr/v4/test/rt/gen/grammars");
 	}
 
@@ -135,7 +149,7 @@ public class Generator {
 	}
 
 	private String generateTestCode(JUnitTestFile test) throws Exception {
-		test.generateUnitTests(group);
+		//test.generateUnitTests(group);
 		ST template = group.getInstanceOf("TestFile");
 		template.add("file", test);
 		return template.render();
@@ -151,7 +165,7 @@ public class Generator {
 		}
 	}
 
-	private Collection<JUnitTestFile> buildTests() throws Exception {
+	public Collection<JUnitTestFile> buildTests() throws Exception {
 		List<JUnitTestFile> list = new ArrayList<JUnitTestFile>();
 		list.add(buildCompositeLexers());
 		list.add(buildCompositeParsers());
@@ -169,8 +183,14 @@ public class Generator {
 		return list;
 	}
 
+	private JUnitTestFileBuilder testFile(String name){
+
+		assert group!=null;
+		return JUnitTestFile.create(this.input,name);
+	}
+
 	private JUnitTestFile buildSets() throws Exception {
-		JUnitTestFile file = new JUnitTestFile("Sets");
+		JUnitTestFileBuilder file = testFile("Sets");
 		// this must return A not I to the parser; calling a nonfragment rule
 		// from a nonfragment rule does not set the overall token.
 		file.addParserTest(input, "SeqDoesNotBecomeSet", "T", "a",
@@ -261,11 +281,11 @@ public class Generator {
 				"",
 				"line 1:0 token recognition error at: 'a'\n" +
 				"line 1:1 missing {} at '<EOF>'\n");
-		return file;
+		return file.build(group);
 	}
 
 	private JUnitTestFile buildSemPredEvalParser() throws Exception {
-		JUnitTestFile file = new JUnitTestFile("SemPredEvalParser");
+		JUnitTestFileBuilder file = testFile("SemPredEvalParser");
 		JUnitTestMethod tm = file.addParserTest(input, "SimpleValidate", "T", "s",
 				"x",
 				"",
@@ -439,11 +459,11 @@ public class Generator {
 				"(file_ (para (paraContent s) \\n \\n) (para (paraContent \\n x) \\n \\n) <EOF>)\n",
 				null);
 		tm.debug = true;
-		return file;
+		return file.build(group);
 	}
 
 	private JUnitTestFile buildSemPredEvalLexer() throws Exception {
-		JUnitTestFile file = new JUnitTestFile("SemPredEvalLexer");
+		JUnitTestFileBuilder file = testFile("SemPredEvalLexer");
 		LexerTestMethod tm = file.addLexerTest(input, "DisableRule", "L",
 				"enum abc",
 				"[@0,0:3='enum',<2>,1:0]\n" +
@@ -534,11 +554,11 @@ public class Generator {
 				"[@2,9:9='a',<2>,1:9]\n" +
 				"[@3,10:9='<EOF>',<-1>,1:10]\n",
 				null);
-		return file;
+		return file.build(group);
 	}
 
 	private JUnitTestFile buildParseTrees() throws Exception {
-		JUnitTestFile file = new JUnitTestFile("ParseTrees");
+		JUnitTestFileBuilder file = testFile("ParseTrees");
 		file.addParserTest(input, "TokenAndRuleContextString", "T", "s",
 				"x",
 				"[a, s]\n(a x)\n",
@@ -571,11 +591,11 @@ public class Generator {
 				"xzyy!",
 				"(a x z y y !)\n",
 				"line 1:1 extraneous input 'z' expecting {'y', '!'}\n");
-		return file;
+		return file.build(group);
 	}
 
 	private JUnitTestFile buildParserErrors() throws Exception {
-		JUnitTestFile file = new JUnitTestFile("ParserErrors");
+		JUnitTestFileBuilder file = testFile("ParserErrors");
 		file.addParserTest(input, "TokenMismatch", "T", "a",
 				"aa",
 				"",
@@ -688,11 +708,11 @@ public class Generator {
 				"a.",
 				"",
 				"line 1:1 mismatched input '.' expecting '!'\n");
-		return file;
+		return file.build(group);
 	}
 
 	private JUnitTestFile buildListeners() throws Exception {
-		JUnitTestFile file = new JUnitTestFile("Listeners");
+		JUnitTestFileBuilder file = testFile("Listeners");
 		file.addParserTest(input, "Basic", "T", "s",
 				"1 2",
 				"(a 1 2)\n" + "1\n" + "2\n",
@@ -725,11 +745,11 @@ public class Generator {
 				"(e (e 1) ( (eList (e 2) , (e 3)) ))\n" +
 				"1\n" + "2\n" + "3\n" + "1 [13 6]",
 				null);
-		return file;
+		return file.build(group);
 	}
 
 	private JUnitTestFile buildLexerErrors() throws Exception {
-		JUnitTestFile file = new JUnitTestFile("LexerErrors");
+		JUnitTestFileBuilder file = testFile("LexerErrors");
 		file.addLexerTest(input, "InvalidCharAtStart", "L",
 				"x",
 				"[@0,1:0='<EOF>',<-1>,1:1]\n",
@@ -800,11 +820,11 @@ public class Generator {
 				"line 1:1 token recognition error at: ' '\n" +
 				"line 1:3 token recognition error at: ' '\n");
 		tm.lexerOnly = false;
-		return file;
+		return file.build(group);
 	}
 
 	private JUnitTestFile buildLeftRecursion() throws Exception {
-		JUnitTestFile file = new JUnitTestFile("LeftRecursion");
+		JUnitTestFileBuilder file = testFile("LeftRecursion");
 		file.addParserTests(input, "Simple", "T", "s",
 				"x", "(s (a x))\n",
 				"x y", "(s (a (a x) y))\n",
@@ -971,11 +991,11 @@ public class Generator {
 				"a,c>>x",		"(s (expr (expr (expr a) , (expr c)) >> (expr x)) <EOF>)\n",
 				"x",			"(s (expr x) <EOF>)\n",
 				"a*b,c,x*y>>r",	"(s (expr (expr (expr (expr (expr a) * (expr b)) , (expr c)) , (expr (expr x) * (expr y))) >> (expr r)) <EOF>)\n");
-		return file;
+		return file.build(group);
 	}
 
 	private JUnitTestFile buildFullContextParsing() throws Exception {
-		JUnitTestFile file = new JUnitTestFile("FullContextParsing");
+		JUnitTestFileBuilder file = testFile("FullContextParsing");
 		JUnitTestMethod tm = file.addParserTest(input, "AmbigYieldsCtxSensitiveDFA", "T", "s", "abc",
 				"Decision 0:\n" +
 				"s0-ID->:s1^=>1\n",
@@ -1084,26 +1104,26 @@ public class Generator {
 					"line 1:3 reportAttemptingFullContext d=1 (expr), input='*'\n" +
 					"line 1:5 reportAmbiguity d=1 (expr): ambigAlts={1, 2}, input='*c'\n");
 		tm.debug = true;
-		return file;
+		return file.build(group);
 	}
 
 	private JUnitTestFile buildCompositeLexers() throws Exception {
-		JUnitTestFile file = new JUnitTestFile("CompositeLexers");
-		file.addCompositeLexerTest(input, "LexerDelegatorInvokesDelegateRule", "M", "abc",
+		JUnitTestFileBuilder file = testFile("CompositeLexers");
+		file.addCompositeLexerTest("LexerDelegatorInvokesDelegateRule", "M", "abc",
 				"S.A\n" +
 				"[@0,0:0='a',<3>,1:0]\n" +
 				"[@1,1:1='b',<1>,1:1]\n" +
 				"[@2,2:2='c',<4>,1:2]\n" +
 				"[@3,3:2='<EOF>',<-1>,1:3]\n", null, "S");
-		file.addCompositeLexerTest(input, "LexerDelegatorRuleOverridesDelegate", "M", "ab",
+		file.addCompositeLexerTest("LexerDelegatorRuleOverridesDelegate", "M", "ab",
 				"M.A\n" +
 				"[@0,0:1='ab',<1>,1:0]\n" +
 				"[@1,2:1='<EOF>',<-1>,1:2]\n", null, "S");
-		return file;
+		return file.build(group);
 	}
 
 	private JUnitTestFile buildLexerExec() throws Exception {
-		JUnitTestFile file = new JUnitTestFile("LexerExec");
+		JUnitTestFileBuilder file = testFile("LexerExec");
 		file.addLexerTest(input, "QuoteTranslation", "L", "\"",
 				"[@0,0:0='\"',<1>,1:0]\n" +
 				"[@1,1:0='<EOF>',<-1>,1:1]\n", null);
@@ -1327,13 +1347,15 @@ public class Generator {
 		file.addLexerTest(input, "ZeroLengthToken", "L", "'xxx'",
 				"[@0,0:4=''xxx'',<1>,1:0]\n" +
 				"[@1,5:4='<EOF>',<-1>,1:5]\n", null);
-		return file;
+		return file.build(group);
 	}
 
 	private JUnitTestFile buildCompositeParsers() throws Exception {
-		JUnitTestFile file = new JUnitTestFile("CompositeParsers");
-		file.importErrorQueue = true;
-		file.importGrammar = true;
+		JUnitTestFileBuilder file = testFile("CompositeParsers");
+
+		file.importErrorQueue(true);
+		file.importGrammar(true);
+
 		file.addCompositeParserTest(input, "DelegatorInvokesDelegateRule", "M", "s", "b", "S.a\n", null, "S");
 		file.addCompositeParserTest(input, "BringInLiteralsFromDelegate", "M", "s", "=a", "S.a", null, "S");
 		file.addCompositeParserTest(input, "DelegatorInvokesDelegateRuleWithArgs", "M", "s", "b", "S.a1000\n", null, "S");
@@ -1365,11 +1387,11 @@ public class Generator {
 		file.addCompositeParserTest(input, "ImportedRuleWithAction", "M", "s", "b", "", null, "S");
 		file.addCompositeParserTest(input, "ImportedGrammarWithEmptyOptions", "M", "s", "b", "", null, "S");
 		file.addCompositeParserTest(input, "ImportLexerWithOnlyFragmentRules", "M", "program", "test test", "", null, "S");
-		return file;
+		return file.build(group);
 	}
 
 	private JUnitTestFile buildParserExec() throws Exception {
-		JUnitTestFile file = new JUnitTestFile("ParserExec");
+		JUnitTestFileBuilder file = testFile("ParserExec");
 		file.addParserTest(input, "Labels", "T", "a", "abc 34;", "", null);
 		file.addParserTest(input, "ListLabelsOnSet", "T", "a", "abc 34;", "", null);
 		file.addParserTest(input, "AorB", "T", "a", "34", "alt 2\n", null);
@@ -1431,7 +1453,7 @@ public class Generator {
 		file.addParserTest(input, "ParserProperty", "T", "a", "abc", "valid\n", null);
 		/*CompositeParserTestMethod tm = file.addCompositeParserTest(input, "AlternateQuotes", "ModeTagsParser", "file_", "", "", null, "ModeTagsLexer");
 		tm.slaveIsLexer = true;*/
-		return file;
+		return file.build(group);
 	}
 
 

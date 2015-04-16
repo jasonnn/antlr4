@@ -20,10 +20,10 @@ public class CompositeParserTestMethod extends ParserTestMethod {
 	}
 
 	@Override
-	public void loadGrammars(File grammarDir, String testFileName) throws Exception {
+	public void loadGrammars(File grammarsDir) throws Exception {
 		for(Grammar slave : slaveGrammars)
-			slave.load(new File(grammarDir, testFileName));
-		super.loadGrammars(grammarDir, testFileName);
+			slave.load(grammarsDir);
+		super.loadGrammars(grammarsDir);
 	}
 
 	@Override
@@ -31,6 +31,11 @@ public class CompositeParserTestMethod extends ParserTestMethod {
 		for(Grammar slave : slaveGrammars)
 			slave.generate(group);
 		super.generateGrammars(group);
+	}
+
+	@Override
+	public void accept(TestMethodVisitor visitor) {
+		visitor.visitCompositeParserTest(this);
 	}
 
 }

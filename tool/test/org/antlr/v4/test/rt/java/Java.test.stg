@@ -1,19 +1,18 @@
 TestFile(file) ::= <<
 package org.antlr.v4.test.rt.java;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
-import static org.hamcrest.Matchers.*;
-
-
 <if(file.importErrorQueue)>
 import org.antlr.v4.test.ErrorQueue;
 <endif>
 <if(file.importGrammar)>
 import org.antlr.v4.tool.Grammar;
 <endif>
-
 import org.antlr.v4.test.AntlrTestcase;
+import org.junit.Test;
+
+import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class Test<file.name> extends AntlrTestcase {
 

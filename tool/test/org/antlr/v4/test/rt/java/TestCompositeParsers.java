@@ -1,8 +1,8 @@
 package org.antlr.v4.test.rt.java;
 
-import org.antlr.v4.test.AntlrTestcase;
 import org.antlr.v4.test.ErrorQueue;
 import org.antlr.v4.tool.Grammar;
+import org.antlr.v4.test.AntlrTestcase;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.isEmptyOrNullString;

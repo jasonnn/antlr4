@@ -1,7 +1,8 @@
-package org.antlr.v4.test.rt.gen;
+package org.antlr.v4.test.rt.gen.aot;
 
 
 import org.antlr.v4.Tool;
+import org.antlr.v4.test.rt.gen.*;
 
 import javax.tools.*;
 import java.io.*;
@@ -31,100 +32,121 @@ class MyGenerator {
     assert testGroups != null;
     assert g.group != null;
 
-    TestMethodVisitors.Multiplexer rootVisitor = new TestMethodVisitors.Multiplexer() {
-      @Override
-      public
-      void visitConcreteParserTest(ConcreteParserTestMethod test) {}
-    };
-    rootVisitor.visitors.add(new MkDirVisitor());
-    rootVisitor.visitors.add(new WriteInputFiles());
-    rootVisitor.visitors.add(new RunAntlr());
-    rootVisitor.visitors.add(new Compile());
+    CodegenContext context = new CodegenContext(g.output);
+
+    for (JUnitTestFile file : testGroups) {
+
+      context.update(file);
+
+      for (JUnitTestMethod unitTest : file.unitTests) {
+        if (ConcreteParserTestMethod.class.equals(unitTest.getClass())) continue;
+
+        context.update(unitTest);
 
 
-    for (JUnitTestFile testGroup : testGroups) {
-      currentGroup = testGroup;
+      }
 
-      baseDir = cwd = new File(g.output, testGroup.name);
-      b = baseDir.mkdir();
-      assert b;
-      testGroup.visitTests(rootVisitor);
+
     }
+
+//    TestMethodVisitors.Multiplexer rootVisitor = new TestMethodVisitors.Multiplexer() {
+//      @Override
+//      public
+//      void visitConcreteParserTest(ConcreteParserTestMethod test) {}
+//    };
+//    rootVisitor.visitors.add(new MkDirVisitor());
+//    rootVisitor.visitors.add(new WriteInputFiles());
+//    rootVisitor.visitors.add(new RunAntlr());
+//    rootVisitor.visitors.add(new Compile());
+//
+//
+//    for (JUnitTestFile testGroup : testGroups) {
+//      currentGroup = testGroup;
+//
+//      baseDir = cwd = new File(g.output, testGroup.name);
+//      b = baseDir.mkdir();
+//      assert b;
+//      testGroup.visitTests(rootVisitor);
+//    }
   }
 
 
-  class MkDirVisitor extends TestMethodVisitors.Generalizer {
-    @Override
-    protected
-    void visitTest(JUnitTestMethod test) {
-      cwd = new File(baseDir, test.name);
-      boolean b = cwd.mkdir();
-      assert b;
-    }
-  }
+//  class MkDirVisitor extends TestMethodVisitors.Generalizer {
+//    @Override
+//    protected
+//    void visitTest(JUnitTestMethod test) {
+//      cwd = new File(baseDir, test.name);
+//      boolean b = cwd.mkdir();
+//      assert b;
+//    }
+//  }
 
-  class WriteInputFiles extends TestMethodVisitors.Generalizer {
-    @Override
-    public
-    void visitCompositeParserTest(CompositeParserTestMethod test) {
-      super.visitCompositeParserTest(test);
-      for (Grammar grammar : test.slaveGrammars) writeGrammar(grammar);
-    }
-
-    @Override
-    public
-    void visitCompositeLexerTest(CompositeLexerTestMethod test) {
-      super.visitCompositeLexerTest(test);
-      for (Grammar grammar : test.slaveGrammars) writeGrammar(grammar);
-    }
-
-    @Override
-    public
-    void visitAbstractParserTest(AbstractParserTestMethod test) {
-      super.visitAbstractParserTest(test);
-      for (ConcreteParserTestMethod derivedTest : test.derivedTests) {
-        realVisitConcreteParser(derivedTest);
-      }
-    }
-
-    void realVisitConcreteParser(ConcreteParserTestMethod test) {
-      String suffix = test.name.substring(test.baseName.length(), test.name.length());
-      if (test.input != null) {
-        writeText(file("input" + suffix + ".txt"), test.input);
-      }
-      if (test.expectedOutput != null) {
-        writeText(file("output" + suffix + ".txt"), test.expectedOutput);
-      }
-      if (test.expectedErrors != null) {
-        writeText(file("errors" + suffix + ".txt"), test.expectedErrors);
-      }
-    }
-
-    //TODO unescape when writing, escape when reading
-    // (input/output are pre-escaped)
-    @Override
-    protected
-    void visitTest(JUnitTestMethod test) {
-      writeGrammar(test.grammar);
-      if (test.input != null) {
-        writeText(file("input.txt"), test.input);
-      }
-      if (test.expectedOutput != null) {
-        writeText(file("output.txt"), test.expectedOutput);
-      }
-      if (test.expectedErrors != null) {
-        writeText(file("errors.txt"), test.expectedErrors);
-      }
-    }
-  }
+//  class WriteInputFiles extends TestMethodVisitors.Generalizer {
+//    @Override
+//    public
+//    void visitCompositeParserTest(CompositeParserTestMethod test) {
+//      super.visitCompositeParserTest(test);
+//      for (Grammar grammar : test.slaveGrammars) writeGrammar(grammar);
+//    }
+//
+//    @Override
+//    public
+//    void visitCompositeLexerTest(CompositeLexerTestMethod test) {
+//      super.visitCompositeLexerTest(test);
+//      for (Grammar grammar : test.slaveGrammars) writeGrammar(grammar);
+//    }
+//
+//    @Override
+//    public
+//    void visitAbstractParserTest(AbstractParserTestMethod test) {
+//      super.visitAbstractParserTest(test);
+//      for (ConcreteParserTestMethod derivedTest : test.derivedTests) {
+//        realVisitConcreteParser(derivedTest);
+//      }
+//    }
+//
+//    void realVisitConcreteParser(ConcreteParserTestMethod test) {
+//      String suffix = test.name.substring(test.baseName.length(), test.name.length());
+//      if (test.input != null) {
+//        writeText(file("input" + suffix + ".txt"), test.input);
+//      }
+//      if (test.expectedOutput != null) {
+//        writeText(file("output" + suffix + ".txt"), test.expectedOutput);
+//      }
+//      if (test.expectedErrors != null) {
+//        writeText(file("errors" + suffix + ".txt"), test.expectedErrors);
+//      }
+//    }
+//
+//    //TODO unescape when writing, escape when reading
+//    // (input/output are pre-escaped)
+//    //see: http://stackoverflow.com/a/14541345
+//    // https://gist.github.com/uklimaschewski/6741769
+//    @Override
+//    protected
+//    void visitTest(JUnitTestMethod test) {
+//      writeGrammar(test.grammar);
+//      if (test.input != null) {
+//        writeText(file("input.txt"), test.input);
+//      }
+//      if (test.expectedOutput != null) {
+//        writeText(file("output.txt"), test.expectedOutput);
+//      }
+//      if (test.expectedErrors != null) {
+//        writeText(file("errors.txt"), test.expectedErrors);
+//      }
+//    }
+//  }
 
   class RunAntlr extends TestMethodVisitors.Generalizer {
-    String packageName(JUnitTestMethod testMethod){
+    String packageName(JUnitTestMethod testMethod) {
       return currentGroup.name + ".Test" + testMethod.name;
     }
-    File srcDir(JUnitTestMethod testMethod){
+
+    File srcDir(JUnitTestMethod testMethod) {
       return new File(cwd, "src/" + currentGroup.name + "/Test" + testMethod.name);
     }
+
     class MyTool extends Tool {
       void setHasOutput() {
         haveOutputDir = true;
@@ -245,11 +267,12 @@ class MyGenerator {
     }
 
   }
+
   static final DiagnosticListener<JavaFileObject> ERROR_LISTENER = new DiagnosticListener<JavaFileObject>() {
     @Override
     public
     void report(Diagnostic<? extends JavaFileObject> diagnostic) {
-      if (diagnostic.getKind()== Diagnostic.Kind.ERROR) {
+      if (diagnostic.getKind() == Diagnostic.Kind.ERROR) {
         System.err.println(diagnostic);
       }
     }

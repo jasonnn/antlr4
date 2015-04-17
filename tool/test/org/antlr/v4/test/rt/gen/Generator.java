@@ -10,11 +10,11 @@ import java.util.*;
 public class Generator {
 	public static String antlrRoot = "."; // assume root is current working dir
 
-	String target;
+	public String target;
 	//org/antlr/v4/test/rt/gen/grammars
-	File input;
-	File output;
-	STGroup group;
+	public File input;
+	public 	File output;
+	public STGroup group;
 
 	public Generator(String target, File input, File output) {
 		this.target = target;

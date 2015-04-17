@@ -10,8 +10,9 @@ public class ParserTestMethod extends JUnitTestMethod {
 		this.startRule = startRule;
 	}
 
+
 	@Override
-	public void accept(TestMethodVisitor visitor) {
-		visitor.visitParserTest(this);
+	<R, P> R accept(TestMethodVisitor<R, P> visitor, P param) {
+		return visitor.visitParserTest(this,param);
 	}
 }

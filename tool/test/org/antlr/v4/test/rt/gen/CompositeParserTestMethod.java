@@ -34,8 +34,7 @@ public class CompositeParserTestMethod extends ParserTestMethod {
 	}
 
 	@Override
-	public void accept(TestMethodVisitor visitor) {
-		visitor.visitCompositeParserTest(this);
+	<R, P> R accept(TestMethodVisitor<R, P> visitor, P param) {
+		return visitor.visitCompositeParserTest(this,param);
 	}
-
 }

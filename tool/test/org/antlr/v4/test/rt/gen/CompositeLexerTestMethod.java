@@ -43,8 +43,7 @@ public class CompositeLexerTestMethod extends LexerTestMethod {
 	}
 
 	@Override
-	public void accept(TestMethodVisitor visitor) {
-		visitor.visitCompositeLexerTest(this);
+	<R, P> R accept(TestMethodVisitor<R, P> visitor, P param) {
+		return visitor.visitCompositeLexerTest(this,param);
 	}
-
 }

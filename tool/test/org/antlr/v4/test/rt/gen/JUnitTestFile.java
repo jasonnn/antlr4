@@ -16,7 +16,7 @@ public class JUnitTestFile implements JUnitTestFileBuilder{
 	}
 	File grammarsDir;
 
-	List<JUnitTestMethod> unitTests = new ArrayList<JUnitTestMethod>();
+  public final List<JUnitTestMethod> unitTests = new ArrayList<JUnitTestMethod>();
 	public String name;
 	//used by stg
 	public List<String> tests = new ArrayList<String>();
@@ -141,9 +141,9 @@ public class JUnitTestFile implements JUnitTestFileBuilder{
 		return this;
 	}
 
-	public void visitTests(TestMethodVisitor visitor){
+	public <R,P> void visitTests(TestMethodVisitor<R,P> visitor){
 		for (JUnitTestMethod unitTest : unitTests) {
-			unitTest.accept(visitor);
+			visitor.beginVisit(unitTest,null);
 		}
 	}
 

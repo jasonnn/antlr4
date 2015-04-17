@@ -2,19 +2,41 @@ package org.antlr.v4.test.rt.gen;
 
 /**
  * Created by jason on 4/15/15.
+ *
+ * note abnormal dispatch:
+ *
+ * visitor.beginVisit -> testMethod.accept -> visitor.visitXXX...-> visitor.visitTest
  */
-public interface TestMethodVisitor {
-    void visitAbstractParserTest(AbstractParserTestMethod test);
+public abstract
+class TestMethodVisitor<R, P> {
+  public
+  R beginVisit(JUnitTestMethod test, P p) {return test.accept(this, p);}
 
-    void visitCompositeLexerTest(CompositeLexerTestMethod test);
+  public
+  R visitAbstractParserTest(AbstractParserTestMethod test, P p) {return visitTest(test, p);}
 
-    void visitCompositeParserTest(CompositeParserTestMethod test);
+  public
+  R visitCompositeLexerTest(CompositeLexerTestMethod test, P p) {return visitLexerTest(test, p);}
 
-    void visitConcreteParserTest(ConcreteParserTestMethod test);
+  public
+  R visitCompositeParserTest(CompositeParserTestMethod test, P p) {return visitParserTest(test, p);}
 
-    void visitParserTest(ParserTestMethod test);
+  public
+  R visitConcreteParserTest(ConcreteParserTestMethod test, P p) {return visitTest(test, p);}
 
-    void visitLexerTest(LexerTestMethod test);
+  public
+  R visitParserTest(ParserTestMethod test, P p) {return visitTest(test, p);}
 
+  public
+  R visitLexerTest(LexerTestMethod test, P p) {return visitTest(test, p);}
+
+  protected
+  R visitTest(JUnitTestMethod test, P p){
+    return defaultValue(p);
+  }
+
+  protected R defaultValue(P p){
+    return null;
+  }
 
 }

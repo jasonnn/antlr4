@@ -15,7 +15,7 @@ public class AbstractParserTestMethod extends JUnitTestMethod {
 
 
 	@Override
-	public void accept(TestMethodVisitor visitor) {
-		visitor.visitAbstractParserTest(this);
+	<R, P> R accept(TestMethodVisitor<R,P> visitor, P param) {
+		return visitor.visitAbstractParserTest(this,param);
 	}
 }

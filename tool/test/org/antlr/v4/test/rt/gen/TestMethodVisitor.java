@@ -3,32 +3,18 @@ package org.antlr.v4.test.rt.gen;
 /**
  * Created by jason on 4/15/15.
  */
-public class TestMethodVisitor {
-    public void visitAbstractParserTest(AbstractParserTestMethod test) {
-        visitTest(test);
-    }
+public interface TestMethodVisitor {
+    void visitAbstractParserTest(AbstractParserTestMethod test);
 
-    public void visitCompositeLexerTest(CompositeLexerTestMethod test) {
-        visitLexerTest(test);
-    }
+    void visitCompositeLexerTest(CompositeLexerTestMethod test);
 
-    public void visitCompositeParserTest(CompositeParserTestMethod test) {
-        visitParserTest(test);
-    }
+    void visitCompositeParserTest(CompositeParserTestMethod test);
 
-    public void visitConcreteParserTest(ConcreteParserTestMethod test) {
-        visitTest(test);
-    }
+    void visitConcreteParserTest(ConcreteParserTestMethod test);
 
-    public void visitParserTest(ParserTestMethod test) {
-        visitTest(test);
-    }
+    void visitParserTest(ParserTestMethod test);
 
-    public void visitLexerTest(LexerTestMethod test) {
-        visitTest(test);
-    }
+    void visitLexerTest(LexerTestMethod test);
 
-    public void visitTest(JUnitTestMethod test){
 
-    }
 }

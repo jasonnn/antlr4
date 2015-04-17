@@ -2,277 +2,261 @@ package org.antlr.v4.test.rt.gen;
 
 
 import org.antlr.v4.Tool;
-import org.antlr.v4.test.impl.wip.NewTestCodeGenerator;
-import org.stringtemplate.v4.ST;
 
 import javax.tools.*;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * Created by jason on 4/14/15.
  */
-public class MyGenerator {
+public
+class MyGenerator {
+  static final
+  Logger log = Logger.getLogger(MyGenerator.class.getName());
 
-    Generator g;
-    Collection<JUnitTestFile> testFiles;
+  Generator g;
+  Collection<JUnitTestFile> testGroups;
 
-    MyGenerator() throws Exception {
-        g = Generator.javaTarget();
-        g.output = cwd = new File("/Users/jason/Desktop/tmp/tst");
+  MyGenerator() throws Exception {
+    g = Generator.javaTarget();
+    g.output = cwd = new File("/Users/jason/Desktop/tmp/tst");
+    if (cwd.exists()) Files.deleteRecurisvely(cwd);
+    boolean b = cwd.mkdirs();
+    assert b;
 
-        testFiles = g.buildTests();
-        assert testFiles != null;
-        assert g.group != null;
-        run();
-    }
+    testGroups = g.buildTests();
+    assert testGroups != null;
+    assert g.group != null;
 
-    JUnitTestFile currentFile;
-
-    private void run() throws Exception {
-        for (JUnitTestFile testFile : testFiles) {
-            currentFile = testFile;
-            handleTestFile(testFile);
-        }
-    }
-
-    private String generateTestCode(JUnitTestFile test) throws Exception {
-        ST template = g.group.getInstanceOf("TestFile");
-        template.add("file", test);
-        return template.render();
-    }
-
-
-    File cwd;
-
-    File dir(String path){
-        File f = new File(cwd,path);
-        f.mkdirs();
-        return f;
-    }
-    File file(String path){
-        return new File(cwd,path);
-    }
-
-    private void handleTestFile(JUnitTestFile testFile) {
-        File baseDir = dir(testFile.name);
-
-        for (JUnitTestMethod test : testFile.unitTests) {
-           this.cwd = new File(baseDir, test.name);
-            cwd.mkdir();
-
-
-
-            if (test instanceof LexerTestMethod) {
-                if (test instanceof CompositeLexerTestMethod) {
-                    handleCompositeLexer((CompositeLexerTestMethod) test);
-                } else {
-                    handleLexer((LexerTestMethod) test);
-                }
-            } else if (test instanceof ParserTestMethod) {
-                if (test instanceof CompositeParserTestMethod) {
-                    handleCompositeParser((CompositeParserTestMethod) test);
-                } else {
-                    handleParser((ParserTestMethod) test);
-                }
-            } else if (test instanceof AbstractParserTestMethod) {
-                handleAbstractParser((AbstractParserTestMethod) test);
-            } else if (test instanceof ConcreteParserTestMethod) {
-                handleConcreteParser((ConcreteParserTestMethod) test);
-            } else {
-                System.err.println("????");
-            }
-
-
-
-
-            //File antlrDir = new File(testBaseDir, "antlr4"); antlrDir.mkdir();
-
-//      if (test.grammar.template != null) {
-//        String grammarTxt = test.grammar.template.render();
-//        writeText(new File(cwd, test.grammar.fileName + ".g4"), grammarTxt);
-//      }
-
-            if (test.input != null) {
-                writeText(file("input"), test.input);
-            }
-
-            if (test.expectedOutput != null) {
-                writeText(file("output"), test.expectedOutput);
-            }
-
-            if (test.expectedErrors != null) {
-                writeText(file("errors"), test.expectedErrors);
-            }
-
-
-        }
-
-    }
-
-    private void handleConcreteParser(ConcreteParserTestMethod test) {
-
-    }
-
-    private void handleAbstractParser(AbstractParserTestMethod test) {
-
-    }
-
-    private void handleParser(ParserTestMethod test) {
-        writeGrammar(test.grammar);
-        runTool(test);
-
-        File tst = new File(cwd, "src/" + currentFile.name + "/" + test.name+"/ParserTest.java");
-        String pkg = currentFile.name + '.' + test.name;
-        String lexerJavaName = test.grammar.grammarName + "Lexer";
-        String parserJavaName = test.grammar.grammarName + "Parser";
-        writeText(tst, NewTestCodeGenerator.generateParserTest(pkg,lexerJavaName,parserJavaName,test.startRule));
-        compile(test);
-
-    }
-
-    private void handleCompositeParser(CompositeParserTestMethod test) {
-        writeGrammar(test.grammar);
-        for (Grammar grammar : test.slaveGrammars) {
-            writeGrammar(grammar);
-        }
-        runTool(test);
-        File tst = new File(cwd, "src/" + currentFile.name + "/" + test.name+"/ParserTest.java");
-        String pkg = currentFile.name + '.' + test.name;
-        String lexerJavaName = test.grammar.grammarName + "Lexer";
-        String parserJavaName = test.grammar.grammarName + "Parser";
-        writeText(tst, NewTestCodeGenerator.generateParserTest(pkg, lexerJavaName, parserJavaName, test.startRule));
-        compile(test);
-
-
-    }
-
-    private void handleLexer(LexerTestMethod test) {
-        writeGrammar(test.grammar);
-        runTool(test);
-
-        File tst = new File(cwd, "src/" + currentFile.name + "/" + test.name+"/LexerTest.java");
-        String lexerJavaName = test.grammar.grammarName;// + "Lexer";
-        writeText(tst, NewTestCodeGenerator.generateLexerTest(currentFile.name + '.' + test.name, test.grammar.grammarName));
-
-        compile(test);
-    }
-
-    private void handleCompositeLexer(CompositeLexerTestMethod test) {
-        writeGrammar(test.grammar);
-        for (Grammar grammar : test.slaveGrammars) {
-            writeGrammar(grammar);
-        }
-        runTool(test);
-        File tst = new File(cwd, "src/" + currentFile.name + "/" + test.name+"/LexerTest.java");
-        //tst.mkdirs();
-        String lexerJavaName = test.grammar.grammarName ;//+ "Lexer";
-
-        writeText(tst, NewTestCodeGenerator.generateLexerTest(currentFile.name + '.' + test.name, lexerJavaName));
-        compile(test);
-
-    }
-
-    static final DiagnosticListener<JavaFileObject> listener=new DiagnosticListener<JavaFileObject>() {
-        @Override
-        public void report(Diagnostic<? extends JavaFileObject> diagnostic) {
-            System.out.println(diagnostic);
-        }
+    TestMethodVisitors.Multiplexer rootVisitor = new TestMethodVisitors.Multiplexer() {
+      @Override
+      public
+      void visitConcreteParserTest(ConcreteParserTestMethod test) {}
     };
-
-    void compile(JUnitTestMethod m){
-        JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-
-        StandardJavaFileManager manager = compiler.getStandardFileManager(listener, Locale.getDefault(), Charset.forName("UTF-8"));
-
-        File[] files = new File(cwd, "src/" + currentFile.name + "/" + m.name).listFiles();
-        assert files!=null;
-        List<JavaFileObject> fileList = new ArrayList<JavaFileObject>();
-        for (File file : files) {
-            if(file.getName().endsWith(".java")){
-                fileList.add(manager.getJavaFileObjects(file).iterator().next());
-            }
-        }
-
-        try {
-            manager.setLocation(StandardLocation.SOURCE_PATH, Collections.singleton(new File(cwd,"src")));
-            File bin = new File(cwd,"bin");
-            bin.mkdir();
-            manager.setLocation(StandardLocation.CLASS_OUTPUT,Collections.singleton(bin));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    rootVisitor.visitors.add(new MkDirVisitor());
+    rootVisitor.visitors.add(new WriteInputFiles());
+    rootVisitor.visitors.add(new RunAntlr());
+    rootVisitor.visitors.add(new Compile());
 
 
-        JavaCompiler.CompilationTask task = compiler.getTask(new OutputStreamWriter(System.err), manager, listener, Collections.<String>emptySet(), Collections.<String>emptySet(), fileList);
-        task.call();
+    for (JUnitTestFile testGroup : testGroups) {
+      currentGroup = testGroup;
 
-        try {
-            manager.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+      baseDir = cwd = new File(g.output, testGroup.name);
+      b = baseDir.mkdir();
+      assert b;
+      testGroup.visitTests(rootVisitor);
+    }
+  }
 
+
+  class MkDirVisitor extends TestMethodVisitors.Generalizer {
+    @Override
+    protected
+    void visitTest(JUnitTestMethod test) {
+      cwd = new File(baseDir, test.name);
+      boolean b = cwd.mkdir();
+      assert b;
+    }
+  }
+
+  class WriteInputFiles extends TestMethodVisitors.Generalizer {
+    @Override
+    public
+    void visitCompositeParserTest(CompositeParserTestMethod test) {
+      super.visitCompositeParserTest(test);
+      for (Grammar grammar : test.slaveGrammars) writeGrammar(grammar);
     }
 
-    void runTool(JUnitTestMethod m) {
-
-        class MyTool extends Tool {
-            void setHasOutput(){
-                haveOutputDir=true;
-            }
-
-            public void addInput(String file){
-                grammarFiles.add(file);
-            }
-        }
-
-
-        MyTool tool = new MyTool();
-        tool.gen_visitor = true;
-        tool.gen_listener = true;
-
-        tool.inputDirectory=cwd.getAbsoluteFile();
-        tool.libDirectory=cwd.getAbsolutePath();
-        tool.genPackage = currentFile.name + '.' + m.name;
-
-        File pkgDir = new File(cwd, "src/" + currentFile.name + "/" + m.name);
-        pkgDir.mkdirs();
-
-        tool.outputDirectory=pkgDir.getAbsolutePath();
-        tool.setHasOutput();
-
-        tool.addInput(new File(cwd,m.grammar.grammarName + ".g4").getAbsolutePath());
-
-        tool.processGrammarsOnCommandLine();
-
-
+    @Override
+    public
+    void visitCompositeLexerTest(CompositeLexerTestMethod test) {
+      super.visitCompositeLexerTest(test);
+      for (Grammar grammar : test.slaveGrammars) writeGrammar(grammar);
     }
 
-    void writeGrammar(Grammar grammar) {
-        writeText(new File(cwd, grammar.grammarName + ".g4"), grammar.template.render());
+    @Override
+    public
+    void visitAbstractParserTest(AbstractParserTestMethod test) {
+      super.visitAbstractParserTest(test);
+      for (ConcreteParserTestMethod derivedTest : test.derivedTests) {
+        realVisitConcreteParser(derivedTest);
+      }
     }
 
-
-    static void writeText(File file, String text) {
-        assert file != null;
-        assert text != null;
-        try {
-
-            FileWriter fw = new FileWriter(file);
-            fw.write(text);
-            fw.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
+    void realVisitConcreteParser(ConcreteParserTestMethod test) {
+      String suffix = test.name.substring(test.baseName.length(), test.name.length());
+      if (test.input != null) {
+        writeText(file("input" + suffix + ".txt"), test.input);
+      }
+      if (test.expectedOutput != null) {
+        writeText(file("output" + suffix + ".txt"), test.expectedOutput);
+      }
+      if (test.expectedErrors != null) {
+        writeText(file("errors" + suffix + ".txt"), test.expectedErrors);
+      }
     }
 
-    public static void main(String[] args) throws Exception {
-        new MyGenerator();
+    //TODO unescape when writing, escape when reading
+    // (input/output are pre-escaped)
+    @Override
+    protected
+    void visitTest(JUnitTestMethod test) {
+      writeGrammar(test.grammar);
+      if (test.input != null) {
+        writeText(file("input.txt"), test.input);
+      }
+      if (test.expectedOutput != null) {
+        writeText(file("output.txt"), test.expectedOutput);
+      }
+      if (test.expectedErrors != null) {
+        writeText(file("errors.txt"), test.expectedErrors);
+      }
     }
+  }
+
+  class RunAntlr extends TestMethodVisitors.Generalizer {
+    String packageName(JUnitTestMethod testMethod){
+      return currentGroup.name + ".Test" + testMethod.name;
+    }
+    File srcDir(JUnitTestMethod testMethod){
+      return new File(cwd, "src/" + currentGroup.name + "/Test" + testMethod.name);
+    }
+    class MyTool extends Tool {
+      void setHasOutput() {
+        haveOutputDir = true;
+      }
+
+      public
+      void addInput(String file) {
+        grammarFiles.add(file);
+      }
+    }
+
+    @Override
+    protected
+    void visitTest(JUnitTestMethod test) {
+
+      MyTool tool = new MyTool();
+      tool.gen_visitor = true;
+      tool.gen_listener = true;
+
+      tool.inputDirectory = cwd.getAbsoluteFile();
+      tool.libDirectory = cwd.getAbsolutePath();
+      tool.genPackage = packageName(test);
+
+      if (!Character.isJavaIdentifierStart(test.name.codePointAt(0))) {
+        System.out.println("bad name: " + test.name);
+      }
+
+      File pkgDir = srcDir(test);
+      boolean b = pkgDir.mkdirs();
+      assert b;
+
+      tool.outputDirectory = pkgDir.getAbsolutePath();
+      tool.setHasOutput();
+
+      tool.addInput(new File(cwd, test.grammar.grammarName + ".g4").getAbsolutePath());
+
+      tool.processGrammarsOnCommandLine();
+    }
+  }
+
+  class Compile extends TestMethodVisitors.Generalizer {
+    @Override
+    protected
+    void visitTest(JUnitTestMethod test) {
+      JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+
+      StandardJavaFileManager manager = compiler.getStandardFileManager(ERROR_LISTENER,
+                                                                        Locale.getDefault(),
+                                                                        Charset.forName("UTF-8"));
+
+      File srcDir = new File(cwd, "src");
+
+      assert srcDir.exists();
+      assert srcDir.isDirectory();
+
+
+      Iterable<? extends JavaFileObject> compilationUnits =
+          manager.getJavaFileObjectsFromFiles(Files.findJavaFiles(srcDir));
+
+      assert compilationUnits.iterator().hasNext();
+
+
+      try {
+        manager.setLocation(StandardLocation.SOURCE_PATH, Collections.singleton(srcDir));
+        File bin = new File(cwd, "bin");
+        boolean b = bin.mkdir();
+        assert b;
+        manager.setLocation(StandardLocation.CLASS_OUTPUT, Collections.singleton(bin));
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+
+
+      JavaCompiler.CompilationTask task = compiler.getTask(new OutputStreamWriter(System.err),
+                                                           manager,
+                                                           ERROR_LISTENER,
+                                                           Collections.<String>emptySet(),
+                                                           Collections.<String>emptySet(),
+                                                           compilationUnits);
+      task.call();
+
+      try {
+        manager.close();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+
+    }
+  }
+
+  File baseDir;
+
+  JUnitTestFile currentGroup;
+
+  File cwd;
+
+
+  File file(String path) {
+    return new File(cwd, path);
+  }
+
+
+  void writeGrammar(Grammar grammar) {
+    writeText(new File(cwd, grammar.grammarName + ".g4"), grammar.template.render());
+  }
+
+  static
+  void writeText(File file, String text) {
+    assert file != null;
+    assert text != null;
+    try {
+
+      FileWriter fw = new FileWriter(file);
+      fw.write(text);
+      fw.close();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
+  }
+  static final DiagnosticListener<JavaFileObject> ERROR_LISTENER = new DiagnosticListener<JavaFileObject>() {
+    @Override
+    public
+    void report(Diagnostic<? extends JavaFileObject> diagnostic) {
+      if (diagnostic.getKind()== Diagnostic.Kind.ERROR) {
+        System.err.println(diagnostic);
+      }
+    }
+  };
+
+  public static
+  void main(String[] args) throws Exception {
+    new MyGenerator();
+  }
 }

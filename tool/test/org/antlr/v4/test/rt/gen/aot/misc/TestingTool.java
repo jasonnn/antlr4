@@ -9,10 +9,8 @@ import org.antlr.v4.tool.ast.GrammarAST;
 import org.antlr.v4.tool.ast.GrammarRootAST;
 
 import javax.tools.JavaFileObject;
-import java.io.File;
-import java.io.IOException;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.*;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +21,8 @@ import java.util.Map;
  */
 public
 class TestingTool extends Tool {
+
+  private boolean writeToFile;
 
   void setHasOutput() {
     haveOutputDir = true;
@@ -38,6 +38,16 @@ class TestingTool extends Tool {
   public final Map<String, ToolInput> grammarSources;
 
   public final List<JavaFileObject> generatedJavaSources;
+
+  Charset charset;
+
+  protected
+  Charset getCharset() {
+    Charset cs = charset;
+    String csname = grammarEncoding;
+    if (cs == null) return (charset = (csname == null) ? Charset.defaultCharset() : Charset.forName(csname));
+    else return (csname == null || cs.name().equals(csname)) ? cs : (charset = Charset.forName(csname));
+  }
 
   public
   TestingTool() {
@@ -58,6 +68,20 @@ class TestingTool extends Tool {
     grammarMap.clear();
     grammarSources.clear();
     generatedJavaSources.clear();
+  }
+
+
+
+  public TestingTool addSources(Iterable<? extends ToolInput> inputs){
+    for (ToolInput input : inputs) {
+      grammarSources.put(input.name,input);
+    }
+    return this;
+  }
+
+  public TestingTool addSource(ToolInput input){
+    grammarSources.put(input.name,input);
+    return this;
   }
 
 
@@ -174,17 +198,31 @@ class TestingTool extends Tool {
     return gr;
   }
 
+  private
+  Writer javaWriter(Grammar g, String fileName) throws IOException {
+    ToolGeneratedJavaSource gen = new ToolGeneratedJavaSource(fileName, getCharset());
+    generatedJavaSources.add(gen);
+    final Writer memWriter = gen.openWriter();
+    if (!writeToFile) return memWriter;
+
+    return new FilterWriter(super.getOutputFileWriter(g,fileName)) {
+      @Override
+      public
+      void write(int i) throws IOException {
+        super.write(i);
+        memWriter.write(i);
+      }
+    };
+  }
+
 
   @Override
   public
   Writer getOutputFileWriter(Grammar g, String fileName) throws IOException {
-    if (fileName.endsWith(".java")) {
-      ToolGeneratedJavaSource gen = new ToolGeneratedJavaSource(g, fileName);
-      generatedJavaSources.add(gen);
-      return gen.openWriter();
-    }
-    return new StringWriter();
+    if (fileName.endsWith(".java")) return javaWriter(g, fileName);
+    return writeToFile ? super.getOutputFileWriter(g, fileName) : new StringWriter();
   }
+
 
   public
   void run(String grammarFileName) {

@@ -1,0 +1,84 @@
+package org.antlr.v4.test.rt.gen.aot;
+
+import org.antlr.v4.test.rt.gen.Files;
+import org.antlr.v4.test.rt.gen.JUnitTestMethod;
+
+import javax.tools.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
+import java.util.Collections;
+import java.util.Locale;
+
+/**
+ * Created by jason on 4/16/15.
+ */
+public
+class CompileFromFSPass extends AOTPass<Void, File> {
+  public static final CompileFromFSPass INSTANCE = new CompileFromFSPass();
+
+  public static
+  void visit(JUnitTestMethod testMethod, File workingDir) {
+    INSTANCE.beginVisit(testMethod, workingDir);
+  }
+
+  @Override
+  public
+  Void beginVisit(JUnitTestMethod test, File workingDir) {
+
+    JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
+
+    StandardJavaFileManager manager = compiler.getStandardFileManager(ERROR_LISTENER,
+                                                                      Locale.getDefault(),
+                                                                      Charset.forName("UTF-8"));
+
+
+    File srcDir = new File(workingDir, "src");
+
+    assert srcDir.exists();
+    assert srcDir.isDirectory();
+
+
+    Iterable<? extends JavaFileObject> compilationUnits =
+        manager.getJavaFileObjectsFromFiles(Files.findJavaFiles(srcDir));
+
+    assert compilationUnits.iterator().hasNext();
+
+    try {
+      manager.setLocation(StandardLocation.SOURCE_PATH, Collections.singleton(srcDir));
+      File bin = new File(workingDir, "bin");
+      boolean b = bin.mkdir();
+      assert b;
+      manager.setLocation(StandardLocation.CLASS_OUTPUT, Collections.singleton(bin));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    JavaCompiler.CompilationTask task = compiler.getTask(new OutputStreamWriter(System.err),
+                                                         manager,
+                                                         ERROR_LISTENER,
+                                                         Collections.<String>emptySet(),
+                                                         Collections.<String>emptySet(),
+                                                         compilationUnits);
+    task.call();
+
+    try {
+      manager.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    return null;
+  }
+
+  static final DiagnosticListener<JavaFileObject> ERROR_LISTENER = new DiagnosticListener<JavaFileObject>() {
+    @Override
+    public
+    void report(Diagnostic<? extends JavaFileObject> diagnostic) {
+      if (diagnostic.getKind() == Diagnostic.Kind.ERROR) {
+        System.err.println(diagnostic);
+      }
+    }
+  };
+}

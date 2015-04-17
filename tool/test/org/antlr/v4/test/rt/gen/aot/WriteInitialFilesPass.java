@@ -3,26 +3,19 @@ package org.antlr.v4.test.rt.gen.aot;
 import org.antlr.v4.test.rt.gen.*;
 
 import java.io.File;
-import java.util.List;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.URI;
 
 /**
  * Created by jason on 4/16/15.
  */
 public
-class WriteInitialFilesPass<P> extends AOTPass<WriteInitialFilesPass.Output, P> {
-
-
-  public static class ResultBuilder {
-   boolean writeToFile;
-    List<String> javaFiles;
+class WriteInitialFilesPass extends AOTPass<Void, URI> {
+  public static final WriteInitialFilesPass INSTANCE = new WriteInitialFilesPass();
+  public static void visit(JUnitTestMethod testMethod,URI uri){
+    INSTANCE.beginVisit(testMethod, uri);
   }
-
-
-  public static class Output {
-
-  }
-
-
 
   //TODO unescape when writing, escape when reading
   // (input/output are pre-escaped)
@@ -31,52 +24,71 @@ class WriteInitialFilesPass<P> extends AOTPass<WriteInitialFilesPass.Output, P> 
 
   @Override
   public
-  Output beginVisit(JUnitTestMethod test, P p) {
-    writeGrammar(test.grammar);
+  Void beginVisit(JUnitTestMethod test, URI uri) {
+    writeGrammar(test.grammar, uri);
     if (test.input != null) {
-      writeText(file("input.txt"), test.input);
+      writeText(file(uri, "input.txt"), test.input);
     }
     if (test.expectedOutput != null) {
-      writeText(file("output.txt"), test.expectedOutput);
+      writeText(file(uri, "output.txt"), test.expectedOutput);
     }
     if (test.expectedErrors != null) {
-      writeText(file("errors.txt"), test.expectedErrors);
+      writeText(file(uri, "errors.txt"), test.expectedErrors);
     }
 
-    return super.beginVisit(test, p);
+    return super.beginVisit(test, uri);
   }
 
   @Override
   public
-  Output visitCompositeParserTest(CompositeParserTestMethod test, P p) {
-    for (Grammar grammar : test.slaveGrammars) writeGrammar(grammar);
+  Void visitCompositeParserTest(CompositeParserTestMethod test, URI p) {
+    for (Grammar grammar : test.slaveGrammars) writeGrammar(grammar, p);
     return super.visitCompositeParserTest(test, p);
 
   }
 
   @Override
   public
-  Output visitCompositeLexerTest(CompositeLexerTestMethod test, P p) {
-    for (Grammar grammar : test.slaveGrammars) writeGrammar(grammar);
+  Void visitCompositeLexerTest(CompositeLexerTestMethod test, URI p) {
+    for (Grammar grammar : test.slaveGrammars) writeGrammar(grammar, p);
     return super.visitCompositeLexerTest(test, p);
   }
 
   @Override
-  protected
-  void visitConcreteParser(ConcreteParserTestMethod test, P p) {
+  public
+  Void visitConcreteParserTest(ConcreteParserTestMethod test, URI uri) {
     String suffix = test.name.substring(test.baseName.length(), test.name.length());
     if (test.input != null) {
-      writeText(file("input" + suffix + ".txt"), test.input);
+      writeText(file(uri, "input" + suffix + ".txt"), test.input);
     }
     if (test.expectedOutput != null) {
-      writeText(file("output" + suffix + ".txt"), test.expectedOutput);
+      writeText(file(uri, "output" + suffix + ".txt"), test.expectedOutput);
     }
     if (test.expectedErrors != null) {
-      writeText(file("errors" + suffix + ".txt"), test.expectedErrors);
+      writeText(file(uri, "errors" + suffix + ".txt"), test.expectedErrors);
     }
+    return super.visitConcreteParserTest(test, uri);
   }
 
-  void writeGrammar(Grammar grammar) {
-    writeText(new File(cwd(), grammar.grammarName + ".g4"), grammar.template.render());
+  void writeGrammar(Grammar grammar, URI uri) {
+    writeText(file(uri, grammar.grammarName + ".g4"), grammar.template.render());
+  }
+
+  static
+  URI file(URI parent, String relativeName) {
+    return parent.resolve(relativeName);
+  }
+
+  static
+  void writeText(URI uri, String text) {
+    File file = new File(uri);
+    assert text != null;
+    try {
+      FileWriter fw = new FileWriter(file);
+      fw.write(text);
+      fw.close();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 }

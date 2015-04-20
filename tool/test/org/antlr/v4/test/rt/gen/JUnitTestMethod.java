@@ -3,6 +3,7 @@ package org.antlr.v4.test.rt.gen;
 import org.stringtemplate.v4.STGroup;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 
 public abstract class JUnitTestMethod {
 
@@ -13,6 +14,8 @@ public abstract class JUnitTestMethod {
 	public String expectedOutput;
 	public String expectedErrors;
 	public boolean debug = false;
+	//just in case...
+	private WeakReference<JUnitTestFile> declaringFile;
 
 	protected JUnitTestMethod(String name, String grammarName, String input,
 			String expectedOutput, String expectedErrors, Integer index) {
@@ -33,6 +36,15 @@ public abstract class JUnitTestMethod {
 	public void loadGrammars(File grammarDir) throws Exception {
 
 		grammar.load(grammarDir);
+	}
+
+	public
+	JUnitTestFile getFile() {
+		return declaringFile.get();
+	}
+
+	void setDeclaringFile(JUnitTestFile file) {
+		this.declaringFile = new WeakReference<JUnitTestFile>(file);
 	}
 
 	public void generateGrammars(STGroup group) {

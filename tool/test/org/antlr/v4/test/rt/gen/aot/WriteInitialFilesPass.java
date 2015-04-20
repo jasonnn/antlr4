@@ -11,9 +11,11 @@ import java.net.URI;
  * Created by jason on 4/16/15.
  */
 public
-class WriteInitialFilesPass extends AOTPass<Void, URI> {
+class WriteInitialFilesPass extends AOTPass<Void, MyGenerator> {
   public static final WriteInitialFilesPass INSTANCE = new WriteInitialFilesPass();
-  public static void visit(JUnitTestMethod testMethod,URI uri){
+
+  public static
+  void visit(JUnitTestMethod testMethod, MyGenerator uri) {
     INSTANCE.beginVisit(testMethod, uri);
   }
 
@@ -24,24 +26,25 @@ class WriteInitialFilesPass extends AOTPass<Void, URI> {
 
   @Override
   public
-  Void beginVisit(JUnitTestMethod test, URI uri) {
-    writeGrammar(test.grammar, uri);
+  Void beginVisit(JUnitTestMethod test, MyGenerator ctx) {
+    File dir = ctx.cwd;
+    writeGrammar(test.grammar, ctx);
     if (test.input != null) {
-      writeText(file(uri, "input.txt"), test.input);
+      writeText(file(dir, "input.txt"), test.input);
     }
     if (test.expectedOutput != null) {
-      writeText(file(uri, "output.txt"), test.expectedOutput);
+      writeText(file(dir, "output.txt"), test.expectedOutput);
     }
     if (test.expectedErrors != null) {
-      writeText(file(uri, "errors.txt"), test.expectedErrors);
+      writeText(file(dir, "errors.txt"), test.expectedErrors);
     }
 
-    return super.beginVisit(test, uri);
+    return super.beginVisit(test, ctx);
   }
 
   @Override
   public
-  Void visitCompositeParserTest(CompositeParserTestMethod test, URI p) {
+  Void visitCompositeParserTest(CompositeParserTestMethod test, MyGenerator p) {
     for (Grammar grammar : test.slaveGrammars) writeGrammar(grammar, p);
     return super.visitCompositeParserTest(test, p);
 
@@ -49,29 +52,36 @@ class WriteInitialFilesPass extends AOTPass<Void, URI> {
 
   @Override
   public
-  Void visitCompositeLexerTest(CompositeLexerTestMethod test, URI p) {
+  Void visitCompositeLexerTest(CompositeLexerTestMethod test, MyGenerator p) {
     for (Grammar grammar : test.slaveGrammars) writeGrammar(grammar, p);
     return super.visitCompositeLexerTest(test, p);
   }
 
   @Override
   public
-  Void visitConcreteParserTest(ConcreteParserTestMethod test, URI uri) {
+  Void visitConcreteParserTest(ConcreteParserTestMethod test, MyGenerator ctx) {
     String suffix = test.name.substring(test.baseName.length(), test.name.length());
+    File dir = ctx.cwd;
     if (test.input != null) {
-      writeText(file(uri, "input" + suffix + ".txt"), test.input);
+      writeText(file(dir, "input" + suffix + ".txt"), test.input);
     }
     if (test.expectedOutput != null) {
-      writeText(file(uri, "output" + suffix + ".txt"), test.expectedOutput);
+      writeText(file(dir, "output" + suffix + ".txt"), test.expectedOutput);
     }
     if (test.expectedErrors != null) {
-      writeText(file(uri, "errors" + suffix + ".txt"), test.expectedErrors);
+      writeText(file(dir, "errors" + suffix + ".txt"), test.expectedErrors);
     }
-    return super.visitConcreteParserTest(test, uri);
+    return super.visitConcreteParserTest(test, ctx);
   }
 
-  void writeGrammar(Grammar grammar, URI uri) {
-    writeText(file(uri, grammar.grammarName + ".g4"), grammar.template.render());
+
+  void writeGrammar(Grammar grammar, MyGenerator ctx) {
+    writeText(file(ctx.cwd, grammar.grammarName + ".g4"), grammar.template.render());
+  }
+
+  static
+  URI file(File parent, String relativeName) {
+    return parent.toURI().resolve(relativeName);
   }
 
   static

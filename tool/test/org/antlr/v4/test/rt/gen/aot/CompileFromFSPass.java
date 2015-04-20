@@ -15,17 +15,17 @@ import java.util.Locale;
  * Created by jason on 4/16/15.
  */
 public
-class CompileFromFSPass extends AOTPass<Void, File> {
+class CompileFromFSPass extends AOTPass<Void, MyGenerator> {
   public static final CompileFromFSPass INSTANCE = new CompileFromFSPass();
 
   public static
-  void visit(JUnitTestMethod testMethod, File workingDir) {
+  void visit(JUnitTestMethod testMethod, MyGenerator workingDir) {
     INSTANCE.beginVisit(testMethod, workingDir);
   }
 
   @Override
   public
-  Void beginVisit(JUnitTestMethod test, File workingDir) {
+  Void beginVisit(JUnitTestMethod test, MyGenerator ctx) {
 
     JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 
@@ -34,7 +34,7 @@ class CompileFromFSPass extends AOTPass<Void, File> {
                                                                       Charset.forName("UTF-8"));
 
 
-    File srcDir = new File(workingDir, "src");
+    File srcDir = new File(ctx.cwd, "src");
 
     assert srcDir.exists();
     assert srcDir.isDirectory();
@@ -47,7 +47,7 @@ class CompileFromFSPass extends AOTPass<Void, File> {
 
     try {
       manager.setLocation(StandardLocation.SOURCE_PATH, Collections.singleton(srcDir));
-      File bin = new File(workingDir, "bin");
+      File bin = new File(ctx.cwd, "bin");
       boolean b = bin.mkdir();
       assert b;
       manager.setLocation(StandardLocation.CLASS_OUTPUT, Collections.singleton(bin));

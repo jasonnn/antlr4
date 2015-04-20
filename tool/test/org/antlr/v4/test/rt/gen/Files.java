@@ -11,6 +11,25 @@ class Files {
 
   public static final File[] EMPTY_FILE_ARRAY = {};
 
+  public static
+  String dirPath(String... strings) {
+    StringBuilder sb = new StringBuilder();
+    for (String string : strings) {
+      sb.append(string).append(File.separatorChar);
+    }
+    return sb.toString();
+  }
+
+  public static
+  void mkdir(File file) {
+    boolean made = file.mkdirs();
+    assert made : file.getPath();
+  }
+
+  public static
+  File dir(File parent, String... pathElements) {
+    return new File(parent, dirPath(pathElements));
+  }
 
   public static
   FileFilter endingWith(final String suffix) {
@@ -35,6 +54,7 @@ class Files {
   }
 
   public static final FileFilter JAVA_FILES = files(endingWith(".java"));
+  public static final FileFilter CLASS_FILES = files(endingWith(".class"));
 
   public static
   List<File> findChildren(File parent, FileFilter filter) {
@@ -45,8 +65,9 @@ class Files {
     return files;
   }
 
-  public static List<File> findJavaFiles(File dir){
-    return findChildrenRecursively(dir,JAVA_FILES);
+  public static
+  List<File> findJavaFiles(File dir) {
+    return findChildrenRecursively(dir, JAVA_FILES);
   }
 
   public static

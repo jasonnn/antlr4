@@ -35,20 +35,19 @@ public class JUnitTestFile implements JUnitTestFileBuilder{
 			String input, String expectedOutput, String expectedErrors) throws Exception {
 		ParserTestMethod tm = new ParserTestMethod(name, grammarName, methodName, input, expectedOutput, expectedErrors);
 		tm.loadGrammars(grammarsDir);
-		unitTests.add(tm);
-		return tm;
+		return addTest(tm);
 	}
 
 	public AbstractParserTestMethod addParserTests(File grammarDir, String name, String grammarName, String methodName,
 			String ... inputsAndOuputs) throws Exception {
 		AbstractParserTestMethod tm = new AbstractParserTestMethod(name, grammarName, methodName);
 		tm.loadGrammars(grammarsDir);
-		unitTests.add(tm);
-		for(int i=0; i<inputsAndOuputs.length; i+=2) {
+		addTest(tm);
+		for (int i = 0; i < inputsAndOuputs.length; i += 2) {
 			ConcreteParserTestMethod cm = new ConcreteParserTestMethod(name,
 					inputsAndOuputs[i], inputsAndOuputs[i+1], null,
 					1 + (i/2));
-			unitTests.add(cm);
+			addTest(cm);
 			tm.derivedTests.add(cm);
 		}
 		return tm;
@@ -58,13 +57,13 @@ public class JUnitTestFile implements JUnitTestFileBuilder{
 			String ... inputsOuputsAndErrors) throws Exception {
 		AbstractParserTestMethod tm = new AbstractParserTestMethod(name, grammarName, methodName);
 		tm.loadGrammars(grammarsDir);
-		unitTests.add(tm);
+		addTest(tm);
 		for(int i=0; i<inputsOuputsAndErrors.length; i+=3) {
 			ConcreteParserTestMethod cm = new ConcreteParserTestMethod(name,
 					inputsOuputsAndErrors[i], inputsOuputsAndErrors[i+1], inputsOuputsAndErrors[i+2],
 					1 + (i/3));
 			tm.derivedTests.add(cm);
-			unitTests.add(cm);
+			addTest(cm);
 		}
 		return tm;
 	}
@@ -73,8 +72,7 @@ public class JUnitTestFile implements JUnitTestFileBuilder{
 			String input, String expectedOutput, String expectedErrors, String ... slaves) throws Exception {
 		CompositeParserTestMethod tm = new CompositeParserTestMethod(name, grammarName, methodName, input, expectedOutput, expectedErrors, slaves);
 		tm.loadGrammars(grammarsDir);
-		unitTests.add(tm);
-		return tm;
+		return addTest(tm);
 	}
 
 	public LexerTestMethod addLexerTest(File grammarDir, String name, String grammarName,
@@ -86,8 +84,7 @@ public class JUnitTestFile implements JUnitTestFileBuilder{
 			String input, String expectedOutput, String expectedErrors, Integer index) throws Exception {
 		LexerTestMethod tm = new LexerTestMethod(name, grammarName, input, expectedOutput, expectedErrors, index);
 		tm.loadGrammars(grammarsDir);
-		unitTests.add(tm);
-		return tm;
+		return addTest(tm);
 	}
 
 	public
@@ -108,7 +105,9 @@ public class JUnitTestFile implements JUnitTestFileBuilder{
 																									 slaves));
 	}
 
-	<T extends JUnitTestMethod> T addTest(T test){
+	<T extends JUnitTestMethod> T addTest(T test) throws Exception {
+		//	test.loadGrammars(grammarsDir);
+		test.setDeclaringFile(this);
 		unitTests.add(test);
 		return test;
 	}

@@ -10,7 +10,7 @@ import java.net.URI;
  * Created by jason on 4/16/15.
  */
 public
-class CodegenContext implements RunAntlrFromFSPass.Input{
+class CodegenContext {
 
   public
   CodegenContext(File allTestsDir) {
@@ -42,21 +42,19 @@ class CodegenContext implements RunAntlrFromFSPass.Input{
   public
   CodegenContext update(JUnitTestMethod testMethod) {
     File cwd = new File(suiteDir, testMethod.name);
-    boolean b = cwd.mkdir();
-    assert b;
+    boolean b = cwd.mkdirs();
+    assert b : cwd.getPath();
     this.testMethodDir = cwd;
     this.cwd=cwd.toURI();
     return this;
   }
 
 
-  @Override
   public
   JUnitTestFile getFile() {
     return enclosingFile;
   }
 
-  @Override
   public
   File cwd() {
     return testMethodDir;

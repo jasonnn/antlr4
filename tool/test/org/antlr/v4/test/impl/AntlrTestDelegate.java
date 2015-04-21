@@ -5,7 +5,7 @@ import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.misc.Pair;
 import org.antlr.v4.test.ErrorQueue;
 import org.antlr.v4.tool.DefaultToolListener;
-import org.junit.runner.Description;
+import org.junit.rules.TestRule;
 
 import java.net.URL;
 
@@ -13,9 +13,11 @@ import java.net.URL;
  * Created by jason on 4/1/15.
  */
 public interface AntlrTestDelegate {
-    void testWillStart(Description description);
+  TestRule testRule();
 
-    void testDidFinish(Description description);
+  // void testWillStart(Description description);
+
+  //  void testDidFinish(Description description);
 
     String loadFile(URL url, String encoding);
 

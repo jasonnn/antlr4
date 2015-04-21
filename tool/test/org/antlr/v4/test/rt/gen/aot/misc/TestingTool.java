@@ -3,6 +3,7 @@ package org.antlr.v4.test.rt.gen.aot.misc;
 import org.antlr.runtime.ANTLRStringStream;
 import org.antlr.v4.Tool;
 import org.antlr.v4.misc.Graph;
+import org.antlr.v4.tool.ANTLRMessage;
 import org.antlr.v4.tool.BuildDependencyGenerator;
 import org.antlr.v4.tool.Grammar;
 import org.antlr.v4.tool.ast.GrammarAST;
@@ -164,7 +165,7 @@ class TestingTool extends Tool {
   }
 
   ToolInput findInput(String name) {
-    if (!name.endsWith(".g4")) name = name + ".g4";
+    // if (!name.endsWith(".g4")) name = name + ".g4";
     ToolInput input = grammarSources.get(name);
     if (input != null) return input;
 
@@ -183,7 +184,8 @@ class TestingTool extends Tool {
   static
   String grammarDir(Grammar g) {
     String name = g.fileName;
-    return name.substring(0, name.lastIndexOf(File.separatorChar));
+    int sepIndex = name.lastIndexOf(File.separatorChar);
+    return sepIndex == -1 ? "" : name.substring(0, sepIndex);
   }
 
   public
@@ -229,5 +231,17 @@ class TestingTool extends Tool {
     Grammar g = load(grammarFileName);
     assert g != null : "problem creating grammar: " + grammarFileName;
     process(g, true);
+  }
+
+  @Override
+  public
+  void info(String msg) {
+    // super.info(msg);
+  }
+
+  @Override
+  public
+  void warning(ANTLRMessage msg) {
+    // super.warning(msg);
   }
 }

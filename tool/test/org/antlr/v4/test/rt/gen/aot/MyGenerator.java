@@ -133,6 +133,11 @@ class MyGenerator {
 
   public static
   void main(String[] args) throws Exception {
+    long t0 = System.nanoTime();
     new MyGenerator();
+    long t1 = System.nanoTime();
+
+    double time = (t1 - t0) / 1.0E09;
+    System.out.printf("total time : %.2f", time);
   }
 }

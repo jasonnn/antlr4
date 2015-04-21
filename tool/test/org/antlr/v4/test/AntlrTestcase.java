@@ -19,8 +19,6 @@ import org.antlr.v4.tool.Grammar;
 import org.antlr.v4.tool.LexerGrammar;
 import org.junit.Rule;
 import org.junit.rules.TestRule;
-import org.junit.rules.TestWatcher;
-import org.junit.runner.Description;
 import org.stringtemplate.v4.ST;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupString;
@@ -44,20 +42,11 @@ public class AntlrTestcase {
     final AntlrTestDelegate delegate;
 
     @Rule
-    public final TestRule junitAdapter = new TestWatcher() {
-        @Override
-        protected void starting(Description description) {
-            delegate.testWillStart(description);
-        }
-
-        @Override
-        protected void finished(Description description) {
-            delegate.testDidFinish(description);
-        }
-    };
+    public final TestRule junitAdapter;
 
     public AntlrTestcase(AntlrTestDelegate delegate) {
         this.delegate = delegate;
+        this.junitAdapter = delegate.testRule();
     }
 
     public AntlrTestcase() {

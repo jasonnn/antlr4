@@ -4,6 +4,8 @@ import org.antlr.v4.Tool;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.misc.Pair;
 import org.antlr.v4.test.ErrorQueue;
+import org.junit.rules.TestRule;
+import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
 
 import java.io.File;
@@ -20,13 +22,30 @@ import java.util.List;
  * Created by jason on 4/1/15.
  */
 public abstract class AbstractTestDelegate implements AntlrTestDelegate {
-
     @Override
+    public
+    TestRule testRule() {
+        return new TestWatcher() {
+            @Override
+            protected
+            void starting(Description description) {
+                AbstractTestDelegate.this.testWillStart(description);
+            }
+
+            @Override
+            protected
+            void finished(Description description) {
+                AbstractTestDelegate.this.testDidFinish(description);
+            }
+        };
+    }
+
+    //@Override
     public void testWillStart(Description description) {
 
     }
 
-    @Override
+    //@Override
     public void testDidFinish(Description description) {
 
     }

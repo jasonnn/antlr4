@@ -14,7 +14,8 @@ import static org.junit.Assert.assertThat;
 /**
  * Created by jason on 3/11/15.
  */
-public class TestCompiler {
+public
+class TestCompiler {
 
 //    static final ThreadLocal<TestCompiler> INSTANCES = new ThreadLocal<TestCompiler>() {
 //        @Override
@@ -27,122 +28,133 @@ public class TestCompiler {
 //        return INSTANCES.get();
 //    }
 
-    //"-d", tmpdir, "-cp", tmpdir + pathSep + CLASSPATH
-    static final List<String> DEFAULT_COMPILE_OPTIONS =
-            Arrays.asList("-g", "-source", "1.6", "-target", "1.6", "-implicit:class", "-Xlint:-options");
+  //"-d", tmpdir, "-cp", tmpdir + pathSep + CLASSPATH
+  static final List<String> DEFAULT_COMPILE_OPTIONS =
+      Arrays.asList("-g", "-source", "1.6", "-target", "1.6", "-implicit:class", "-Xlint:-options");
 
-    InMemoryFileManager fileManager;
-    JavaCompiler compiler;
-    DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
+  InMemoryFileManager fileManager;
+  JavaCompiler compiler;
+  DiagnosticCollector<JavaFileObject> diagnostics = new DiagnosticCollector<JavaFileObject>();
 
-    List<String> options = new ArrayList<String>();
+  List<String> options = new ArrayList<String>();
 
-    List<JavaFileObject> sources;
+  List<JavaFileObject> sources;
 
-    List<BytecodeFileObject> compiledFiles;
+  List<BytecodeFileObject> compiledFiles;
 
+  public
+  TestCompiler(List<JavaFileObject> sources) {
+    this(sources, new ArrayList<BytecodeFileObject>(sources.size()));
+  }
 
-    public TestCompiler(List<JavaFileObject> javaSources, List<BytecodeFileObject> compiledFiles) {
-        this.sources = javaSources;
-        this.compiledFiles = compiledFiles;
-        initCompiler();
+  public
+  TestCompiler(List<JavaFileObject> javaSources, List<BytecodeFileObject> compiledFiles) {
+    this.sources = javaSources;
+    this.compiledFiles = compiledFiles;
+    initCompiler();
 
+  }
+
+  void initCompiler() {
+    JavaCompiler cmp = ToolProvider.getSystemJavaCompiler();
+    DiagnosticCollector<JavaFileObject> diagnosticCollector = new DiagnosticCollector<JavaFileObject>();
+    StandardJavaFileManager mgr = cmp.getStandardFileManager(diagnosticCollector,
+                                                             Locale.getDefault(),
+                                                             Charset.forName("UTF-8"));
+    assertThat(diagnostics.getDiagnostics(), Matchers.empty());
+    this.compiler = cmp;
+    this.fileManager = new InMemoryFileManager(mgr, compiledFiles);
+  }
+
+  TestCompiler() {
+    this(new ArrayList<JavaFileObject>(), new ArrayList<BytecodeFileObject>());
+  }
+
+  public
+  TestCompiler reset() {
+    if (!DEFAULT_COMPILE_OPTIONS.equals(options)) {
+      options = new ArrayList<String>(DEFAULT_COMPILE_OPTIONS);
     }
-
-    void initCompiler() {
-        JavaCompiler cmp = ToolProvider.getSystemJavaCompiler();
-        DiagnosticCollector<JavaFileObject> diagnosticCollector = new DiagnosticCollector<JavaFileObject>();
-        StandardJavaFileManager mgr = cmp.getStandardFileManager(diagnosticCollector, Locale.getDefault(), Charset.forName("UTF-8"));
-        assertThat(diagnostics.getDiagnostics(), Matchers.empty());
-        this.compiler = cmp;
-        this.fileManager = new InMemoryFileManager(mgr, compiledFiles);
+    if (!diagnostics.getDiagnostics().isEmpty()) {
+      diagnostics = new DiagnosticCollector<JavaFileObject>();
     }
-
-    TestCompiler() {
-        this(new ArrayList<JavaFileObject>(), new ArrayList<BytecodeFileObject>());
-    }
-
-    public TestCompiler reset() {
-        if (!DEFAULT_COMPILE_OPTIONS.equals(options)) {
-            options = new ArrayList<String>(DEFAULT_COMPILE_OPTIONS);
-        }
-        if (!diagnostics.getDiagnostics().isEmpty()) {
-            diagnostics = new DiagnosticCollector<JavaFileObject>();
-        }
-        if (!compiledFiles.isEmpty()) {
-            compiledFiles.clear();
-        }
-
-
-        try {
-            fileManager.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        initCompiler();
-        return this;
-    }
-
-    public JavacOutput compile() {
-        return compile(sources);
+    if (!compiledFiles.isEmpty()) {
+      compiledFiles.clear();
     }
 
 
-    public JavacOutput compile(JavaFileObject... files) {
-        return compile(Arrays.asList(files));
+    try {
+      fileManager.close();
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
 
-    public JavacOutput compile(List<JavaFileObject> files) {
-        Writer out = new StringWriter();
-        Iterable<String> options = DEFAULT_COMPILE_OPTIONS;
-        Iterable<String> classes = Collections.emptyList();
-        JavaCompiler.CompilationTask task = compiler.getTask(out, fileManager, diagnostics, options, classes, files);
+    initCompiler();
+    return this;
+  }
 
-        boolean success = task.call();
+  public
+  JavacOutput compile() {
+    return compile(sources);
+  }
 
-        JavacOutput result = new JavacOutput();
-        result.success = success;
-        //noinspection unchecked
-        result.diagnostics = new ArrayList(diagnostics.getDiagnostics());
-        result.extraCompilerMessages = out.toString();
 
-        Map<String, byte[]> compiledClasses = new HashMap<String, byte[]>(fileManager.compiledFiles.size());
+  public
+  JavacOutput compile(JavaFileObject... files) {
+    return compile(Arrays.asList(files));
+  }
 
-        for (BytecodeFileObject compiledFile : fileManager.compiledFiles) {
-            compiledClasses.put(compiledFile.getName(), compiledFile.baos.toByteArray());
-        }
+  public
+  JavacOutput compile(List<JavaFileObject> files) {
+    Writer out = new StringWriter();
+    Iterable<String> options = DEFAULT_COMPILE_OPTIONS;
+    Iterable<String> classes = Collections.emptyList();
+    JavaCompiler.CompilationTask task = compiler.getTask(out, fileManager, diagnostics, options, classes, files);
 
-        result.compiledClasses = compiledClasses;
-        result.sources = files;
+    boolean success = task.call();
 
-        return result;
+    JavacOutput result = new JavacOutput();
+    result.success = success;
+    //noinspection unchecked
+    result.diagnostics = new ArrayList(diagnostics.getDiagnostics());
+    result.extraCompilerMessages = out.toString();
+    result.compiledClasses = fileManager.compiledFiles;
+    result.sources = files;
+
+    return result;
+  }
+
+  static
+  class InMemoryFileManager extends ForwardingJavaFileManager<StandardJavaFileManager> {
+    public final List<BytecodeFileObject> compiledFiles;// = new ArrayList<BytecodeFileObject>();
+
+    protected
+    InMemoryFileManager(StandardJavaFileManager fileManager, List<BytecodeFileObject> compiledFiles) {
+      super(fileManager);
+      this.compiledFiles = compiledFiles;
     }
 
-    static class InMemoryFileManager extends ForwardingJavaFileManager<StandardJavaFileManager> {
-        public final List<BytecodeFileObject> compiledFiles;// = new ArrayList<BytecodeFileObject>();
-
-        protected InMemoryFileManager(StandardJavaFileManager fileManager, List<BytecodeFileObject> compiledFiles) {
-            super(fileManager);
-            this.compiledFiles = compiledFiles;
-        }
-
-        @Override
-        public JavaFileObject getJavaFileForOutput(Location location, String className, JavaFileObject.Kind kind, FileObject sibling) throws IOException {
-            if (kind == JavaFileObject.Kind.CLASS) {
-                BytecodeFileObject object = new BytecodeFileObject(className);
-                compiledFiles.add(object);
-                return object;
-            }
-            return super.getJavaFileForOutput(location, className, kind, sibling);
-        }
-
-        @Override
-        public String toString() {
-            return "InMemoryFileManager{" +
-                    "compiledFiles=" + compiledFiles +
-                    '}';
-        }
+    @Override
+    public
+    JavaFileObject getJavaFileForOutput(Location location,
+                                        String className,
+                                        JavaFileObject.Kind kind,
+                                        FileObject sibling) throws IOException {
+      if (kind == JavaFileObject.Kind.CLASS) {
+        BytecodeFileObject object = new BytecodeFileObject(className);
+        compiledFiles.add(object);
+        return object;
+      }
+      return super.getJavaFileForOutput(location, className, kind, sibling);
     }
+
+    @Override
+    public
+    String toString() {
+      return "InMemoryFileManager{" +
+             "compiledFiles=" + compiledFiles +
+             '}';
+    }
+  }
 
 }

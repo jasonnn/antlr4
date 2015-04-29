@@ -1,12 +1,13 @@
 package org.antlr.v4.test.rt.gen.dsl;
 
+import org.antlr.v4.test.rt.gen.CompositeLexerTestMethod;
 import org.antlr.v4.test.rt.gen.CompositeParserTestMethod;
 import org.antlr.v4.test.rt.gen.dsl.impl.SpecBuilder;
 
 /**
  * Created by jason on 4/13/15.
  */
-public
+public abstract
 class TestSpecs extends SpecBuilder {
 
   class CompositeParserSpecs {
@@ -14,34 +15,33 @@ class TestSpecs extends SpecBuilder {
     String input;
 
     {
-      compositeParserTest("DelegatorInvokesDelegateRule")
-          .grammarName("M")
-          .startRule("s")
-          .input("b")
-          .expectOutput("S.a\n")
-          .expectErrors(null)
-          .slaveGrammars("S")
-          .build();
-
-      compositeParserTest("BringInLiteralsFromDelegate")
-          .grammarName("M")
-          .startRule("s")
-          .input("=a")
-          .expectOutput("S.a")
-          .expectErrors(null)
-          .slaveGrammars("S")
-          .build();
-      //.....
-
-      CompositeParserTestMethod ct =
-          compositeParserTest("DelegatesSeeSameTokenType")
-              .grammarName("M")
-              .withStartRule("s")
-              .test(input = "aa", output = "S.x\nT.y\n")
-
-
-              .slaveGrammars("S", "T")
+      CompositeParserTestMethod testMethod =//
+          compositeParserTest("DelegatorInvokesDelegateRule")//
+              .grammarName("M")//
+              .slaveGrammars("S")//
+              .startRule("s")//
+              .input("b")//
+              .expectOutput("S.a\n")//
               .build();
+
+      compositeParserTest("BringInLiteralsFromDelegate").grammarName("M")
+                                                        .slaveGrammars("S")
+                                                        .startRule("s")
+                                                        .input("=a")
+                                                        .expectOutput("S.a")
+                                                        .expectErrors(null)
+                                                        .build();
+      //.....
+      CompositeParserTestMethod ct =                          //
+          compositeParserTest2("DelegatesSeeSameTokenType")   //
+              .grammarName("M")                               //
+              .slaveGrammars("S", "T")                        //
+              .startRule("s")                                 //
+              .test(input = "aa",                             //
+                    output = "S.x\nT.y\n")                    //
+              .test(1, "", "")                                //
+              .test(2, "", "")                                //
+              .build();                                       //
 
       ct.afterGrammar = "writeFile(tmpdir(), \"M.g4\", grammar);\n"
                         +
@@ -64,20 +64,11 @@ class TestSpecs extends SpecBuilder {
                         "assertEquals(\"unexpected errors: \"+equeue, 0, equeue.errors.size());\n";
 
 
-      parserTest("myTest")
-          .grammarName("something")
-          .withStartRule("start")
-          .test(0,
-                input = "abc",
-                output = "cde"
-               )
-          .test(1,
-                input = "adasdasd",
-                output = "something big "
-                         + "\n"
-                         + "with multiple lines!"
-               )
-          .build();
+      parserTest("myTest").grammarName("something")
+                          .withStartRule("start")
+                          .test(0, input = "abc", output = "cde")
+                          .test(1, input = "adasdasd", output = "something big " + "\n" + "with multiple lines!")
+                          .build();
 
 
     }
@@ -85,26 +76,27 @@ class TestSpecs extends SpecBuilder {
 
   class CompositeLexerSpecs {
     {
-      compositeLexerTest("LexerDelegatorInvokesDelegateRule")
-          .grammarName("M")
-          .input("abc")
-          .expectOutput("S.A\n" +
-                        "[@0,0:0='a',<3>,1:0]\n" +
-                        "[@1,1:1='b',<1>,1:1]\n" +
-                        "[@2,2:2='c',<4>,1:2]\n" +
-                        "[@3,3:2='<EOF>',<-1>,1:3]\n")
-          .expectErrors(null)
-          .slaveGrammars("S")
-          .build();
+      CompositeLexerTestMethod lexerTestMethod = //
+          compositeLexerTest("LexerDelegatorInvokesDelegateRule")//
+              .grammarName("M")
+              .slaveGrammars("S")
+              .input("abc")
+              .expectOutput("S.A\n" +
+                            "[@0,0:0='a',<3>,1:0]\n" +
+                            "[@1,1:1='b',<1>,1:1]\n" +
+                            "[@2,2:2='c',<4>,1:2]\n" +
+                            "[@3,3:2='<EOF>',<-1>,1:3]\n")
+              .expectErrors(null)
+              .build();
 
-      compositeLexerTest("LexerDelegatorRuleOverridesDelegate")
-          .grammarName("M")
-          .input("ab")
-          .expectOutput("M.A\n" +
-                        "[@0,0:1='ab',<1>,1:0]\n" +
-                        "[@1,2:1='<EOF>',<-1>,1:2]\n")
-          //.expectErrors(null)
-          .slaveGrammars("S");
+      compositeLexerTest("LexerDelegatorRuleOverridesDelegate")//
+          .grammarName("M").slaveGrammars("S").input("ab").expectOutput("M.A\n" +
+                                                                        "[@0,0:1='ab',<1>,1:0]\n" +
+                                                                        "[@1,2:1='<EOF>',<-1>,1:2]\n").build();
+
+      lexerTest("SomeTest").grammarName("M").input("input").expectOutput("asdfasd").build();
+
+
     }
   }
 }

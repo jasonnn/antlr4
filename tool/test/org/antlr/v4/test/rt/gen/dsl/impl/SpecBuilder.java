@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by jason on 4/13/15.
  */
-public
+public abstract
 class SpecBuilder implements BuilderApi.Factory {
   List<LexerTestMethod> lexerTestMethods = new ArrayList<LexerTestMethod>();
   List<CompositeLexerTestMethod> compositeLexerTestMethods = new ArrayList<CompositeLexerTestMethod>();
@@ -29,7 +29,8 @@ class SpecBuilder implements BuilderApi.Factory {
                                     String expectedErrors,
                                     Integer ruleIndex) {
       LexerTestMethod m = super.lexerTestMethod(name, grammarName, input, expectedOutput, expectedErrors, ruleIndex);
-      lexerTestMethods.add(m); return m;
+      lexerTestMethods.add(m);
+      return m;
     }
 
     @Override
@@ -43,9 +44,8 @@ class SpecBuilder implements BuilderApi.Factory {
       CompositeLexerTestMethod m = super.compositeLexerTestMethod(name,
                                                                   grammarName,
                                                                   input,
-                                                                  expectedOutput,
-                                                                  expectedErrors,
-                                                                  slaveGrammars); compositeLexerTestMethods.add(m);
+                                                                  expectedOutput, expectedErrors, slaveGrammars);
+      compositeLexerTestMethods.add(m);
       return m;
     }
 
@@ -58,7 +58,8 @@ class SpecBuilder implements BuilderApi.Factory {
                                       String expectedOutput,
                                       String expectedErrors) {
       ParserTestMethod m = super.parserTestMethod(name, grammarName, startRule, input, expectedOutput, expectedErrors);
-      parserTestMethods.add(m); return m;
+      parserTestMethods.add(m);
+      return m;
     }
 
     @Override
@@ -76,7 +77,8 @@ class SpecBuilder implements BuilderApi.Factory {
                                                                     input,
                                                                     expectedOutput,
                                                                     expectedErrors,
-                                                                    slaveGrammars); compositeParserTestMethods.add(m);
+                                                                    slaveGrammars);
+      compositeParserTestMethods.add(m);
       return m;
     }
   };
@@ -92,29 +94,18 @@ class SpecBuilder implements BuilderApi.Factory {
   BuilderApi.CompositeLexerTestBuilder compositeLexerTest(String name) {
     return new LazyBuilder(factory).name(name).asCompositeLexerTestBuilder();
   }
+//
+//  @Override
+//  public
+//  BuilderApi.ParseTestBuilder parserTest(String name) {
+//    return new LazyBuilder(factory).name(name).asParseTestBuilder();
+//  }
+//
+//  @Override
+//  public
+//  BuilderApi.CompositeParseTestBuilder compositeParserTest(String name) {
+//    return new LazyBuilder(factory).name(name).asCompositeParseTestBuilder();
+//  }
 
-  @Override
-  public
-  BuilderApi.ParseTestBuilder parserTest(String name) {
-    return new LazyBuilder(factory).name(name).asParseTestBuilder();
-  }
-
-  @Override
-  public
-  BuilderApi.CompositeParseTestBuilder compositeParserTest(String name) {
-    return new LazyBuilder(factory).name(name).asCompositeParseTestBuilder();
-  }
-
-  @Override
-  public
-  BuilderApi.Out<Void> input(String input) {
-    return new InputOutput<Void>(input);
-  }
-
-  @Override
-  public
-  BuilderApi.Out<Void> output(String s) {
-    return null;
-  }
 
 }

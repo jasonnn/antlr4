@@ -3,15 +3,12 @@ package org.antlr.v4.test.rt.gen;
 /**
  * Created by jason on 4/15/15.
  *
- * note abnormal dispatch:
+ * note somewhat abnormal dispatch:
  *
- * visitor.beginVisit -> testMethod.accept -> visitor.visitXXX...-> visitor.visitTest
+ * testMethod.accept -> visitor.visitXXX...-> visitor.visitTest
  */
 public abstract
 class TestMethodVisitor<R, P> {
-  public
-  R beginVisit(JUnitTestMethod test, P p) {return test.accept(this, p);}
-
   public
   R visitAbstractParserTest(AbstractParserTestMethod test, P p) {return visitTest(test, p);}
 

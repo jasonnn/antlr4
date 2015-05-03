@@ -12,6 +12,7 @@ public class ParserTestMethod extends JUnitTestMethod {
 
 
 	@Override
+	public
 	<R, P> R accept(TestMethodVisitor<R, P> visitor, P param) {
 		return visitor.visitParserTest(this,param);
 	}

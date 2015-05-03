@@ -51,6 +51,7 @@ public abstract class JUnitTestMethod {
 		grammar.generate(group);
 	}
 
-	 abstract <R,P> R accept(TestMethodVisitor<R,P> visitor,P param);
+	public abstract
+	<R, P> R accept(TestMethodVisitor<R, P> visitor, P param);
 
 }

@@ -71,10 +71,10 @@ class MyGenerator {
         update(unitTest);
 
 
-        WriteInitialFilesPass.visit(unitTest, this);
-        RunAntlrFromFSPass.visit(unitTest, this);
-        WriteTestPass.visit(unitTest, this);
-        CompileFromFSPass.visit(unitTest, this);
+        WriteInitialFilesVisitor.visit(unitTest, this);
+        RunAntlrFromFSVisitor.visit(unitTest, this);
+        WriteTesVisitor.visit(unitTest, this);
+        CompileFromFSVisitor.visit(unitTest, this);
 
       }
     }

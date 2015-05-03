@@ -23,6 +23,7 @@ public class ConcreteParserTestMethod extends JUnitTestMethod {
 	}
 
 	@Override
+	public
 	<R, P> R accept(TestMethodVisitor<R, P> visitor, P param) {
 		return visitor.visitConcreteParserTest(this,param);
 	}

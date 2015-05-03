@@ -43,8 +43,7 @@ class SpecBuilder implements BuilderApi.Factory {
                                                       String[] slaveGrammars) {
       CompositeLexerTestMethod m = super.compositeLexerTestMethod(name,
                                                                   grammarName,
-                                                                  input,
-                                                                  expectedOutput, expectedErrors, slaveGrammars);
+                                                                  input, expectedOutput, expectedErrors, slaveGrammars);
       compositeLexerTestMethods.add(m);
       return m;
     }

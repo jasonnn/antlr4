@@ -15,17 +15,17 @@ import java.util.Locale;
  * Created by jason on 4/16/15.
  */
 public
-class CompileFromFSPass extends AOTPass<Void, MyGenerator> {
-  public static final CompileFromFSPass INSTANCE = new CompileFromFSPass();
+class CompileFromFSVisitor extends TestBuildingVisitor<Void, MyGenerator> {
+  public static final CompileFromFSVisitor INSTANCE = new CompileFromFSVisitor();
 
   public static
-  void visit(JUnitTestMethod testMethod, MyGenerator workingDir) {
-    INSTANCE.beginVisit(testMethod, workingDir);
+  void visit(JUnitTestMethod testMethod, MyGenerator generator) {
+    testMethod.accept(INSTANCE, generator);
   }
 
   @Override
   public
-  Void beginVisit(JUnitTestMethod test, MyGenerator ctx) {
+  Void visitTest(JUnitTestMethod test, MyGenerator ctx) {
 
     JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
 
@@ -40,8 +40,7 @@ class CompileFromFSPass extends AOTPass<Void, MyGenerator> {
     assert srcDir.isDirectory();
 
 
-    Iterable<? extends JavaFileObject> compilationUnits =
-        manager.getJavaFileObjectsFromFiles(Files.findJavaFiles(srcDir));
+    Iterable<? extends JavaFileObject> compilationUnits = manager.getJavaFileObjectsFromFiles(Files.findJavaFiles(srcDir));
 
     assert compilationUnits.iterator().hasNext();
 

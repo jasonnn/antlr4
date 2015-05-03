@@ -15,6 +15,7 @@ public class LexerTestMethod extends JUnitTestMethod {
 	}
 
 	@Override
+	public
 	<R, P> R accept(TestMethodVisitor<R, P> visitor, P param) {
 		return visitor.visitLexerTest(this,param);
 	}

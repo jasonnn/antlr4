@@ -11,35 +11,12 @@ import java.net.URI;
  * Created by jason on 4/16/15.
  */
 public
-class WriteInitialFilesPass extends AOTPass<Void, MyGenerator> {
-  public static final WriteInitialFilesPass INSTANCE = new WriteInitialFilesPass();
+class WriteInitialFilesVisitor extends TestBuildingVisitor<Void, MyGenerator> {
+  public static final WriteInitialFilesVisitor INSTANCE = new WriteInitialFilesVisitor();
 
   public static
-  void visit(JUnitTestMethod testMethod, MyGenerator uri) {
-    INSTANCE.beginVisit(testMethod, uri);
-  }
-
-  //TODO unescape when writing, escape when reading
-  // (input/output are pre-escaped)
-  //see: http://stackoverflow.com/a/14541345
-  // https://gist.github.com/uklimaschewski/6741769
-
-  @Override
-  public
-  Void beginVisit(JUnitTestMethod test, MyGenerator ctx) {
-    File dir = ctx.cwd;
-    writeGrammar(test.grammar, ctx);
-    if (test.input != null) {
-      writeText(file(dir, "input.txt"), test.input);
-    }
-    if (test.expectedOutput != null) {
-      writeText(file(dir, "output.txt"), test.expectedOutput);
-    }
-    if (test.expectedErrors != null) {
-      writeText(file(dir, "errors.txt"), test.expectedErrors);
-    }
-
-    return super.beginVisit(test, ctx);
+  void visit(JUnitTestMethod testMethod, MyGenerator generator) {
+    testMethod.accept(INSTANCE, generator);
   }
 
   @Override
@@ -74,6 +51,26 @@ class WriteInitialFilesPass extends AOTPass<Void, MyGenerator> {
     return super.visitConcreteParserTest(test, ctx);
   }
 
+  //TODO unescape when writing, escape when reading
+  // (input/output are pre-escaped)
+  //see: http://stackoverflow.com/a/14541345
+  // https://gist.github.com/uklimaschewski/6741769
+  @Override
+  protected
+  Void visitTest(JUnitTestMethod test, MyGenerator generator) {
+    File dir = generator.cwd;
+    writeGrammar(test.grammar, generator);
+    if (test.input != null) {
+      writeText(file(dir, "input.txt"), test.input);
+    }
+    if (test.expectedOutput != null) {
+      writeText(file(dir, "output.txt"), test.expectedOutput);
+    }
+    if (test.expectedErrors != null) {
+      writeText(file(dir, "errors.txt"), test.expectedErrors);
+    }
+    return super.visitTest(test, generator);
+  }
 
   void writeGrammar(Grammar grammar, MyGenerator ctx) {
     writeText(file(ctx.cwd, grammar.grammarName + ".g4"), grammar.template.render());

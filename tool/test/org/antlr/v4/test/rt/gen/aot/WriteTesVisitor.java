@@ -14,12 +14,12 @@ import java.io.IOException;
  * Created by jason on 4/20/15.
  */
 public
-class WriteTestPass extends AOTPass<Void, MyGenerator> {
-  public static final WriteTestPass INSTANCE = new WriteTestPass();
+class WriteTesVisitor extends TestBuildingVisitor<Void, MyGenerator> {
+  public static final WriteTesVisitor INSTANCE = new WriteTesVisitor();
 
   public static
   void visit(JUnitTestMethod test, MyGenerator gen) {
-    INSTANCE.beginVisit(test, gen);
+    test.accept(INSTANCE, gen);
   }
 
   @Override

@@ -13,12 +13,12 @@ import java.util.List;
  * Created by jason on 4/16/15.
  */
 public
-class RunAntlrFromFSPass extends AOTPass<Void, MyGenerator> {
-  public static final RunAntlrFromFSPass INSTANCE = new RunAntlrFromFSPass();
+class RunAntlrFromFSVisitor extends TestBuildingVisitor<Void, MyGenerator> {
+  public static final RunAntlrFromFSVisitor INSTANCE = new RunAntlrFromFSVisitor();
 
   public static
   void visit(JUnitTestMethod testMethod, MyGenerator input) {
-    INSTANCE.beginVisit(testMethod, input);
+    testMethod.accept(INSTANCE, input);
   }
 
   static
@@ -62,10 +62,10 @@ class RunAntlrFromFSPass extends AOTPass<Void, MyGenerator> {
   }
 
   @Override
-  public
-  Void beginVisit(JUnitTestMethod test, MyGenerator ctx) {
-    File cwd = ctx.cwd;
-    JUnitTestFile suite = ctx.currentFile;
+  protected
+  Void visitTest(JUnitTestMethod test, MyGenerator generator) {
+    File cwd = generator.cwd;
+    JUnitTestFile suite = generator.currentFile;
 
     MyTool tool = new MyTool(test);
     tool.gen_visitor = true;
@@ -73,7 +73,7 @@ class RunAntlrFromFSPass extends AOTPass<Void, MyGenerator> {
 
     tool.inputDirectory = cwd.getAbsoluteFile();
     tool.libDirectory = cwd.getAbsolutePath();
-    tool.genPackage = ctx.pkgName;
+    tool.genPackage = generator.pkgName;
 
 //    if (!Character.isJavaIdentifierStart(test.name.codePointAt(0))) {
 //      System.out.println("bad name: " + test.name);
@@ -83,7 +83,7 @@ class RunAntlrFromFSPass extends AOTPass<Void, MyGenerator> {
 //    boolean b = pkgDir.mkdirs();
 //    assert b;
 
-    tool.outputDirectory = ctx.srcPkgDir.getAbsolutePath();// pkgDir.getAbsolutePath();
+    tool.outputDirectory = generator.srcPkgDir.getAbsolutePath();// pkgDir.getAbsolutePath();
     tool.setHasOutput();
 
     tool.addInput(new File(cwd, test.grammar.grammarName + ".g4").getAbsolutePath());
@@ -100,7 +100,8 @@ class RunAntlrFromFSPass extends AOTPass<Void, MyGenerator> {
 
     }
 
-    return null;
+
+    return super.visitTest(test, generator);
   }
 
 }

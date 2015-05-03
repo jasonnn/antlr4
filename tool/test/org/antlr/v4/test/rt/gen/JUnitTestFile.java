@@ -141,8 +141,13 @@ public class JUnitTestFile implements JUnitTestFileBuilder{
 	}
 
 	public <R,P> void visitTests(TestMethodVisitor<R,P> visitor){
+		visitTests(visitor, null);
+	}
+
+	public
+	<R, P> void visitTests(TestMethodVisitor<R, P> visitor, P param) {
 		for (JUnitTestMethod unitTest : unitTests) {
-			visitor.beginVisit(unitTest,null);
+			unitTest.accept(visitor, param);
 		}
 	}
 

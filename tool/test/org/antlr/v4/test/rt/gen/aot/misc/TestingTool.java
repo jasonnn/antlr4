@@ -10,7 +10,10 @@ import org.antlr.v4.tool.ast.GrammarAST;
 import org.antlr.v4.tool.ast.GrammarRootAST;
 
 import javax.tools.JavaFileObject;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,7 +26,7 @@ import java.util.Map;
 public
 class TestingTool extends Tool {
 
-  private boolean writeToFile;
+  // private boolean writeToFile;
 
   void setHasOutput() {
     haveOutputDir = true;
@@ -202,19 +205,22 @@ class TestingTool extends Tool {
 
   private
   Writer javaWriter(Grammar g, String fileName) throws IOException {
-    ToolGeneratedJavaSource gen = new ToolGeneratedJavaSource(fileName, getCharset());
-    generatedJavaSources.add(gen);
-    final Writer memWriter = gen.openWriter();
-    if (!writeToFile) return memWriter;
+    String dir = g.tool.outputDirectory;
+    assert dir != null;
 
-    return new FilterWriter(super.getOutputFileWriter(g,fileName)) {
-      @Override
-      public
-      void write(int i) throws IOException {
-        super.write(i);
-        memWriter.write(i);
-      }
-    };
+    ToolGeneratedJavaSource gen = new ToolGeneratedJavaSource(dir + '/' + fileName, getCharset());
+    generatedJavaSources.add(gen);
+    return gen.openWriter();
+//    if (!writeToFile) return memWriter;
+//
+//    return new FilterWriter(super.getOutputFileWriter(g,fileName)) {
+//      @Override
+//      public
+//      void write(int i) throws IOException {
+//        super.write(i);
+//        memWriter.write(i);
+//      }
+//    };
   }
 
 
@@ -222,7 +228,8 @@ class TestingTool extends Tool {
   public
   Writer getOutputFileWriter(Grammar g, String fileName) throws IOException {
     if (fileName.endsWith(".java")) return javaWriter(g, fileName);
-    return writeToFile ? super.getOutputFileWriter(g, fileName) : new StringWriter();
+    return new StringWriter();
+    //return writeToFile ? super.getOutputFileWriter(g, fileName) : new StringWriter();
   }
 
 
